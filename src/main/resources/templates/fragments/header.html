@@ -1,0 +1,86 @@
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><!-- End Required meta tags -->
+    <!-- Begin SEO tag -->
+    <title>Shilen Workbench</title>
+    <meta property="og:title" content="Workbench">
+    <meta name="author" content="Greg Preston">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- FAVICONS -->
+    <link rel="apple-touch-icon" sizes="144x144" th:href="@{/assets/apple-touch-icon.png}">
+    <link rel="shortcut icon" href="assets/favicon.ico">
+    <meta name="theme-color" content="#3063A0"><!-- End FAVICONS -->
+    <!-- GOOGLE FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:400,500,600" rel="stylesheet"><!-- End GOOGLE FONT -->
+    <!-- BEGIN PLUGINS STYLES -->
+    <link rel="stylesheet" th:href="@{/assets/vendor/open-iconic/css/open-iconic-bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/vendor/fontawesome/css/all.css}">
+    <link rel="stylesheet" th:href="@{/assets/vendor/flatpickr/flatpickr.min.css}"><!-- END PLUGINS STYLES -->
+    <!-- BEGIN THEME STYLES -->
+    <link rel="stylesheet" th:href="@{/assets/stylesheets/theme.min.css}" data-skin="default">
+    <link rel="stylesheet" th:href="@{/assets/stylesheets/theme-dark.min.css}" data-skin="dark">
+    <link rel="stylesheet" th:href="@{/assets/stylesheets/custom.css}">
+    <link rel="stylesheet" th:href="@{/assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css}">
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.css" integrity="sha512-MKxcSu/LDtbIYHBNAWUQwfB3iVoG9xeMCm32QV5hZ/9lFaQZJVaXfz9aFa0IZExWzCpm7OWvp9zq9gVip/nLMg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+     
+    <script src="https://kit.fontawesome.com/e6bebe917e.js" crossorigin="anonymous"></script>
+    
+    
+    
+    
+    <style>
+    
+     a[type='button'] {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;
+
+ 	}
+    
+    	.error {
+    		color: red;
+    	}
+    
+    label {
+    margin-bottom: .1rem;
+}
+
+.app-main {
+    padding-top: 2.0rem;
+
+}
+
+.row {
+margin-bottom: 10px;
+}
+.small-tag {
+  border-radius: 20px;
+  background: #a95292;
+  text-align: center;
+  margin-left: 10px;
+  padding: 3px; 
+  font-size: 8pt;
+  color: white;
+  width: 100px;
+  height: 12px; 
+}
+
+
+    </style>
+    
+      
+    <script>
+      var skin = localStorage.getItem('skin') || 'default';
+      var isCompact = JSON.parse(localStorage.getItem('hasCompactMenu'));
+      var disabledSkinStylesheet = document.querySelector('link[data-skin]:not([data-skin="' + skin + '"])');
+      // Disable unused skin immediately
+      disabledSkinStylesheet.setAttribute('rel', '');
+      disabledSkinStylesheet.setAttribute('disabled', true);
+      // add flag class to html immediately
+      if (isCompact == true) document.querySelector('html').classList.add('preparing-compact-menu');
+    </script><!-- END THEME STYLES -->

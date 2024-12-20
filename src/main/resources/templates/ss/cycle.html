@@ -1,0 +1,213 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<div th:replace="fragments/header"></div>
+
+
+
+
+</head>
+<body>
+	<!-- .app -->
+	<div class="app">
+		<!--[if lt IE 10]>
+      <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+      <![endif]-->
+
+
+		<div th:replace="fragments/app_header"></div>
+
+		<div th:replace="fragments/sidebar"></div>
+
+		<!-- .app-main -->
+		<main class="app-main">
+			<!-- .wrapper -->
+			<div class="wrapper">
+				<!-- .page -->
+				<div class="page">
+					<!-- .page-inner -->
+					<div class="page-inner">
+						<!-- .page-title-bar -->
+						<header class="page-title-bar"> </header>
+						<!-- /.page-title-bar -->
+
+						<div class="page-section">
+
+							<!-- .page-section -->
+
+
+							<div class="card shadow col-md-8" style="margin: 20px 20px 20px 20px">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">CYCLE</span>
+								</div>
+								<div class="card-body">
+
+									<form action="/ss/cycle/insert" th:object="${FORM}" method="post" id="cycleform">
+										<div class="form-group">
+											<label for="equipment_id">Equipment</label> 
+											<select class="form-control form-control-sm" id="equipment_id" name="equipment_id">
+											</select>
+										</div>
+										<div class="form-group">
+											<label for="poll_frequency">Poll Frequency (minutes)</label> 
+											<select class="form-control form-control-sm" id="poll_frequency" name="polling_frequency">
+												<option value="1">1</option>
+												<option value="2">2</option>
+												<option value="3">3</option>
+												<option value="4">4</option>
+												<option value="5">5</option>
+												<option value="10">10</option>
+												<option value="15">15</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label for="profile">Profile</label> 
+											<select class="form-control form-control-sm" id="profile" name="profile">
+												<option value="Profile 1">Profile 1</option>
+												<option value="Profile 2">Profile 2</option>
+												<option value="Profile 3">Profile 3</option>
+												<option value="Profile 4">Profile 4</option>
+												<option value="Profile 5">Profile 5</option>
+												<option value="Profile 6">Profile 6</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label for="number_of_barrels">Number of barrels</label> 
+											<input type="text" name="number_of_barrels"  class="form-control form-control-sm" />
+										</div>
+
+
+
+									<table class="table table-sm ">
+										<thead>
+											<tr>
+												<th>Enabled</th>
+												<th>Severity</th>
+												<th>Notification</th>
+												<th>Threshold</th>
+											</tr>
+										</thead>
+										<tbody id="notification_tbody">
+											<tr th:each="a, itemStat: *{alerts}">
+												
+												<td><input type="hidden" th:field="*{alerts[__${itemStat.index}__].type}"/>
+													<input type="checkbox" class="form-control" th:value="2" th:field="*{alerts[__${itemStat.index}__].selected}"/>
+												</td>
+												<td><select class="form-control form-control-sm" th:field="*{alerts[__${itemStat.index}__].notification_type}">
+														<option value="E">Error</option>
+														<option value="W">Warning</option>
+														<option value="I">Information</option>													
+													</select>
+												</td>
+												<td><span th:text="*{alerts[__${itemStat.index}__].description}"></span></td>
+												<td><input type="text" class="form-control form-control-sm" th:field="*{alerts[__${itemStat.index}__].value}"/></td>
+											</tr>
+										</tbody>
+									</table>
+
+
+
+								<table class="table table-sm ">
+										<thead>
+											<tr>
+												<th>Enabled</th>
+												<th>Recipient</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="u, itemStat: *{users}">
+												
+												<td><input type="checkbox" class="form-control" th:checked="${u.checked}" value="1" th:field="*{users[__${itemStat.index}__].checked}"/></td>
+												<td><span th:text="*{users[__${itemStat.index}__].full_name}"></span></td>
+											</tr>
+										</tbody>
+									</table>
+									
+									
+									<button type="submit" class="btn btn-primary">Save</button>
+
+
+									</form>
+
+
+								</div>
+							</div>
+
+
+						</div>
+						<!-- /.page-section -->
+					</div>
+					<!-- /.page-inner -->
+				</div>
+				<!-- /.page -->
+			</div>
+
+			<div th:replace="fragments/footer"></div>
+
+
+			<!-- /.wrapper -->
+		</main>
+		<!-- /.app-main -->
+	</div>
+	<!-- /.app -->
+
+
+	<!-- BEGIN BASE JS -->
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<!-- END BASE JS -->
+	<!-- BEGIN PLUGINS JS -->
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+	<script
+		th:src="@{/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+
+	<!-- BEGIN THEME JS -->
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+	<!-- END THEME JS -->
+	
+	
+
+	<p th:text="@{/lkup/equipment/json}">	
+
+
+
+	<script>
+	
+	 $(document).ready(function() {
+	
+		$.getJSON('/lkup/equipment/json',
+			function(data) {
+		
+				$('#equipment_id').empty();
+	            $.each(data, function(i, obj){
+	                    $('#equipment_id').append($('<option>').text(obj.value).attr('value', obj.id));
+	            });
+
+			});
+		
+		
+		var rowCount = $('#notification_tbody tr').length;
+		var i;
+		
+		for ( i = 0; i < rowCount; i++ ) {
+			$( '#alerts' + i + '.selected1' ).attr( "checked");
+			//$('input[type=checkbox]').attr('checked');
+
+		}
+		
+		
+		
+	
+	 });
+
+
+	</script>
+
+
+</body>
+</html>

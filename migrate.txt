@@ -1,0 +1,141 @@
+*** Operator migration / runout
+
+delete from operators;
+
+insert ignore into operators (operator)
+select distinct operator from runout
+
+update runout r
+inner join operators o
+set r.operator_id = o.id
+where r.operator = o.operator
+
+*** Caliber migration / runout
+
+delete from caliber;
+
+insert ignore into caliber (caliber)
+select distinct caliber from runout
+
+update runout r
+inner join caliber c
+set r.caliber_id = c.id
+where r.caliber = c.caliber
+
+
+*** Steel migration / runout
+
+delete from steel;
+
+select * from steel
+
+insert ignore into steel (heat_name)
+select distinct material_code from runout
+
+update runout r
+inner join steel s
+set r.steel_id = s.id
+where r.material_code = s.heat_name
+
+
+*** Length migration / runout
+
+delete from lk_length;
+
+select * from lk_length 
+
+insert ignore into lk_length (length)
+select distinct length from runout
+
+update runout r
+inner join length l
+set r.length_id = l.id
+where l.length = l.length
+
+
+*** scrap_reason  migration / runout
+
+select * from lk_scrapreason 
+
+delete from lk_scrapreason;
+
+insert ignore into lk_scrapreason (reason)
+select distinct scrap_reason from runout where scrap_reason is not null
+
+update runout r
+inner join lk_scrapreason l
+set r.scrapreason_id = l.id
+where r.scrap_reason = l.reason
+
+
+
+package com.shilen.app.workbench;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+
+public class Migrate {
+
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		
+	    ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
+	 	ctx.refresh();
+	 /*	
+	 	WorkOrderMapper mapper = ctx.getBean( WorkOrderMapper.class);
+	 	
+	 	
+	 	
+	 	List<WoQty> woqlist = mapper.getWoqty();
+	 	
+	 	
+	 	for ( WoQty woq : woqlist ) {
+	 		
+	 		switch(woq.getLength() ) {
+	 		
+	 		case 28:
+	 			mapper.insertGrp1(woq);
+	 			break;
+	 		case 30:
+	 			mapper.insertGrp2(woq);
+	 			break;
+	 		case 32:
+	 			mapper.insertGrp3(woq);
+	 			break;
+	 		
+	 		}
+
+	 		System.out.println(".");
+	 		
+	 	}
+	 	*/
+	 	
+	 	ctx.close();
+
+	}
+	
+}
+
+
+
+
+
+
+package com.shilen.app.workbench;
+
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+public class ServletInitializer extends SpringBootServletInitializer {
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(WorkbenchApplication.class);
+	}
+
+}
+

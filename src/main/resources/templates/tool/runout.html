@@ -1,0 +1,444 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<div th:replace="fragments/header"></div>
+
+
+</head>
+<body>
+	<!-- .app -->
+	<div class="app">
+		<!--[if lt IE 10]>
+      <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+      <![endif]-->
+
+
+		<div th:replace="fragments/app_header"></div>
+
+		<div th:replace="fragments/sidebar"></div>
+
+		<!-- .app-main -->
+		<main class="app-main">
+			<!-- .wrapper -->
+			<div class="wrapper">
+				<!-- .page -->
+				<div class="page">
+					<!-- .page-inner -->
+					<div class="page-inner">
+						<!-- .page-title-bar -->
+
+
+						<!--  Start  -->
+
+
+						<form action="/ro/update" th:object="${FORM}" method="post"
+							id="woform">
+
+
+
+							<div class="card card-fluid" style="margin-top: 25px;">
+								<div class="card-header">
+									<span class="h5 m-0 font-weight-bold text-primary">RUNOUT&nbsp;#<span th:text="${ID}"></span>
+								</div>
+								<!-- /.card-header -->
+
+								<div class="card-body">
+									<!-- .table -->
+
+									<div class="form-row">
+
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="run_date">Run Date
+												</label> <input id="run_date" type="text"
+												class="form-control form-control-sm" data-toggle="flatpickr"
+												name="run_date" th:field="*{run_date}">
+										</div>
+										<span th:text="${run_date}">
+										
+								    </div>
+										
+										<!-- /form column -->
+
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="caliber_id">Caliber</label> <select
+												name="caliber_id" th:field="*{caliber_id}" id="caliber_id"
+												class="form-control form-control-sm" required>
+												<option value="-1"></option>
+												<option th:each="s:${CALIBERS}" th:value="${s.id}"
+													th:utext="${s.value}" />
+											</select>
+										</div>
+
+									</div>
+									
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="spindle_id">Spindle</label> <select
+												name="spindle_id" th:field="*{spindle_id}" id="spindle_id"
+												class="form-control form-control-sm" required>
+												<option value="-1"></option>
+												<option th:each="s:${SPINDLES}" th:value="${s.id}"
+													th:utext="${s.value}" />
+											</select>
+										</div>
+
+									</div>
+									
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="steel_id">Steel</label> <select
+												name="steel_id" th:field="*{steel_id}" id="steel_id"
+												class="form-control form-control-sm" required>
+												<option value="-1"></option>
+												<option th:each="s:${STEEL}" th:value="${s.id}"
+													th:utext="${s.value}" />
+											</select>
+										</div>
+
+									</div>
+									
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="length">Length</label> <select
+												name="length" th:field="*{length}" id="length"
+												class="form-control form-control-sm" required>
+												<option value="-1"></option>
+												<option th:each="s:${LENGTHS}" th:value="${s.id}"
+													th:utext="${s.value}" />
+											</select>
+										</div>
+
+									</div>
+									
+																		
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<label class="control-label" for="muzzle_tir">Muzzle TIR</label>
+														<input type="text" class="form-control form-control-sm" id="muzzle_tir"
+															name="muzzle_tir" th:field="*{muzzle_tir}">
+										</div>
+
+									</div>													
+													
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<label class="control-label" for="muzzle_tir">Chamber TIR</label>
+														<input type="text" class="form-control form-control-sm" id="chamber_tir"
+															name="chamber_tir" th:field="*{chamber_tir}">
+										</div>
+
+									</div>	
+
+
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="operator_id">Operator</label> <select
+												name="operator_id" th:field="*{operator_id}" id="operator_id"
+												class="form-control form-control-sm" required>
+												<option value="-1"></option>
+												<option th:each="s:${OPERATORS}" th:value="${s.id}"
+													th:utext="${s.value}" />
+											</select>
+										</div>
+
+									</div>
+									
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="scrap">Scrap</label> <select
+												name="length" th:field="*{scrap}" id="scrap"
+												class="form-control form-control-sm" required>
+												<option value="n">No</option>
+												<option value="y">Yes</option>
+											</select>
+										</div>
+
+									</div>
+									
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="scrapreason_id">Scrap Reason</label> <select
+												name="scrapreason_id" th:field="*{scrapreason_id}" id="scrapreason_id"
+												class="form-control form-control-sm" required>
+												<option value="-1"></option>
+												<option th:each="s:${SCRAPREASONS}" th:value="${s.id}"
+													th:utext="${s.value}" />
+											</select>
+										</div>
+
+									</div>
+									
+									
+
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="scrap">Redrill</label> <select
+												name="redrill" th:field="*{redrill}" id="redrill"
+												class="form-control form-control-sm" required>
+												<option value="n">No</option>
+												<option value="y">Yes</option>
+											</select>
+										</div>
+
+									</div>
+									
+									<div class="form-row">
+									
+										<div class="col-md-6 mb-3">
+											<label class="control-label" for="woid">Workorder #</label>
+														<input type="text" class="form-control form-control-sm" id="woid"
+															name="woid" th:field="*{woid}">
+										</div>
+
+									</div>	
+									
+
+
+									<input type="hidden" name="id" th:field="*{id}" />
+
+									<button type="submit" class="btn btn-primary" id="btnSubmit">Update</button>
+
+
+								</div>
+							</div>
+
+						</form>
+
+
+
+
+
+
+
+						<!--  ************************ Body Content End / Start Modals *************************************************** -->
+
+
+
+						<!-- DEL Confirmation Modal -->
+						<div class="modal fade" id="confirmModal" tabindex="-1"
+							role="dialog" aria-labelledby="confirmModalLabel"
+							aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLabel">DELETE</h5>
+										<button type="button" class="close" data-dismiss="modal"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">Do you want to delete this
+										object?</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary"
+											data-dismiss="modal">NO</button>
+										<a href="javascript:deleteID()" role="button"
+											class="btn btn-danger">YES</a>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<!-- ****************  End Modals ******************* -->
+
+
+					</div>
+					<!-- /.page-inner -->
+				</div>
+				<!-- /.page -->
+			</div>
+
+			<div th:replace="fragments/footer"></div>
+
+
+			<!-- /.wrapper -->
+		</main>
+		<!-- /.app-main -->
+	</div>
+	<!-- /.app -->
+
+
+	<!-- BEGIN BASE JS -->
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<!-- END BASE JS -->
+	<!-- BEGIN PLUGINS JS -->
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+	<script
+		th:src="@{/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+	<script
+		th:src="@{/assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js}"></script>
+	<!-- END PLUGINS JS -->
+
+	<!-- BEGIN THEME JS -->
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+	<!-- END THEME JS -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+
+	<script>
+    
+    $(document).ready(function() {
+    	
+    	$.validator.addMethod('checkAlpha', function (value, element, param ) {
+    		  return value != "-1";
+    	},'This is a required field');
+    	
+    	
+    	  $("#woform").validate({
+    		  submitHandler: function(form) {
+    			    form.submit();
+    			  },
+    		  rules : {
+    			  prod_date: {
+    				  required: true
+    			  },
+    			  status_id: {
+    				  required: true,
+    				  min: "0"
+    			  },
+    			  caliber_id: {
+    				  required: true,
+    				  min: "0"
+    			  },
+    			  rifling_id: {
+    				  checkAlpha: true
+    			  },
+    			  steel_id: {
+    				  required: true,
+    				  min: "0"
+    			  },
+    			  twist_id: {
+    				  required: true,
+    				  min: "0"
+    			  },
+    			  groove_id: {
+    				  required: true,
+    				  min: "0"
+    			  },
+    			  steeltype_id: {
+    				  checkAlpha: true
+    			  }
+    		  },
+    		  messages : {
+    			  status_id: "This is a required field.",
+    			  prod_date: "Please select a production date.",
+    			  caliber_id: "This is a required field.",
+    			  rifling_id: "This is a required field.",
+    			  steel_id: "This is a required field.",
+    			  twist_id: "This is a required field.",
+    			  groove_id: "This is a required field.",
+    			  steeltype_id: "This is a required field."	  
+    		  }
+    		  
+    	  });
+    	  
+    	  $("#woform").submit(function() {
+    		  
+    	  })
+   	  
+   	});
+    
+    
+    var length_options;
+    
+    
+	function newObj() {
+		
+		var rowCount = $('#woqty_tbody tr').length;
+		
+		$('#woqty_table > tbody:last-child').append(
+				'<tr>'
+				+'<td><input type="hidden" name="woqty' + rowCount + '.id" value=""/>'
+				+'<input type="hidden" name="woqty[' + rowCount + '].woid" value="' + $(this).attr("id").value + '"/>'
+				+'<input type="hidden" id="woqty' + rowCount + '.action"  name="woqty[' + rowCount + '].action"      value="A"/>'
+				+'<a onclick="itemDelete(this)"><i class="far fa-trash-alt"></i></a></td>'				
+				+'<td><input  id="woqty' + rowCount + '.qty"     class="form-control form-control-sm col-md-6 mb-3"   name="woqty[' + rowCount + '].qty"   onchange="itemRowUpdated(this)"   value=""/></td>'
+				+'<td><select id="woqty' + rowCount + '.length"  class="form-control form-control-sm col-md-6 mb-3"   name="woqty[' + rowCount + '].length" onchange="itemRowUpdated(this)" >'
+				+'<option value="28">28</option>'
+				+'<option value="30">30</option>'
+				+'<option value="32">32</option>'
+				+'</select>'				
+				+'</tr>'
+		);
+		
+		
+	}
+	
+	function itemRowUpdated( element ) {
+		
+		var row = element.parentNode.parentNode.rowIndex - 1
+		var id = 'woqty' + row + '.action';
+		
+		if ($(this).attr(id).value != 'A' ) {
+			$(this).attr(id).value = 'C';
+		}
+		
+	}
+	
+	
+   function itemDelete( element ) {
+   
+	   var row = element.parentNode.parentNode.rowIndex - 1;
+	   var id = 'woqty' + row + '.action';
+	   
+	   if ( $(this).attr(id).value == 'A' ) {
+		   $(element).closest("tr").remove();
+			
+		} else {
+			$(this).attr(id).value = 'D'
+			$(element).closest("tr").hide();
+		}
+	   
+   } 
+   
+   
+   function lkBarrelLength() {
+
+		$.getJSON('/wo/getQualityCounts/json/' + wo_qty_id,
+				function(data) {
+			
+					$('#rejected_' + wo_qty_id).text( data.rejected);
+					$('#passed_' + wo_qty_id).text( data.passed);
+					
+
+				});
+
+		}
+    
+    
+    </script>
+
+
+
+
+</body>
+</html>

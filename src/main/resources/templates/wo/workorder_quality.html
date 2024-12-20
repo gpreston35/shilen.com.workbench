@@ -1,0 +1,480 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<div th:replace="fragments/header"></div>
+
+<style>
+.qbox {
+	border-radius: 3px;
+	background: #346cb0;
+	padding: 3px;
+	height: 25px;
+	color: white;
+	margin-bottom: 10px;
+}
+</style>
+
+
+</head>
+<body>
+	<!-- .app -->
+	<div class="app">
+		<!--[if lt IE 10]>
+      <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+      <![endif]-->
+
+
+		<div th:replace="fragments/app_header"></div>
+
+		<div th:replace="fragments/sidebar"></div>
+
+		<!-- .app-main -->
+		<main class="app-main">
+			<!-- .wrapper -->
+			<div class="wrapper">
+				<!-- .page -->
+				<div class="page">
+					<!-- .page-inner -->
+					<div class="page-inner">
+						<!-- .page-title-bar -->
+
+						<!--  Start  -->
+
+						<form action="/wo/quality_update" th:object="${FORM}"
+							method="post" id="woform">
+
+							<div style="margin-top:20px"/>
+							
+													<a type="button" class="btn btn-secondary btn-sm"
+														style="margin-bottom: 10px; width: 100px"
+														th:href="@{/ro/home}">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</a>
+																<button type="submit" class="btn btn-primary btn-sm"
+														style="margin-bottom: 10px; width: 100px">Save</button>
+														
+		
+							
+							<h5 style="margin-right: 10px; margin-left: 10px">
+								WORKORDER&nbsp;#<span th:text="${WOID}" ></span>
+							</h5>
+
+
+							<div th:each="wq, itemStat : *{quality_records}"
+								style="margin-right: 10px; margin-left: 10px">
+
+								<div class="qbox col-md-6">
+									<h6>
+										&nbsp;@ <span th:text="${wq.length}"></span>&nbsp;inches
+									</h6>
+								</div>
+
+
+								<div class="col-md-6">
+
+									<table border="1" style="margin-bottom: 10px; width: 100%">
+
+										<thead>
+											<tr>
+
+												<td style="text-align: center; width: 33%">
+													<!-- .metric -->
+													<div class="metric">
+														<h4 class="metric-value" th:text="${wq.qty}"></h4>
+														<p class="metric-label">total</p>
+													</div> <!-- .metric -->
+												</td>
+												<td style="text-align: center; width: 33%">
+													<!-- .metric -->
+													<div class="metric">
+														<h4 class="metric-value"
+															th:id="'passed_' + ${wq.wo_qty_id}"></h4>
+														<p class="metric-label">passed</p>
+													</div> <!-- .metric -->
+												</td>
+												<td style="text-align: center; width: 33%">
+													<!-- .metric -->
+													<div class="metric">
+														<h4 class="metric-value"
+															th:id="'rejected_' + ${wq.wo_qty_id}"></h4>
+														<p class="metric-label">rejected</p>
+													</div> <!-- .metric -->
+												</td>
+
+											</tr>
+										</thead>
+
+									</table>
+
+								</div>
+
+
+
+								<input type="hidden"
+									th:field="*{quality_records[__${itemStat.index}__].wo_qty_id}">
+								<input type="hidden"
+									th:field="*{quality_records[__${itemStat.index}__].qty}">
+								<input type="hidden"
+									th:field="*{quality_records[__${itemStat.index}__].length}">
+
+								<div class="form-group col-md-6">
+									<label for="qal_select_match">Select Match</label> <input
+										type="text"
+										th:field="*{quality_records[__${itemStat.index}__].sm_count}"
+										data-toggle="touchspin" class="form-control">
+								</div>
+
+
+
+								<div class="form-group col-md-6">
+									<label for="qal_select_match">Match Grade</label> <input
+										type="text"
+										th:field="*{quality_records[__${itemStat.index}__].m_count}"
+										data-toggle="touchspin" class="form-control">
+								</div>
+
+								<div class="btn-group d-flex col-md-6">
+									<button type="button" class="btn btn-danger"
+										style="margin-bottom: 10px"
+										th:onclick="|reject(  ${itemStat.index}  )|">Reject</button>
+								</div>
+
+								<table th:id="${wq.wo_qty_id}" class="table table-sm col-md-6">
+									<thead>
+										<th></th>
+										<th>Process</th>
+										<th>Scrap Reason</th>
+										<th>Qty</th>
+									</thead>
+									<tbody>
+
+									</tbody>
+								</table>
+
+
+							</div>
+
+
+							<input type="hidden" id="tobedeleted_id" /> <input type="hidden"
+								id="tobedeleted_wo_qty_id" />
+
+						</form>
+
+
+
+
+						<!--  ************************ Body Content End / Start Modals *************************************************** -->
+
+
+						<!-- Form Modal-->
+						<div class="modal fade" id="formModal" tabindex="-1" role="dialog"
+							aria-labelledby="ModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="formModalLabel"></h5>
+										<button class="close" type="button" data-dismiss="modal"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<form id="modalform">
+										<div class="modal-body">
+											<input type="hidden" id="form-wo_qty_id" name="wo_qty_id" />
+											<div class="form-group">
+												<label for="name">Process</label> <select
+													class="form-control form-control" name="process_id"
+													id="form-process_id">
+												</select>
+											</div>
+											<div class="form-group">
+												<label for="name">Scrap Reason</label> <select
+													class="form-control form-control" name="scrap_reason_id"
+													id="form-scrapreason_id">
+												</select>
+											</div>
+											<div class="form-group">
+												<label for="name">Qty</label> <input type="text"
+													class="form-control" id="form-qty" value="1"
+													data-toggle="touchspin" name="qty">
+											</div>
+											<div class="form-group">
+												<label for="form-note">Notes</label> <textarea class="form-control" id="form-note" rows=3
+												 name="note" maxlength="200"></textarea>
+											</div>
+										</div>
+										
+										<input type="hidden" name="woid" th:value="${WOID}"/>
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-primary">Update</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+
+
+						<!-- DEL Confirmation Modal -->
+						<div class="modal fade" id="confirmModal" tabindex="-1"
+							role="dialog" aria-labelledby="confirmModalLabel"
+							aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLabel">DELETE</h5>
+										<button type="button" class="close" data-dismiss="modal"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">Do you want to delete this scrap
+										record?</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary"
+											data-dismiss="modal">NO</button>
+										<a href="javascript:deleteAfterConfirmation()" role="button"
+											class="btn btn-danger">YES</a>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<!-- ****************  End Modals ******************* -->
+
+
+
+
+					</div>
+					<!-- /.page-inner -->
+				</div>
+				<!-- /.page -->
+			</div>
+
+			<div th:replace="fragments/footer"></div>
+
+
+			<!-- /.wrapper -->
+		</main>
+		<!-- /.app-main -->
+	</div>
+	<!-- /.app -->
+
+
+	<!-- BEGIN BASE JS -->
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<!-- END BASE JS -->
+	<!-- BEGIN PLUGINS JS -->
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+	<script th:src="@{/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+	<script
+		th:src="@{/assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js}"></script>
+	<!-- END PLUGINS JS -->
+
+	<!-- BEGIN THEME JS -->
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+	<!-- END THEME JS -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+
+
+	<script>
+    
+    $(document).ready(function() {
+    	
+   	
+    	$('table').each(function(){ 
+    		
+    		if ( this.id != "" ) {
+    		   refreshTable(this.id);
+    		   refreshMetrics(this.id);  
+
+    		}
+   		});
+    	
+   	  
+
+    
+    
+    $(function() {
+		$('#modalform').bind('submit', function(event) {
+
+			event.preventDefault();// using this page stop being refreshing 
+			
+			
+
+			$.ajax({
+				type : 'POST',
+				url : '/wo/scrapreason_insert',
+				data : $('form').serialize(),
+				success : function(data) {
+					
+					var wo_qty_id = $('#form-wo_qty_id').val();
+			
+
+					// Clear out form vars
+					$('#form-wo_qty_id').val('0');
+					$('#form-process_id').val('0');
+					$('#form-scrapreason_id').val('0');
+					$('#form-qty').val('1');
+
+					$('#formModal').modal('hide');
+
+					refreshTable( wo_qty_id );
+		    		refreshMetrics(wo_qty_id); 
+
+
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+	                  alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+	            }
+			});
+
+		});
+	});
+    
+    
+   	});
+    
+    
+    function deleteByID( id, wo_qty_id ) {
+		
+    	$('#tobedeleted_id').val(id);
+    	$('#tobedeleted_wo_qty_id').val(wo_qty_id);
+		
+		$('#confirmModal').modal('show'); 
+			
+
+	}
+    
+    
+    function deleteAfterConfirmation() {
+		
+    	var id = $('#tobedeleted_id').val();
+    	var wo_qty_id = $('#tobedeleted_wo_qty_id').val();
+    	
+    	$('#tobedeleted_id').val(0);
+    	$('#tobedeleted_wo_qty_id').val(0);
+    	
+
+		$.ajax({
+			type : 'GET',
+			url : '/wo/scrap/delete',
+			data : 'id=' + id,
+			success : function(data) {
+
+				 refreshTable(wo_qty_id);
+				 refreshMetrics(wo_qty_id); 
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+                  alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+             }
+
+		});
+
+		
+		$('#confirmModal').modal('hide'); 
+			
+
+	}
+    
+
+    
+    function refreshTable(wo_qty_id) {
+
+		$.getJSON('/wo/getByWoScrapId/json/' + wo_qty_id,
+				function(data) {
+			
+					$('#' + wo_qty_id + ' tbody').empty();
+					
+					$.each(data, function(index) {
+						
+						var cell;
+						if ( data[index].id == -1 ) {
+							cell = '';
+						} else {
+							cell = '<a href="javascript:deleteByID(' + data[index].id + ', ' + data[index].wo_qty_id + ')" class="btn btn-sm btn-icon btn-secondary"><i class="far fa-trash-alt"></i></a>';
+						}
+						
+						$('#' + wo_qty_id ).append('<tr>'
+								+ '<td>' + cell + '</td>'
+								+ '<td>' + data[index].process + '</td>'
+								+ '<td>' + data[index].reason + '</td>'
+								+ '<td>' + data[index].qty + '</td>'
+								+ '</tr>')
+								
+					   });	
+
+				});
+
+		}
+    
+    
+    
+    function refreshMetrics(wo_qty_id) {
+
+		$.getJSON('/wo/getQualityCounts/json/' + wo_qty_id,
+				function(data) {
+			
+					$('#rejected_' + wo_qty_id).text( data.rejected);
+					$('#passed_' + wo_qty_id).text( data.passed);
+					
+
+				});
+
+		}
+    
+    
+    function reject( id ) {
+    	
+
+		event.preventDefault();// using this page stop being refreshing 
+    	
+    	var wo_qty_id = 'quality_records' + id + '.wo_qty_id';
+    	
+    	var modalTitle = $(this).attr( 'quality_records' + id + '.qty' ).value
+    	               + ' @ ' + $(this).attr( 'quality_records' + id + '.length' ).value 
+    	               + ' inches';
+    	
+    	$('#formModalLabel').text(modalTitle);
+    	
+    	$.getJSON('/lkup/process/json',
+			function(data) {
+			
+				$('#form-process_id').empty();
+		        $.each(data, function(i, obj){
+		          	$('#form-process_id').append($('<option>').text(obj.value).attr('value', obj.id));
+		        });
+		
+		});
+    	
+ 
+    	$.getJSON('/lkup/scrapreasons/json',
+    			function(data) {
+    			
+    				$('#form-scrapreason_id').empty();
+    		        $.each(data, function(i, obj){
+    		          	$('#form-scrapreason_id').append($('<option>').text(obj.value).attr('value', obj.id));
+    		        });
+    		
+    	});
+    	
+    	
+    	$(this).attr('form-wo_qty_id').value = $(this).attr(wo_qty_id).value
+  	
+    	
+		$('#formModal').modal('show');
+    	
+    }
+
+    
+    </script>
+
+
+</body>
+</html>

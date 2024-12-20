@@ -1,0 +1,7 @@
+2020-04-02 19:55:03.813  INFO 26810 --- [restartedMain] c.s.app.workbench.WorkbenchApplication   : Starting WorkbenchApplication on gregs-mac-mini.lan with PID 26810 (/Users/greg/Documents/workspace-spring-tool-suite-4-4.4.1.RELEASE/workbench/target/classes started by greg in /Users/greg/Documents/workspace-spring-tool-suite-4-4.4.1.RELEASE/workbench)
+2020-04-02 19:55:03.815  INFO 26810 --- [restartedMain] c.s.app.workbench.WorkbenchApplication   : No active profile set, falling back to default profiles: default
+2020-04-02 19:55:04.579  INFO 26810 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2020-04-02 19:55:04.579  INFO 26810 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.33]
+2020-04-02 19:55:04.630  INFO 26810 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2020-04-02 19:55:05.041  INFO 26810 --- [restartedMain] c.s.app.workbench.WorkbenchApplication   : Started WorkbenchApplication in 1.407 seconds (JVM running for 1.801)
+2020-04-02 19:55:17.684  INFO 26810 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'

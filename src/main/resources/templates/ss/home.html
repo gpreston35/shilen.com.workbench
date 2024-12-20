@@ -1,0 +1,347 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<div th:replace="fragments/header"></div>
+
+
+
+
+</head>
+<body>
+	<!-- .app -->
+	<div class="app">
+		<!--[if lt IE 10]>
+      <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+      <![endif]-->
+
+
+		<div th:replace="fragments/app_header"></div>
+
+		<div th:replace="fragments/sidebar"></div>
+
+		<!-- .app-main -->
+		<main class="app-main">
+			<!-- .wrapper -->
+			<div class="wrapper">
+				<!-- .page -->
+				<div class="page">
+					<!-- .page-inner -->
+					<div class="page-inner">
+						<!-- .page-title-bar -->
+						<header class="page-title-bar"> </header>
+						<!-- /.page-title-bar -->
+
+						<div class="page-section">
+
+							<!-- .page-section -->
+
+
+							<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">ALERTS</span>
+								</div>
+								<div class="card-body">
+									<table class="table table-hover table-sm" id="results"
+										style="width: 100%;">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>TYPE</th>
+												<th>NOTIFICATION</th>
+												<th>VALUE</th>
+												<th>DATE</th>
+											</tr>
+										</thead>
+										<tbody id="alertTable">
+											<tr th:each="alert : ${ALERTS}" th:id="${alert.cycle_id}">
+												<td th:text="${alert.cycle_id}" />
+												<td th:text="${alert.notification_type}" />
+												<td th:text="${alert.type}" />
+												<td th:text="${alert.value}" />
+												<td th:text="${alert.notified_date}" />
+											</tr>
+										</tbody>
+
+									</table>
+								</div>
+							</div>
+
+
+
+
+							<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">ACTIVE
+										JOBS</span>
+								</div>
+								<div class="card-body">
+									<table class="table table-hover table-sm" id="results"
+										style="width: 100%;">
+										<thead>
+											<tr>
+												<th>ID</th>
+												<th>EQUIPMENT</th>
+												<th>SENSOR</th>
+												<th>RUNTIME</th>
+												<th>POLLED</th>
+												<th>ERRORS</th>
+												<th>LAST POLL</th>
+												<th>LAST RESULT</th>
+											</tr>
+										</thead>
+										<tbody id="activeTable">
+											<tr th:each="job : ${ACTIVE_JOBS}"
+												th:id="${job.cycle_sensor_id}">
+												<td th:text="${job.cycle_sensor_id}" />
+												<td th:text="${job.equipment}" />
+												<td th:text="${job.sensor}" />
+												<td th:text="${job.runtime}" />
+												<td th:text="${job.times_polled}" />
+												<td th:text="${job.errors}" />
+												<td th:text="${job.last_poll}" />
+												<td th:text="${job.result}" />
+											</tr>
+										</tbody>
+
+									</table>
+								</div>
+							</div>
+
+	<p th:text="@{/lkup/equipment/json}" id="baseurl">	
+	
+
+							<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">GRAPH</span>
+								</div>
+								<div class="card-body">
+									<div class="chart-container"
+										style="position: relative; height: 40vh; width: 100%">
+										<canvas id="canvas"></canvas>
+									</div>
+								</div>
+							</div>
+
+
+						</div>
+						<!-- /.page-section -->
+					</div>
+					<!-- /.page-inner -->
+				</div>
+				<!-- /.page -->
+			</div>
+
+			<div th:replace="fragments/footer"></div>
+
+
+			<!-- /.wrapper -->
+		</main>
+		<!-- /.app-main -->
+	</div>
+	<!-- /.app -->
+
+
+	<!-- BEGIN BASE JS -->
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<!-- END BASE JS -->
+	<!-- BEGIN PLUGINS JS -->
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+	<script
+		th:src="@{/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+
+	<!-- BEGIN THEME JS -->
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+	<!-- END THEME JS -->
+
+	<!-- Page level plugins -->
+	<script th:src="@{/assets/vendor/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/assets/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+	<!-- Page level plugins -->
+	<script th:src="@{/assets/vendor/chart.js/Chart.min.js}"></script>
+
+
+
+	<script>
+	
+	
+
+
+
+$(document).ready(function(){
+    $("#activeTable").delegate('tr', 'click', function() {
+    	refreshChartData(this.id);
+
+    });
+    
+    $("#alertTable").delegate('tr', 'click', function() {
+    	refreshChartData(this.id);
+    	
+    });
+    
+    
+    var id = $("#activeTable tr:first")[0].id;
+    getChartData(id);
+
+    
+});
+
+
+var myLineChart; 
+
+function refreshChartData(cycle_sensor_id) {
+	 $.ajax({
+	     url: '/workbench/ss/samples/json/' + cycle_sensor_id,
+	     dataType: 'json',
+	     success: function (data) {
+	    	 
+	    	 var zone_zero = data.map(function(e) {
+	    		 return e.zone_zero;
+	    	 })
+	    	 
+	    	 var zone_one = data.map(function(e) {
+	    		 return e.zone_one;
+	    	 })
+	    	 
+	    	 var zone_two = data.map(function(e) {
+	    		 return e.zone_two;
+	    	 })
+	    	 
+	    	 var zone_three = data.map(function(e) {
+	    		 return e.zone_three;
+	    	 })
+	    	 
+	    	 var labels = data.map(function(e) {
+	    		 return e.timeblock;
+	    	 })
+	    	 
+	    	myLineChart.clear(); 
+	    	myLineChart.data.datasets[0].data = zone_zero;
+	    	myLineChart.data.datasets[1].data = zone_one;
+		    myLineChart.data.datasets[2].data = zone_two;
+		    myLineChart.data.datasets[3].data = zone_three;
+		    myLineChart.options.title.text = 'CYCLE TEMPERATURE: #' + cycle_sensor_id;
+		    myLineChart.data.labels = labels;
+		    myLineChart.update();
+	    }
+	 });
+}
+
+
+function getChartData(cycle_sensor_id) {
+	 $.ajax({
+	     url: '/workbench/ss/samples/json/' + cycle_sensor_id,
+	     dataType: 'json',
+	     success: function (retData) {
+	        plot(retData, cycle_sensor_id);
+	    }
+	 });
+}
+
+ function plot(data, cycle_id) {     
+	 var ctx = $('#canvas');
+	 var zone_zero = data.map(function(e) {
+		 return e.zone_zero;
+	 })
+	 
+	 var zone_one = data.map(function(e) {
+		 return e.zone_one;
+	 })
+	 
+	 var zone_two = data.map(function(e) {
+		 return e.zone_two;
+	 })
+	 
+	 var zone_three = data.map(function(e) {
+		 return e.zone_three;
+	 })
+	 
+	 var labels = data.map(function(e) {
+		 return e.timeblock;
+	 })
+	 
+	 myLineChart = new Chart(ctx, {
+		    type: 'line',
+		    options: {
+		    	title: {
+		         	display: true,
+	            	text: 'CYCLE TEMPERATURE: #' + cycle_id,
+			    	maintainAspectRatio: true,
+			    	responsive: true,
+			    	fontSize: 14
+
+		    	},
+	        },
+		    data: {
+		    	labels: labels,
+		    	datasets: [{
+		    		label: "External A",
+		    		stacked: false,
+		    		data: zone_zero,
+		    		borderWidth: 1,
+		    		pointRadius: 0,
+		            fill: false,
+		            borderColor: "rgba(0, 0, 255, 1)",
+		            pointBackgroundColor: "rgba(225, 225, 225, 1)",
+		            pointBorderColor: "rgba(0, 0, 255, 1)",
+		            pointHoverBackgroundColor: "rgba(0, 0, 255, 1)",
+		            pointHoverBorderColor: "#fff"
+		    	},{
+		    		label: "Internal A",
+		    		stacked: false,
+		    		data: zone_one,
+		    		borderWidth: 1,
+		    		pointRadius: 0,
+		            fill: false,
+		            borderColor: "rgba(255, 0, 255, 1)",
+		            pointBackgroundColor: "rgba(225, 225, 225, 1)",
+		            pointBorderColor: "rgba(255, 0, 255, 1)",
+		            pointHoverBackgroundColor: "rgba(255, 0, 255, 1)",
+		            pointHoverBorderColor: "#fff"			    	
+		    	},{
+		    		label: "Internal B",
+		    		stacked: false,
+		    		data: zone_two,
+		    		borderWidth: 1,
+		    		pointRadius: 0,
+		            fill: false,
+		            borderColor: "rgba(255, 0, 0, 1)",
+		            pointBackgroundColor: "rgba(225, 225, 225, 1)",
+		            pointBorderColor: "rgba(255, 0, 0, 1)",
+		            pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
+		            pointHoverBorderColor: "#fff"			    	
+		    	},{
+		    		label: "Internal C",
+		    		stacked: false,
+		    		data: zone_three,
+		    		borderWidth: 1,
+		    		pointRadius: 0,
+		            fill: false,
+		            borderColor: "rgba(6, 167, 125, 1)",
+		            pointBackgroundColor: "rgba(225, 225, 225, 1)",
+		            pointBorderColor: "rgba(6, 167, 125, 1)",
+		            pointHoverBackgroundColor: "rgba(6, 167, 125, 1)",
+		            pointHoverBorderColor: "#fff"			    	
+		    	}]
+		    }
+	 });
+
+};
+
+
+
+
+
+
+</script>
+
+
+</body>
+</html>

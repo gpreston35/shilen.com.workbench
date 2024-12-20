@@ -1,0 +1,383 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<div th:replace="fragments/header"></div>
+
+
+
+</head>
+<body>
+	<!-- .app -->
+	<div class="app">
+		<!--[if lt IE 10]>
+      <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+      <![endif]-->
+
+		<div th:replace="fragments/app_header"></div>
+
+		<div th:replace="fragments/sidebar"></div>
+
+		<!-- .app-main -->
+		<main class="app-main">
+			<!-- .wrapper -->
+			<div class="wrapper">
+				<!-- .page -->
+				<div class="page">
+					<!-- .page-inner -->
+					<div class="page-inner">
+						<!-- .page-title-bar -->
+						<header class="page-title-bar"> </header>
+						<!-- /.page-title-bar -->
+
+						<div class="page-section">
+
+							<!-- .page-section -->
+
+							<form th:action="@{/tool/br/update}" th:object="${FORM}" method="post"
+								id="chamber_reamer_form">
+
+								<div class="card shadow col-md-8" style="margin: 20px 20px 20px 20px">
+									<div class="card-header py-3">
+										<span class="h6 m-0 font-weight-bold text-primary">BORE REAMER</span>
+									</div>
+									<div class="card-body">
+										<!-- .table -->
+					
+										<a type="button" class="btn btn-secondary btn-sm" th:href="@{/tool/br}" style="margin-bottom: 10px; width:100px">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</a>
+										<button type="submit" class="btn btn-primary btn-sm" style="margin-bottom: 10px; width:100px">Save</button>
+										
+								
+										
+										<div th:if="${MESSAGE}" class="alert alert-primary has-icon" role="alert">
+											<div class="alert-icon">
+												<span class="oi oi-info"></span>
+											</div>
+											 <span th:text="${MESSAGE}"></span>
+										</div>
+										
+										
+										<div class="form-row">
+										<div class="col-md-6 mb-3">
+											<!-- form column -->
+											<label class="control-label" for="status_id">Status</label> 
+											<select
+												name="status_id" th:field="*{status_id}" id="status_id"
+												class="form-control form-control-sm" th:required="required">
+													<option th:each="s:${STATUS_LIST}" th:value="${s.id}"
+													th:utext="${s.text}" />
+											</select>
+										</div>
+										
+										
+											<div class="form-group col-md-6">
+												<label for="tool_identifier">Tool Identifier</label> 
+												<input type="text" class="form-control form-control-sm" id="tool_identifier" th:field="*{tool_identifier}" placeholder="" th:required="required">
+
+											</div>
+										</div>
+										
+									   <div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="flute_count">Flute Count</label> 
+												
+											<select name="flute_count" th:field="*{flute_count}" id="flute_count"
+												class="form-control form-control-sm">
+												<option value="0">0</option>
+												<option value="4">4</option>
+												<option value="6">6</option>
+											</select>
+
+											</div>
+											
+											<div class="form-group col-md-6">
+												<label for="drawing_number">Drawing Number</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{drawing_number}" id="drawing_number" placeholder="">
+
+											</div>
+										</div>
+										
+									   <div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="style">Style</label> 
+												
+											<select name="style" th:field="*{style}" id="style"
+												class="form-control form-control-sm" >
+												<option value=""></option>
+												<option value="standard">standard</option>
+												<option value="salvage">salvage</option>
+												<option value="piloted">piloted</option>
+											</select>
+
+										</div>
+											
+											<div class="form-group col-md-6">
+												<label for="storage_location">Storage Location</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{storage_location}" id="storage_location" placeholder="">
+											</div>
+										</div>
+										
+										
+
+							   			<div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="dia_ao">Diameter as ordered</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{dia_ao}" id="dia_ao" placeholder="" >
+												<small class="text-muted">Must be in #.##### format.</small> 
+											</div>
+											
+											<div class="form-group col-md-6">
+												<label for="dia_am">Diameter as measured</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{dia_am}" id="dia_am" placeholder="">
+												<small class="text-muted">Must be in #.##### format.</small> 
+											</div>
+										</div>
+
+							   			<div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="dia_hs">Diameter actual hole size</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{dia_hs}" id="dia_hs" placeholder="" > 
+												<small class="text-muted">Must be in #.##### format.</small> 
+											</div>
+											
+											<div class="form-group col-md-6">
+												<label for="shaft_dia">Shaft size required</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{shaft_dia}" id="shaft_dia" placeholder="">
+												<small class="text-muted">Must be in #.##### format.</small> 
+											</div>
+										</div>
+
+
+							   			<div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="manufacturer">Manufacturer</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{manufacturer}" id="manufacturer" placeholder="" > 
+
+											</div>
+											
+											<div class="form-group col-md-6">
+												<label for="mfg_print_id">Mfg Print Id</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{mfg_print_id}" id="mfg_print_id" placeholder="">
+
+											</div>
+										</div>
+										
+							   			<div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="material">Material</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{material}" id="material" placeholder="" > 
+
+											</div>
+											
+											<div class="form-group col-md-6">
+												<label for="mfg_serial_number">Mfg Serial Number</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{mfg_serial_number}" id="mfg_serial_number" placeholder="">
+											</div>
+										</div>
+										
+
+							   			<div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="dom_str">Date of Mfg</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{dom_str}" id="dom_str" placeholder="" data-toggle="flatpickr" th:required="required"> 
+
+											</div>
+											
+											<div class="form-group col-md-6">
+												
+											</div>
+										</div>
+										
+										
+							   			<div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="dos_str">Date of Service</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{dos_str}" id="dos_str" placeholder="" data-toggle="flatpickr"> 
+
+											</div>
+											
+
+										</div>										
+														
+							   			<div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="eos_str">End of Service</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{eos_str}" id="eos_str" placeholder="" data-toggle="flatpickr"> 
+
+											</div>
+											
+											<div class="form-group col-md-6">
+											
+
+												
+											</div>
+										</div>															
+														
+							   			<div class="form-row">
+											<div class="form-group col-md-6">
+												<label for="eos_reason">End of Service Reason</label> 
+												<input type="text" class="form-control form-control-sm" th:field="*{eos_reason}" id="eos_reason" placeholder=""> 
+											</div>
+											
+											<div class="form-group col-md-6">
+												
+											</div>
+										</div>		
+										
+										 <div th:if="*{id} != 0">													
+														
+											<div class="form-row">				
+												<div class="form-group col-md-12">
+												    <label for="note">Notes</label>
+												    <textarea class="form-control"  th:field="*{note}" id="note" rows="3" maxlength="1000"></textarea>
+												</div>	
+											</div>			
+										</div>
+											
+																								
+								</div>
+								
+								
+							    <input type="hidden" name="id" th:field="*{id}" />
+
+								<p><a type="button" class="btn btn-primary btn-sm" th:href="@{/manage-files?referring_module_id=2(module_record_id=*{id})}" style="margin-top: 0px;">&nbsp;&nbsp;Manage Files&nbsp;&nbsp;</a>
+
+								
+					 <div th:if="*{id} != 0">		
+					 
+					 
+					 		<div class="card card-fluid" style="margin-top: 5px;">
+								<div class="card-header"><span class="h6 m-0 font-weight-bold text-primary">FILE(S)</span></div>
+								<!-- /.card-header -->
+
+								<div class="card-body">
+									<!-- .table -->
+
+									<table class="table table-hover table-sm table-bordered"
+										id="file_results">
+										<thead>
+											<tr>
+												<th>FILE NAME</th>
+												<th>FILE SIZE</th>
+												<th>UPLOADED BY</th>
+												<th>UPLOADED</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="f: *{files}">
+												<td><a th:href="@{/get-file(id=${f.file_storage_id})}"><span th:text="${f.file_name}"></span></a></td>
+												<td th:text="${f.file_size_str}" />
+												<td th:text="${f.uploaded_by}" />
+												<td th:text="${f.uploaded_str}" />
+											</tr>
+										</tbody>
+									</table>
+
+
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+									
+
+							<div class="card card-fluid" style="margin-top: 25px;">
+								<div class="card-header"><span class="h6 m-0 font-weight-bold text-primary">NOTES HISTORY</span></div>
+								<!-- /.card-header -->
+
+								<div class="card-body">
+									<!-- .table -->
+
+									<table class="table table-hover table-sm table-bordered"
+										id="results">
+										<thead>
+											<tr>
+												<th>Created</th>
+												<th>Created By</th>
+												<th>Note</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="r: *{notes}">
+												<td th:text="${r.created}" />
+												<td th:text="${r.created_by}" />
+												<td th:text="${r.note}" />
+											</tr>
+										</tbody>
+									</table>
+
+
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+							
+							<hr>
+							
+																		<div class="form-group col-md-6" style="font-style: italic;">
+											
+													
+													Created: <span th:text="*{created}"></span>,&nbsp;by&nbsp;<span th:text="*{created_by}"></span>
+													<br>Updated: <span th:text="*{updated}"></span>,&nbsp;by&nbsp;<span th:text="*{updated_by}"></span>
+												
+											</div>
+											
+
+					</div>
+					</div>
+					
+
+
+							</form>
+												
+							
+
+							
+						</div>
+					</div>
+				</div>
+				<!-- /.page-section -->
+			</div>
+			<!-- /.page-inner -->
+		</main>
+	</div>
+	<!-- /.page -->
+
+</body>
+
+
+<div th:replace="fragments/footer"></div>
+
+
+<!-- BEGIN BASE JS -->
+<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<!-- END BASE JS -->
+<!-- BEGIN PLUGINS JS -->
+<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+
+	<script
+		th:src="@{/assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js}"></script>
+
+<!-- BEGIN THEME JS -->
+<script th:src="@{/assets/javascript/theme.min.js}"></script>
+<!-- END THEME JS -->
+
+
+<script>
+	
+	$(document).ready(function() {
+		
+	    	
+
+	} );
+
+
+</script>
+
+
+</body>
+</html>

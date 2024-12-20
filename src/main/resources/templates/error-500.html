@@ -1,0 +1,103 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+
+<div th:replace="fragments/header"></div>
+
+
+
+
+</head>
+<body>
+	<!-- .app -->
+	<div class="app">
+		<!--[if lt IE 10]>
+      <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+      <![endif]-->
+
+
+		<div th:replace="fragments/app_header"></div>
+
+		<div th:replace="fragments/sidebar"></div>
+
+		<!-- .app-main -->
+		<main class="app-main">
+			<!-- .wrapper -->
+			<div class="wrapper">
+				<!-- .page -->
+				<div class="page">
+					<!-- .page-inner -->
+					<div class="page-inner">
+						<!-- .page-title-bar -->
+						<header class="page-title-bar"> </header>
+						<!-- /.page-title-bar -->
+
+						<div class="page-section">
+
+							<!-- .page-section -->
+
+
+          <!-- .empty-state -->
+          <div class="empty-state">
+            <!-- .empty-state-container -->
+            <div class="empty-state-container">
+              <p>
+              <p>
+              <h1 class="state-header">application or server error.</h1>
+              <p>
+              <p>
+              <p class="state-description lead text-muted">this should not have happened.</p>
+            </div><!-- /.empty-state-container -->
+          </div><!-- /.empty-state -->
+
+
+
+						</div>
+						<!-- /.page-section -->
+					</div>
+					<!-- /.page-inner -->
+				</div>
+				<!-- /.page -->
+			</div>
+
+			<div th:replace="fragments/footer"></div>
+
+
+			<!-- /.wrapper -->
+		</main>
+		<!-- /.app-main -->
+	</div>
+	<!-- /.app -->
+
+
+	<!-- BEGIN BASE JS -->
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<!-- END BASE JS -->
+	<!-- BEGIN PLUGINS JS -->
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+
+
+	<!-- BEGIN THEME JS -->
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+	<script th:src="@{/assets/javascript/pages/dashboard-demo.js}"></script> 
+	<!-- END THEME JS -->
+
+
+
+
+	<script>
+    
+	    $(document).ready(function() {
+
+	    } );
+	    
+    </script>
+
+
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<div th:replace="fragments/header"></div>
+
+
+
+</head>
+<body>
+	<!-- .app -->
+	<div class="app">
+		<!--[if lt IE 10]>
+      <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+      <![endif]-->
+
+		<div th:replace="fragments/app_header"></div>
+
+		<div th:replace="fragments/sidebar"></div>
+
+		<!-- .app-main -->
+		<main class="app-main">
+			<!-- .wrapper -->
+			<div class="wrapper">
+				<!-- .page -->
+				<div class="page">
+					<!-- .page-inner -->
+					<div class="page-inner">
+						<!-- .page-title-bar -->
+						<header class="page-title-bar"> </header>
+						<!-- /.page-title-bar -->
+						<div class="page-section">
+
+							<!-- .page-section -->
+
+							<div class="card shadow col-md-12" style="margin: 20px 20px 20px 20px">
+									<div class="card-header py-3">
+										<span class="h6 m-0 font-weight-bold text-primary">BORE REAMER</span>
+									</div>
+									<div class="card-body">
+										<!-- .table -->
+										
+										<a type="button" class="btn btn-danger btn-sm" th:href="${REFERRER.referrer_url}" style="margin-bottom: 10px;">&nbsp;&nbsp;Back&nbsp;&nbsp;</a>
+			
+										
+										<div th:if="${MESSAGE}" class="alert alert-primary has-icon" role="alert">
+											<div class="alert-icon">
+												<span class="oi oi-info"></span>
+											</div>
+											 <span th:text="${MESSAGE}"></span>
+										</div>
+		
+
+							<div class="alert alert-primary has-icon" role="alert" style="display: none;" id="info_message_block">
+								<div class="alert-icon">
+									<span class="oi oi-info"></span>
+								</div>
+								<span id="info_message" ></span>
+							</div>
+
+
+							<div class="alert alert-warning has-icon" role="alert" style="display: none;" id="warning_message_block">
+								<div class="alert-icon">
+									<span class="fa fa-bullhorn"></span>
+								</div>
+								<span id="warning_message"></span>
+							</div>
+
+
+							<form th:action="@{/store-files}" th:object="${FORM}" method="post" enctype="multipart/form-data"
+								id="fileupload" >
+
+								<div class="card card-fluid">
+									<!-- .card-body -->
+									<div class="card-body">
+
+										<label class="mr-2"></label>
+										<div class="btn btn-secondary fileinput-button">
+											<i class="fa-solid fa-file-arrow-up"></i> <span>Add files...</span>
+											<!-- The file input field used as target for the file upload widget -->
+											<input id="fileupload-btn" type="file" name="files" multiple>
+										</div>
+										<hr>
+										<label>Use dropzone</label>
+										<div id="dropzone" class="fileinput-dropzone">
+											<span>Drop files or click to upload.</span>
+											<!-- The file input field used as target for the file upload widget -->
+											<input id="fileupload-dropzone" type="file" name="files"
+												multiple>
+										</div>
+									</div>
+									<!-- /.card-body -->
+								</div>
+								<!-- /.card -->
+
+								<input type="hidden" id="module_id" th:value="${MODULE_ID}"/>
+								<input type="hidden" id="record_id" th:value="${RECORD_ID}"/>
+								<span th:text="@{/list-files/module/}" id="list_files_href" style="display: none;" /></span>
+								<span th:text="@{/delete-file/}" id="delete_file_href" style="display: none;" /></span>
+								<span th:text="@{/get-file?id=}" id="get_file_href" style="display: none;" /></span>
+								
+
+							</form>									
+												
+							<div class="card card-fluid" style="margin-top: 25px;">
+								<div class="card-header"><span class="h6 m-0 font-weight-bold text-primary">FILE(S)</span></div>
+								<!-- /.card-header -->
+
+								<div class="card-body">
+									<!-- .table -->
+
+									<table class="table table-hover table-sm table-bordered"
+										id="results">
+										<thead>
+											<tr>
+												<th>FILE NAME</th>
+												<th>FILE SIZE</th>
+												<th>UPLOADED BY</th>
+												<th>UPLOADED</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+										</tbody>
+									</table>
+
+
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+							
+						</div>
+					</div>
+				</div>
+				<!-- /.page-section -->
+			</div>
+			<!-- /.page-inner -->
+		</main>
+	</div>
+	<!-- /.page -->
+
+
+
+	<!-- Alert Warning Modal -->
+	<div class="modal modal-alert fade" id="deleteModalAlertWarning"
+		data-backdrop="static" tabindex="-1" role="dialog"
+		aria-labelledby="deleteModalAlertWarning" aria-hidden="true">
+		<!-- .modal-dialog -->
+		<div class="modal-dialog" role="document">
+			<!-- .modal-content -->
+			<div class="modal-content">
+				<!-- .modal-header -->
+				<div class="modal-header">
+					<h5 id="exampleModalAlertWarningLabel" class="modal-title">
+						<i class="fa fa-bullhorn text-warning mr-1"></i> Confirmation: Delete File
+					</h5>
+				</div>
+				<!-- /.modal-header -->
+				<!-- .modal-body -->
+				<div class="modal-body" >
+					<p id="model_message"></p>
+				</div>
+				<!-- /.modal-body -->
+				<!-- .modal-footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-danger" onclick="deleteAfterConfirmation()">Delete</button>
+				</div>
+				<!-- /.modal-footer -->
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+
+</body>
+
+
+<div th:replace="fragments/footer"></div>
+
+
+<!-- BEGIN BASE JS -->
+<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+<!-- END BASE JS -->
+
+<!-- BEGIN PLUGINS JS -->
+<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+
+<script th:src="@{/assets/vendor/blueimp-file-upload/js/vendor/jquery.ui.widget.min.js}"></script>
+<script th:src="@{/assets/vendor/blueimp-load-image/load-image.all.min.js}"></script>
+<script th:src="@{/assets/vendor/blueimp-canvas-to-blob/canvas-to-blob.min.js}"></script>
+<script th:src="@{/assets/vendor/blueimp-file-upload/js/jquery.iframe-transport.min.js}"></script>
+<script th:src="@{/assets/vendor/blueimp-file-upload/js/jquery.fileupload.min.js}"></script>
+<script th:src="@{/assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js}"></script>
+<script th:src="@{/assets/vendor/datatables/jquery.dataTables.min.js}"></script>
+
+<!-- BEGIN THEME JS -->
+<script th:src="@{/assets/javascript/theme.min.js}"></script>
+<!-- END THEME JS -->
+
+
+   
+<script>
+	
+	
+    var file_storage_id;
+    var table;
+    var list_files_href = $('#list_files_href').text();
+    var delete_file_href = $('#delete_file_href').text();
+    var get_file_href = $('#get_file_href').text();
+    
+	
+	$(document).ready(function() {
+		
+
+		var _url = list_files_href + $('#module_id').val() + "/record/" + $('#record_id').val()
+		
+        table = $('#results').DataTable( {
+        	"ajax": { 
+        		"url" : _url,
+        		"dataSrc" : ""
+            },
+        	 "columns" : [
+        		 { "data" : "file_name",
+        			 render : function ( data, type, full, meta) {
+        				 return "<a href='" + get_file_href + full.file_storage_id + "' target=\"_blank\">" + full.file_name +  "</a>"; 
+        			 }},
+        		 { "data" : "file_size_str" },
+        		 { "data" : "uploaded_by" },
+        		 { "data" : "uploaded" },
+        		 { "data" : "file_storage_id",
+    			 render : function ( data, type, full, meta) {
+    				 return "<a href='javascript:delete_file(" + full.file_storage_id + ",\"" + full.file_name + "\")' role=\"button\" class=\"btn btn-sm btn-icon btn-secondary\"><i class='fa-solid fa-trash'></i></a>"; 
+    			 }}
+        	 ]
+         });
+
+		
+		 $('#fileupload-customInput, #fileupload-btn, #fileupload-dropzone').fileupload({
+			    dropZone: null,
+			    autoUpload: false,
+			    disableImageResize: /Android(?!.*Chrome)|Opera/.test(window.navigator.userAgent),
+			    singleFileUploads: 0,
+			    previewMaxWidth: 32,
+			    previewMaxHeight: 32,
+			    previewCrop: true,
+			    add: function ( e, data ) {
+			    	data.submit();
+			    }
+			    
+			  }).on('fileuploadalways', function (e, data) {
+				  
+				  if ( data.textStatus == 'success' ) {
+					  
+					  $('#info_message').text('File(s) successfully uploaded.');
+					  $('#info_message_block').show();
+					  $('#warning_message_block').hide();
+					    
+					  table.ajax.reload();
+					  
+				  } else {
+				  
+					  $('#warning_message').text('Error uploading file(s); if upload fails check the file sizes - current limit is 10MB.');
+					  $('#info_message_block').hide();
+					  $('#warning_message_block').show();
+
+				  }
+				  
+			  });
+
+			  var dropZone = $('#dropzone');
+			  $('#fileupload-dropzone').fileupload('option', 'dropZone', dropZone);
+			  dropZone.on('dragover', function () {
+			    dropZone.addClass('hover');
+			  }).on('drop dragleave', function () {
+			    dropZone.removeClass('hover');
+			  });
+			  
+		
+	} );
+	
+	
+	function delete_file( file_id, file_name) {
+		
+		$("#model_message").text( "Confirm you want to delete file name: " + file_name );
+		
+		$("#deleteModalAlertWarning").modal();	
+		
+		file_storage_id = file_id;
+		
+		
+	}
+	
+	
+	 function deleteAfterConfirmation() {
+			
+	  var _url = delete_file_href + file_storage_id;
+	  
+			$.ajax({
+				type : 'GET',
+				url : _url,
+				data : "",
+				success : function(data) {
+
+					  $('#info_message').text('File successfully deleted.');
+					  $('#info_message_block').show();
+					  $('#warning_message_block').hide();
+					  table.ajax.reload();
+					
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					
+					  $('#warning_message').text(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+					  $('#info_message_block').hide();
+					  $('#warning_message_block').show();
+
+	             }
+
+			});
+
+			
+			$('#deleteModalAlertWarning').modal('hide'); 
+				
+
+		}
+	 
+
+</script>
+
+
+</body>
+</html>

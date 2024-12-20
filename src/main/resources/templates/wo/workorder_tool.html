@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.css"
+	integrity="sha512-MKxcSu/LDtbIYHBNAWUQwfB3iVoG9xeMCm32QV5hZ/9lFaQZJVaXfz9aFa0IZExWzCpm7OWvp9zq9gVip/nLMg=="
+	crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+
+
+<body>
+
+	<h1>hello</h1>
+
+	<div id="slider"></div>
+
+
+
+
+	<script src="/assets/vendor/jquery/jquery.min.js"></script>
+
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.js"
+		integrity="sha512-1mDhG//LAjM3pLXCJyaA+4c+h5qmMoTc7IuJyuNNPaakrWT9rVTxICK4tIizf7YwJsXgDC2JP74PGCc7qxLAHw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer">
+		
+	</script>
+
+
+
+
+
+
+
+
+
+
+	<script>
+		$(document).ready(function() {
+
+			var slider = document.getElementById('slider');
+
+			noUiSlider.create(slider, {
+				start : [ 4000, 8000 ],
+				range : {
+					'min' : [ 2000 ],
+					'max' : [ 10000 ]
+				}
+			});
+
+		});
+	</script>
+
+</body>
+
+</html>

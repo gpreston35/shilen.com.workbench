@@ -1,0 +1,92 @@
+
+<!-- .app-aside -->
+<aside class="app-aside app-aside-expand-md app-aside-light">
+	<!-- .aside-content -->
+	<div class="aside-content">
+		<!-- .aside-header -->
+		<header class="aside-header d-block d-md-none"> </header>
+		<!-- /.aside-header -->
+
+
+		<!-- .aside-menu -->
+		<div class="aside-menu overflow-hidden">
+			<!-- .stacked-menu -->
+			<nav id="stacked-menu" class="stacked-menu">
+				<!-- .menu -->
+
+				<ul class="menu">
+					<!-- .menu-item -->
+					<li class="menu-item has-active"><a th:href="@{/}"
+						class="menu-link"><span class="menu-icon fas fa-home"></span>
+							<span class="menu-text">Dashboard</span></a></li>
+					<!-- /.menu-item -->
+
+					<li class="menu-item has-child"><a href="#" class="menu-link"><span
+							class="menu-icon fa-solid fa-bullseye"></span> <span
+							class="menu-text">Applications</span></a> <!-- child menu -->
+						<ul class="menu">
+							<li class="menu-item"><a th:href="@{/ro/home}"
+								class="menu-link">Runout</a></li>
+							<li class="menu-item"><a th:href="@{/wo/home}"
+								class="menu-link">Work Orders</a></li>
+
+						</ul></li>
+
+
+					<li class="menu-item has-child"><a href="#" class="menu-link"><span
+							class="menu-icon oi oi-wrench"></span> <span class="menu-text">Tools</span></a>
+						<!-- child menu -->
+						<ul class="menu">
+							<li class="menu-item"><a th:href="@{/tool/cr}"
+								class="menu-link">Chamber Reamers</a></li>
+							<li class="menu-item"><a th:href="@{/tool/br}"
+								class="menu-link">Bore Reamers</a></li>
+							<li class="menu-item"><a th:href="@{/tool/bn}"
+								class="menu-link">Buttons</a></li>
+							<li class="menu-item"><a th:href="@{/tool/dh}"
+								class="menu-link">Deep Hole Drills</a></li>
+						</ul></li>
+
+
+					<li class="menu-item has-child"><a href="#" class="menu-link"><span
+							class="menu-icon fa-solid fa-database"></span> <span
+							class="menu-text">Data</span></a> <!-- child menu -->
+						<ul class="menu">
+							<li class="menu-item"><a th:href="@{/config/caliber}"
+								class="menu-link">Calibers</a></li>
+
+						</ul>
+					</li>
+
+
+					<li class="menu-item has-child"><a href="#" class="menu-link"><span
+							class="menu-icon fa-solid fa-gear"></span> <span
+							class="menu-text">Administration</span></a> <!-- child menu -->
+						<ul class="menu">
+							
+						</ul>
+					</li>
+
+				</ul>
+				<!-- /.menu -->
+
+			</nav>
+			<!-- /.stacked-menu -->
+		</div>
+		<!-- /.aside-menu -->
+
+
+
+		<!-- Skin changer -->
+		<footer class="aside-footer border-top p-2">
+			<button class="btn btn-light btn-block text-primary"
+				data-toggle="skin">
+				<span class="d-compact-menu-none">Night mode</span> <i
+					class="fas fa-moon ml-1"></i>
+			</button>
+		</footer>
+		<!-- /Skin changer -->
+	</div>
+	<!-- /.aside-content -->
+</aside>
+<!-- /.app-aside -->

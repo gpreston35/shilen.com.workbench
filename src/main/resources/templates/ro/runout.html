@@ -1,0 +1,297 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<div th:replace="fragments/header"></div>
+
+
+</head>
+<body>
+	<!-- .app -->
+	<div class="app">
+		<!--[if lt IE 10]>
+      <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+      <![endif]-->
+
+		<div th:replace="fragments/app_header"></div>
+
+		<div th:replace="fragments/sidebar"></div>
+
+		<!-- .app-main -->
+		<main class="app-main">
+			<!-- .wrapper -->
+			<div class="wrapper">
+				<!-- .page -->
+				<div class="page">
+					<!-- .page-inner -->
+					<div class="page-inner">
+						<!-- .page-title-bar -->
+						<header class="page-title-bar"> </header>
+						<!-- /.page-title-bar -->
+
+						<div class="page-section">
+
+							<!-- .page-section -->
+
+							<div class="card shadow col-md-8"
+								style="margin: 20px 20px 20px 20px">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">RUNOUT&nbsp;&nbsp;&nbsp;&nbsp;</span>
+								</div>
+
+								<div class="alert alert-primary" style="margin-top: 25px"
+									role="alert" th:text="${success}" th:if="${success}"></div>
+								<div class="alert alert-danger" style="margin-top: 25px"
+									role="alert" th:text="${error}" th:if="${error}"></div>
+								<div class="alert alert-warning" style="margin-top: 25px"
+									role="alert" th:text="${warning}" th:if="${warning}"></div>
+
+								<div class="card-body">
+
+									<form th:action="@{/ro/update}" th:object="${FORM}"
+										method="post">
+										<div class="container">
+											<div class="row">
+												<div class="col-sm">
+
+													<a type="button" class="btn btn-secondary btn-sm"
+														style="margin-bottom: 10px; width: 100px"
+														th:href="@{/ro/home}">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</a>
+													<button type="submit" class="btn btn-primary btn-sm"
+														style="margin-bottom: 10px; width: 100px">Save</button>
+
+
+													<div class="form-row" style="margin-bottom: 10px"
+														th:if="*{id==0}">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="woid">Run Date</label>
+															<input id="run_date" type="text"
+																class="form-control form-control-sm"
+																data-toggle="flatpickr" name="run_date"
+																th:field="*{run_date}">
+														</div>
+													</div>
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="muzzle_tir">Work
+																Order </label> <input name="woid" th:field="*{woid}"
+																class="form-control form-control-sm" id="woid" />
+
+														</div>
+													</div>
+
+
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="status_id">Caliber</label>
+															<select name="caliber_id" th:field="*{caliber_id}"
+																id="caliber_id" class="form-control form-control-sm"
+																th:required="required">
+																<option value="-1"></option>
+																<option th:each="s:${CALIBERS}" th:value="${s.id}"
+																	th:utext="${s.value}" />
+															</select>
+														</div>
+													</div>
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="status_id">Spindle</label>
+															<select name="spindle_id" th:field="*{spindle_id}"
+																id="spindle_id" class="form-control form-control-sm"
+																th:required="required">
+																<option value="-1"></option>
+																<option th:each="s:${SPINDLES}" th:value="${s.id}"
+																	th:utext="${s.value}" />
+															</select>
+														</div>
+													</div>
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="heat_name">Heat</label>
+															<select name="steel_id" th:field="*{steel_id}"
+																id="steel_id" class="form-control form-control-sm"
+																th:required="required">
+																<option value="-1"></option>
+																<option th:each="s:${STEEL}" th:value="${s.id}"
+																	th:utext="${s.value}" />
+															</select>
+														</div>
+													</div>
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="length">Length</label>
+															<select name="length_id" th:field="*{length_id}"
+																id="length_id" class="form-control form-control-sm"
+																th:required="required">
+																<option value="-1"></option>
+																<option th:each="s:${LENGTHS}" th:value="${s.id}"
+																	th:utext="${s.value}" />
+															</select>
+														</div>
+													</div>
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="muzzle_tir">Muzzle
+																TIR</label> <input name="muzzle_tir" th:field="*{muzzle_tir}"
+																class="form-control form-control-sm" id="muzzle_tir" />
+
+														</div>
+													</div>
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="muzzle_tir">Chamber
+																TIR</label> <input name="chamber_tir" th:field="*{chamber_tir}"
+																class="form-control form-control-sm" id="chamber_tir" />
+														</div>
+													</div>
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="length">Operator</label>
+															<select name="operator_id" th:field="*{operator_id}"
+																id="operator_id" class="form-control form-control-sm"
+																th:required="required">
+																<option value="-1"></option>
+																<option th:each="s:${OPERATORS}" th:value="${s.id}"
+																	th:utext="${s.value}" />
+															</select>
+														</div>
+													</div>
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="length">Redrill</label>
+															<select name="redrill" th:field="*{redrill}" id="redrill"
+																class="form-control form-control-sm"
+																th:required="required">
+																<option value="n">N</option>
+																<option value="y">Y</option>
+
+															</select>
+														</div>
+													</div>
+
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="length">Scrap</label> <select
+																name="scrap" th:field="*{scrap}" id="scrap"
+																class="form-control form-control-sm"
+																th:required="required">
+																<option value="n">N</option>
+																<option value="y">Y</option>
+
+															</select>
+														</div>
+													</div>
+
+													<div class="form-row" style="margin-bottom: 10px">
+														<div class="col-md-12 mb-12">
+															<!-- form column -->
+															<label class="control-label" for="length">Scrap
+																Reason</label> <select name="scrap_reason"
+																th:field="*{scrapreason_id}" id="scrapreason_id"
+																class="form-control form-control-sm"
+																th:required="required">
+																<option value=-1></option>
+																<option th:each="s:${SCRAPREASONS}" th:value="${s.id}"
+																	th:utext="${s.value}" />
+															</select>
+														</div>
+													</div>
+
+
+												</div>
+												<div class="col-sm">
+
+													<p>
+														ID: <span th:text="*{id}"></span>
+													<p>
+														Work Order: <span th:text="*{woid}"></span>
+													<p>
+														Created: <span th:text="*{run_date}"></span>
+													<p>
+														Updated: <span th:text="*{updated}"></span>
+													<p>
+												</div>
+											</div>
+										</div>
+
+										<input type=HIDDEN name="id" th:value="*{id}" />
+
+									</form>
+
+								</div>
+							</div>
+
+
+
+
+						</div>
+						<!-- /.page-section -->
+					</div>
+					<!-- /.page-inner -->
+				</div>
+				<!-- /.page -->
+			</div>
+
+			<div th:replace="fragments/footer"></div>
+
+
+			<!-- /.wrapper -->
+		</main>
+		<!-- /.app-main -->
+	</div>
+	<!-- /.app -->
+
+
+
+	<!-- BEGIN BASE JS -->
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<!-- END BASE JS -->
+	<!-- BEGIN PLUGINS JS -->
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+	<script
+		th:src="@{/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+
+	<!-- BEGIN THEME JS -->
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+	<!-- END THEME JS -->
+
+	<!-- Page level plugins -->
+	<script th:src="@{/assets/vendor/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/assets/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+
+
+	<script>
+		
+	</script>
+
+
+</body>
+</html>

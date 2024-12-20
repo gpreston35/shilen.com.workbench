@@ -1,0 +1,178 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<div th:replace="fragments/header"></div>
+
+</head>
+<body>
+	<!-- .app -->
+	<div class="app">
+		<!--[if lt IE 10]>
+      <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
+      <![endif]-->
+
+
+		<div th:replace="fragments/app_header"></div>
+
+		<div th:replace="fragments/sidebar"></div>
+
+		<!-- .app-main -->
+		<main class="app-main">
+			<!-- .wrapper -->
+			<div class="wrapper">
+				<!-- .page -->
+				<div class="page">
+					<!-- .page-inner -->
+					<div class="page-inner">
+						<!-- .page-title-bar -->
+						<header class="page-title-bar"></header>
+						<!-- /.page-title-bar -->
+
+						<div class="page-section">
+
+							<!-- .page-section -->
+							
+
+							<span class="h5 m-0 font-weight-bold text-primary">BUTTONS</span>
+
+					
+							
+
+							<p><a type="button" class="btn btn-primary btn-sm" th:href="@{/tool/bn/new}" style="margin-top: 10px;">&nbsp;&nbsp;Add&nbsp;&nbsp;</a>
+							
+
+
+							<div class="card card-fluid" style="margin-top: 15px;">
+								<div class="card-header"><span class="h6 m-0 font-weight-bold text-primary">SEARCH</span></div>
+								<!-- /.card-header -->
+
+								<div class="card-body">
+									<!-- .table -->
+									
+
+
+									<form th:action="@{/tool/bn/search}" th:object="${SEARCH_FORM}" method="post">
+
+										<div class="form-row">
+											<!-- form row -->
+
+											<div class="col-md-6 mb-3">
+												<!-- form column -->
+												<label class="control-label" for="search">Search Term</label>
+												<input type="text" class="form-control form-control-sm" id="search_term"
+													name="search_term" th:field="*{search_term}" placeholder="ex 243">
+											</div>
+											<!-- /form column -->
+											<div class="col-md-6 mb-3">
+										
+											</div>
+											
+									    </div>
+
+
+										<button type="submit" class="btn btn-primary btn-sm" >Search</button>
+
+									</form>
+
+								</div>
+
+							</div>
+
+
+
+
+							<div class="card card-fluid" style="margin-top: 25px;">
+								<div class="card-header"><span class="h6 m-0 font-weight-bold text-primary">RESULTS</span></div>
+								<!-- /.card-header -->
+
+								<div class="card-body">
+									<!-- .table -->
+
+									<table class="table table-hover table-sm table-bordered"
+										id="results">
+										<thead>
+											<tr>
+												<th></th>
+												<th>ID</th>
+												<th>TOOL IDENTIFER</th>
+												<th>STATUS</th>
+												<th>DOS</th>
+												<th>EOS</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="r: ${RESULTS}">
+												<td><a th:href="@{'/tool/bn/read'(id=${r.id})}" role="button" class="btn btn-sm btn-icon btn-secondary"><i class="far fa-edit"></i></a> 
+												<td th:text="${r.id}" />
+												<td th:text="${r.tool_identifier}" />
+												<td th:text="${r.status}" />
+												<td th:text="${r.dos_str}" />
+												<td th:text="${r.eos_str}" />
+											</tr>
+										</tbody>
+									</table>
+
+
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+
+
+					</div>
+							
+						
+				</div>
+						<!-- /.page-section -->
+					</div>
+					<!-- /.page-inner -->
+				</div>
+
+
+			<div th:replace="fragments/footer"></div>
+
+
+			<!-- /.wrapper -->
+		</main>
+		<!-- /.app-main -->
+	</div>
+	<!-- /.app -->
+
+
+	<!-- BEGIN BASE JS -->
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<!-- END BASE JS -->
+	<!-- BEGIN PLUGINS JS -->
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+	<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+
+	<!-- BEGIN THEME JS -->
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+	<!-- END THEME JS -->
+
+	<!-- Page level plugins -->
+	<script th:src="@{/assets/vendor/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/assets/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+	<!-- Page level plugins -->
+	<script th:src="@{/assets/vendor/chart.js/Chart.min.js}"></script>
+
+
+
+	<script>
+    
+	    $(document).ready(function() {
+	        $('#results').DataTable();
+	    } );
+	    
+    </script>
+
+
+</body>
+</html>
