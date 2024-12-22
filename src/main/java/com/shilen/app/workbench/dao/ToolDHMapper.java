@@ -36,6 +36,8 @@ public interface ToolDHMapper {
 	@Options(useGeneratedKeys = true, keyProperty="id", keyColumn="id") 
 	void Insert( DeepHole deephole );		
 			
+	@Update( "UPDATE operations.tool_deephole set tool_identifier = #{identifier} where id = #{id}" )
+	void updateToolIdentifier( String identifier, int id );
 			
 	@Update( "UPDATE operations.tool_deephole "
 			+ "  set tool_identifier = #{tool_identifier},"

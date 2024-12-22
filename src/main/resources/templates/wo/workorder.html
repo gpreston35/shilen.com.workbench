@@ -37,7 +37,8 @@
 
 							<div class="card card-fluid" style="margin-top: 25px;">
 								<div class="card-header">
-									<span class="h5 m-0 font-weight-bold text-primary">WORKORDER&nbsp;#<span th:text="${WOID}"></span></span>
+									<span class="h5 m-0 font-weight-bold text-primary">WORKORDER&nbsp;#<span
+										th:text="${WOID}"></span></span>
 								</div>
 								<!-- /.card-header -->
 
@@ -212,44 +213,94 @@
 
 									<div class="card shadow mb-4">
 										<div class="card-header py-3">
-											<span class="h6 m-0 font-weight-bold text-primary">NOTES</span>
+											<span class="h6 m-0 font-weight-bold text-primary">TOOLS&nbsp;&nbsp;&nbsp;&nbsp;</span>
 										</div>
-										<div class="card-body">
-										
-										<textarea name="note" rows="4" id="note" class="form-control"></textarea>
-										
-										
+
+										<div class="col-md-4 mb-2" style="margin-top: 10px">
+											<!-- form column -->
+											<label class="control-label" for="dhtool">Deep Hole Drill</label> 
+											<input th:field="*{dhtool}" id="dhtool" class="form-control form-control-sm" />
 										</div>
 										
+										<div class="col-md-4 mb-2 ">
+											<!-- form column -->
+											<label class="control-label" for="brtool">Bore Reamer</label> 
+											<input th:field="*{brtool}" id="brtool" class="form-control form-control-sm" />
+										</div>
+										
+										<div class="col-md-4 mb-2">
+											<!-- form column -->
+											<label class="control-label" for="bntool">Button</label> 
+											<input th:field="*{bntool}" id="bntool" class="form-control form-control-sm" style="margin-bottom: 20px"/>
+										</div>
+										
+										
+										<div class="card-header py-3">
+											<span class="h6 m-0 font-weight-bold text-primary">TOOL HISTORY&nbsp;&nbsp;&nbsp;&nbsp;</span>
+										</div>
+										
+										<table class="table table-hover table-sm" style="width: 100%; margin-bottom: 20px">
+											<thead>
+												<tr>
+													<th>Updated</th>
+													<th>Tool Identifier</th>
+													<th>Tool Type</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr th:each="h: *{wotoolhistory}">
+													<td th:text="${h.updated}"></td>
+													<td th:text="${h.tool_identifier}"></td>
+													<td th:text="${h.tool_type}"></td>
+												</tr>
+											</tbody>
+										</table>
+										
+									
 									</div>
-									
-									
-									<table class="table table-hover table-sm" style="width: 100%">
-												<thead>
-													<tr>
-														<th>CREATED</th>
-														<th>NOTE</th>
-													</tr>
-												</thead>
-												<tbody >
-													<tr th:each="n: *{wonote}">
-														<td th:text="${n.fcreated}"></td>
-														<td th:utext="${n.note}" style="white-space:pre;"></td>
-													</tr>
-												</tbody>
-									</table>
-												
 										
 
+									<div class="card shadowmb-4">
+											<div class="card-header py-3">
+												<span class="h6 m-0 font-weight-bold text-primary">NOTES</span>
+											</div>
+											<div class="card-body">
 
-									<input type="hidden" name="id" th:field="*{id}" />
+												<textarea name="note" rows="4" id="note"
+													class="form-control"></textarea>
 
-									<button type="submit" class="btn btn-primary" id="btnSubmit">Update</button>
+
+											</div>
+
+										</div>
 
 
+										<table class="table table-hover table-sm" style="width: 100%">
+											<thead>
+												<tr>
+													<th>CREATED</th>
+													<th>NOTE</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr th:each="n: *{wonote}">
+													<td th:text="${n.fcreated}"></td>
+													<td th:utext="${n.note}" style="white-space: pre;"></td>
+												</tr>
+											</tbody>
+										</table>
+
+
+										<input type="hidden" name="id" th:field="*{id}" />
+										<input type="hidden" name="current_dhtool" th:value="*{dhtool}" />
+										<input type="hidden" name="current_brtool" th:value="*{brtool}" />
+										<input type="hidden" name="current_bntool" th:value="*{bntool}" />
+
+										<button type="submit" class="btn btn-primary" id="btnSubmit">Update</button>
+
+
+									</div>
 								</div>
-							</div>
-
 						</form>
 
 
@@ -331,137 +382,139 @@
 
 
 	<script>
-    
-    $(document).ready(function() {
-    	
-    	$.validator.addMethod('checkAlpha', function (value, element, param ) {
-    		  return value != "-1";
-    	},'This is a required field');
-    	
-    	
-    	  $("#woform").validate({
-    		  submitHandler: function(form) {
-    			    form.submit();
-    			  },
-    		  rules : {
-    			  prod_date: {
-    				  required: true
-    			  },
-    			  status_id: {
-    				  required: true,
-    				  min: "0"
-    			  },
-    			  caliber_id: {
-    				  required: true,
-    				  min: "0"
-    			  },
-    			  rifling_id: {
-    				  checkAlpha: true
-    			  },
-    			  steel_id: {
-    				  required: true,
-    				  min: "0"
-    			  },
-    			  twist_id: {
-    				  required: true,
-    				  min: "0"
-    			  },
-    			  groove_id: {
-    				  required: true,
-    				  min: "0"
-    			  },
-    			  steeltype_id: {
-    				  checkAlpha: true
-    			  }
-    		  },
-    		  messages : {
-    			  status_id: "This is a required field.",
-    			  prod_date: "Please select a production date.",
-    			  caliber_id: "This is a required field.",
-    			  rifling_id: "This is a required field.",
-    			  steel_id: "This is a required field.",
-    			  twist_id: "This is a required field.",
-    			  groove_id: "This is a required field.",
-    			  steeltype_id: "This is a required field."	  
-    		  }
-    		  
-    	  });
-    	  
-    	  $("#woform").submit(function() {
-    		  
-    	  })
-   	  
-   	});
-    
-    
-    var length_options;
-    
-    
-	function newObj() {
-		
-		var rowCount = $('#woqty_tbody tr').length;
-		
-		$('#woqty_table > tbody:last-child').append(
-				'<tr>'
-				+'<td><input type="hidden" name="woqty' + rowCount + '.id" value=""/>'
-				+'<input type="hidden" name="woqty[' + rowCount + '].woid" value="' + $(this).attr("id").value + '"/>'
-				+'<input type="hidden" id="woqty' + rowCount + '.action"  name="woqty[' + rowCount + '].action"      value="A"/>'
-				+'<a onclick="itemDelete(this)"><i class="far fa-trash-alt"></i></a></td>'				
-				+'<td><input  id="woqty' + rowCount + '.qty"     class="form-control form-control-sm col-md-6 mb-3"   name="woqty[' + rowCount + '].qty"   onchange="itemRowUpdated(this)"   value=""/></td>'
-				+'<td><select id="woqty' + rowCount + '.length"  class="form-control form-control-sm col-md-6 mb-3"   name="woqty[' + rowCount + '].length" onchange="itemRowUpdated(this)" >'
-				+'<option value="28">28</option>'
-				+'<option value="30">30</option>'
-				+'<option value="32">32</option>'
-				+'</select>'				
-				+'</tr>'
-		);
-		
-		
-	}
-	
-	function itemRowUpdated( element ) {
-		
-		var row = element.parentNode.parentNode.rowIndex - 1
-		var id = 'woqty' + row + '.action';
-		
-		if ($(this).attr(id).value != 'A' ) {
-			$(this).attr(id).value = 'C';
-		}
-		
-	}
-	
-	
-   function itemDelete( element ) {
-   
-	   var row = element.parentNode.parentNode.rowIndex - 1;
-	   var id = 'woqty' + row + '.action';
-	   
-	   if ( $(this).attr(id).value == 'A' ) {
-		   $(element).closest("tr").remove();
-			
-		} else {
-			$(this).attr(id).value = 'D'
-			$(element).closest("tr").hide();
-		}
-	   
-   } 
-   
-   
-   function lkBarrelLength() {
+		$(document).ready(
+				function() {
 
-		$.getJSON('/wo/getQualityCounts/json/' + wo_qty_id,
-				function(data) {
-			
-					$('#rejected_' + wo_qty_id).text( data.rejected);
-					$('#passed_' + wo_qty_id).text( data.passed);
-					
+					$.validator.addMethod('checkAlpha', function(value,
+							element, param) {
+						return value != "-1";
+					}, 'This is a required field');
+
+					$("#woform").validate({
+						submitHandler : function(form) {
+							form.submit();
+						},
+						rules : {
+							prod_date : {
+								required : true
+							},
+							status_id : {
+								required : true,
+								min : "0"
+							},
+							caliber_id : {
+								required : true,
+								min : "0"
+							},
+							rifling_id : {
+								checkAlpha : true
+							},
+							steel_id : {
+								required : true,
+								min : "0"
+							},
+							twist_id : {
+								required : true,
+								min : "0"
+							},
+							groove_id : {
+								required : true,
+								min : "0"
+							},
+							steeltype_id : {
+								checkAlpha : true
+							}
+						},
+						messages : {
+							status_id : "This is a required field.",
+							prod_date : "Please select a production date.",
+							caliber_id : "This is a required field.",
+							rifling_id : "This is a required field.",
+							steel_id : "This is a required field.",
+							twist_id : "This is a required field.",
+							groove_id : "This is a required field.",
+							steeltype_id : "This is a required field."
+						}
+
+					});
+
+					$("#woform").submit(function() {
+
+					})
 
 				});
 
+		var length_options;
+
+		function newObj() {
+
+			var rowCount = $('#woqty_tbody tr').length;
+
+			$('#woqty_table > tbody:last-child')
+					.append(
+							'<tr>'
+									+ '<td><input type="hidden" name="woqty' + rowCount + '.id" value=""/>'
+									+ '<input type="hidden" name="woqty['
+									+ rowCount
+									+ '].woid" value="'
+									+ $(this).attr("id").value
+									+ '"/>'
+									+ '<input type="hidden" id="woqty' + rowCount + '.action"  name="woqty[' + rowCount + '].action"      value="A"/>'
+									+ '<a onclick="itemDelete(this)"><i class="far fa-trash-alt"></i></a></td>'
+									+ '<td><input  id="woqty'
+									+ rowCount
+									+ '.qty"     class="form-control form-control-sm col-md-6 mb-3"   name="woqty['
+									+ rowCount
+									+ '].qty"   onchange="itemRowUpdated(this)"   value=""/></td>'
+									+ '<td><select id="woqty'
+									+ rowCount
+									+ '.length"  class="form-control form-control-sm col-md-6 mb-3"   name="woqty['
+									+ rowCount
+									+ '].length" onchange="itemRowUpdated(this)" >'
+									+ '<option value="28">28</option>'
+									+ '<option value="30">30</option>'
+									+ '<option value="32">32</option>'
+									+ '</select>' + '</tr>');
+
 		}
-    
-    
-    </script>
+
+		function itemRowUpdated(element) {
+
+			var row = element.parentNode.parentNode.rowIndex - 1
+			var id = 'woqty' + row + '.action';
+
+			if ($(this).attr(id).value != 'A') {
+				$(this).attr(id).value = 'C';
+			}
+
+		}
+
+		function itemDelete(element) {
+
+			var row = element.parentNode.parentNode.rowIndex - 1;
+			var id = 'woqty' + row + '.action';
+
+			if ($(this).attr(id).value == 'A') {
+				$(element).closest("tr").remove();
+
+			} else {
+				$(this).attr(id).value = 'D'
+				$(element).closest("tr").hide();
+			}
+
+		}
+
+		function lkBarrelLength() {
+
+			$.getJSON('/wo/getQualityCounts/json/' + wo_qty_id, function(data) {
+
+				$('#rejected_' + wo_qty_id).text(data.rejected);
+				$('#passed_' + wo_qty_id).text(data.passed);
+
+			});
+
+		}
+	</script>
 
 
 

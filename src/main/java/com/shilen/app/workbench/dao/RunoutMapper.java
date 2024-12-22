@@ -98,14 +98,15 @@ public interface RunoutMapper {
 	Runout getRunout(int id);
 	
 	@Insert("insert into runout (caliber_id, spindle_id, operator_id, muzzle_tir, chamber_tir, steel_id, length_id, "
-			+ "redrill, scrap, woid, scrapreason_id, updated ) "
+			+ "redrill, scrap, woid, scrapreason_id, updated, brtool, dhtool ) "
 			+ "VALUES (  #{caliber_id}, #{spindle_id}, #{operator_id}, #{muzzle_tir}, #{chamber_tir}, #{steel_id}, #{length_id},"
-			+ " #{redrill}, #{scrap}, #{woid}, #{scrapreason_id}, now() )")
+			+ " #{redrill}, #{scrap}, #{woid}, #{scrapreason_id}, now(), #{brtool}, #{dhtool} )")
 	@Options(useGeneratedKeys = true, keyProperty="id", keyColumn="id") 
 	void insert( Runout ro );
 	
 	@Update("update runout set caliber_id = #{caliber_id}, spindle_id = #{spindle_id}, operator_id = #{operator_id}, steel_id = #{steel_id},"
 			+ "length_id = #{length_id}, redrill = #{redrill}, scrap_id = #{scrap_id} ,woid = #{woid},"
+			+ " brtool = #{brtool}, dhtool = #{dhtool}, "
 			+ "chamber_tir = #{chamber_tir}, muzzle_tir = #{muzzle_tir}, scrapreason_id = #{scrapreason_id}, updated = now() where id = #{id}")
 	void update( Runout ro);
 		

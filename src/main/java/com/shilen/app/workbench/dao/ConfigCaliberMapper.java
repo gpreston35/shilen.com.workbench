@@ -22,8 +22,7 @@ public interface ConfigCaliberMapper {
 				+ " grv_nominal, grv_utol, grv_ltol, grv_target, bor_nominal, bor_utol, bor_ltol, bor_target  ) "
 			    + " values ("
 				+ " #{caliber}, #{description}, "
-				+ " #{tool_range_low}, "
-				+ " #{tool_range_high}, #{status_id}, "
+				+ " #{status_id}, "
 				+ " now(), now(), #{created_by}, #{updated_by}, #{bore_reamer_high}, #{bore_reamer_low}, #{button_low}, #{button_high}, #{drill_high}, #{drill_low},"
 				+ " #{grv_nominal}, #{grv_utol}, #{grv_ltol}, #{grv_target}, #{bor_nominal}, #{bor_utol}, #{bor_ltol}, #{bor_target}  )" )
 			

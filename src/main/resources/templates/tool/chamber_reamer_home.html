@@ -95,7 +95,6 @@
 										<thead>
 											<tr>
 												<th></th>
-												<th>ID</th>
 												<th>TOOL IDENTIFER</th>
 												<th>CHAMBER NAME</th>
 												<th>Status</th>
@@ -106,7 +105,6 @@
 										<tbody>
 											<tr th:each="r: ${RESULTS}">
 												<td><a th:href="@{'/tool/cr/read'(id=${r.id})}" role="button" class="btn btn-sm btn-icon btn-secondary"><i class="far fa-edit"></i></a> 
-												<td th:text="${r.id}" />
 												<td th:text="${r.tool_identifier}" />
 												<td th:text="${r.chamber_name}" />
 												<td th:text="${r.status}">DD</td>

@@ -223,8 +223,32 @@
 												</div>
 												<div class="col-sm">
 
-													<p>
-														ID: <span th:text="*{id}"></span>
+													<div class="form-row" style="margin-top:38px">
+
+														<div class="col-md-12 mb-12">
+															<label class="control-label" for="dhtool">Deephole
+																Drill Tool Id:</label> <input type="text"
+																class="form-control form-control-sm" id="dhtool"
+																name="dhtool" th:field="*{dhtool}">
+														</div>
+
+													</div>
+
+													<div class="form-row" style="margin-top:11px">
+
+														<div class="col-md-12 mb-12">
+															<label class="control-label" for="brtool">Bore
+																Reamer Tool Id:</label> <input type="text"
+																class="form-control form-control-sm" id="brtool"
+																name="brtool" th:field="*{brtool}">
+														</div>
+
+													</div>
+													
+													
+													
+													<p style="margin-top:35px ">
+														ID: <span th:text="*{id}" ></span>
 													<p>
 														Work Order: <span th:text="*{woid}"></span>
 													<p>
@@ -232,7 +256,9 @@
 													<p>
 														Updated: <span th:text="*{updated}"></span>
 													<p>
+
 												</div>
+
 											</div>
 										</div>
 

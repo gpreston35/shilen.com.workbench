@@ -36,7 +36,10 @@ public interface ToolCRMapper {
 				+ "	#{eos_reason}, #{storage_location},  now(), now(), #{updated_by}, "
 				+ " #{created_by}, #{drawing_number}, #{chamber_name}, #{flute_count}, #{pilot_type}, #{status_id}, #{sharpen_count} )" )
 	@Options(useGeneratedKeys = true, keyProperty="id", keyColumn="id") 
-	void Insert( ChamberReamer reamer );		
+	void Insert( ChamberReamer reamer );	
+	
+	@Update( "UPDATE operations.tool_chamber_reamer set tool_identifier = #{identifier} where id = #{id}" )
+	void updateToolIdentifier( String identifier, int id );
 			
 			
 	@Update( "UPDATE operations.tool_chamber_reamer "

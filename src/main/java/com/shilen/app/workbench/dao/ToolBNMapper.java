@@ -13,7 +13,7 @@ import com.shilen.app.workbench.model.tool.Button;
 public interface ToolBNMapper {
 	
 	
-	@Select("SELECT b.id, b.tool_identifier, b.dos as dos_str, b.eos as eos_str, s.status from "
+	@Select("SELECT b.id, b.tool_identifier, b.dos, b.eos, s.status from "
 			+ "   operations.tool_button b,"
 			+ "   operations.lk_tool_status s"
 			+ "   where b.status_id = s.id and upper(b.tool_identifier) like '%' #{search_term} '%' ")
@@ -21,13 +21,13 @@ public interface ToolBNMapper {
 	
 	
 	@Insert( "INSERT into operations.tool_button "
-				+ "( tool_identifier, manufacturer, dom, "
+				+ "( manufacturer, dom, "
 				+ " mfg_print_id, mfg_serial_number, material, "
 				+ "   dos, eos, "
 				+ "	eos_reason, storage_location, created, updated, updated_by, "
 				+ " created_by, drawing_number, status_id, rifling_count, major_dia, minor_dia, rifling_type, rifling_width, shaft_size, button_shank_size )"
 			    + " values ("
-				+ " #{tool_identifier}, #{manufacturer}, "
+				+ " #{manufacturer}, "
 				+ " #{dom}, "
 				+ " #{mfg_print_id}, #{mfg_serial_number}, #{material}, "
 				+ " #{dos}, "
@@ -37,10 +37,11 @@ public interface ToolBNMapper {
 	@Options(useGeneratedKeys = true, keyProperty="id", keyColumn="id") 
 	void Insert( Button button );		
 			
-			
+	@Update( "UPDATE operations.tool_button set tool_identifier = #{identifier} where id = #{id}" )
+	void updateToolIdentifier( String identifier, int id );
+	
 	@Update( "UPDATE operations.tool_button "
-			+ "  set tool_identifier = #{tool_identifier},"
-			+ "      manufacturer = #{manufacturer},"
+			+ "  set manufacturer = #{manufacturer},"
 			+ "      dom = #{dom},"
 			+ "      mfg_print_id = #{mfg_print_id},"
 			+ "      mfg_serial_number = #{mfg_serial_number},"

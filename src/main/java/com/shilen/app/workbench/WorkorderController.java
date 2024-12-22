@@ -37,6 +37,7 @@ import com.shilen.app.workbench.model.wo.WoQty;
 import com.shilen.app.workbench.model.wo.WoQuality;
 import com.shilen.app.workbench.model.wo.WoQualityRecords;
 import com.shilen.app.workbench.model.wo.WoScrap;
+import com.shilen.app.workbench.model.wo.WoToolHistory;
 import com.shilen.app.workbench.model.wo.WorkOrder;
 import com.shilen.app.workbench.out.WorkOrderPdf;
 
@@ -242,10 +243,20 @@ public class WorkorderController {
 		 	
 		 	WorkOrderMapper mapper = ctx.getBean( WorkOrderMapper.class);
 		 	
-		 	if ( wo.getId() == 0 )	
+		 	if ( wo.getId() == 0 ) {
 		 		mapper.insertWo( wo );
-		 	else
+		 		
+
+		 		
+		 		
+		 	} else { 
 		 		mapper.updateWo(wo);
+		 	
+		 	}
+		 	
+	 		if ( !wo.getBntool().equals( wo.getCurrent_bntool() ) ) 
+	 			mapper.insertWoToolHistory( new WoToolHistory( wo.getId() , wo.getBntool(), "BUTTON" ) );
+	 		
 		 	
 		 	for ( WoQty woqty : wo.getWoqty() ) {
 		 		
@@ -375,6 +386,8 @@ public class WorkorderController {
 		 	    
 		 	    WorkOrder wo = mapper.getWorkorder(id);
 				wo.setWonote( mapper.getWoNotes( id ));
+				wo.setWotoolhistory( mapper.getWoToolHistory(id));
+				
 				List<WoQty> woqty = mapper.getWorkorderQty(id);
 				wo.setWoqty(woqty);
 		 	    

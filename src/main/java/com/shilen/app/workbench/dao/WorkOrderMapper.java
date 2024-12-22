@@ -15,6 +15,7 @@ import com.shilen.app.workbench.model.wo.WoNote;
 import com.shilen.app.workbench.model.wo.WoQty;
 import com.shilen.app.workbench.model.wo.WoQuality;
 import com.shilen.app.workbench.model.wo.WoScrap;
+import com.shilen.app.workbench.model.wo.WoToolHistory;
 import com.shilen.app.workbench.model.wo.WorkOrder;
 
 
@@ -46,15 +47,22 @@ public interface WorkOrderMapper {
 	@Select("SELECT sid, steeltype value FROM operations.steel_type")
 	List<PickList> getSteelTypeList();
 	
-	@Insert("insert into operations.wo (caliber_id, steeltype_id, rifling_id, groove_id, twist_id, created, status_id, steel_id, prod_date, updated ) " + 
-			"values ( #{caliber_id}, #{steeltype_id}, #{rifling_id}, #{groove_id}, #{twist_id}, now(), #{status_id}, #{steel_id},  #{prod_date}, now())")
+	@Insert("insert into operations.wo (caliber_id, steeltype_id, rifling_id, groove_id, twist_id, created, status_id, steel_id, prod_date, updated, dhtool, brtool, bntool ) " + 
+			"values ( #{caliber_id}, #{steeltype_id}, #{rifling_id}, #{groove_id}, #{twist_id}, now(), #{status_id}, #{steel_id},  #{prod_date}, now(), #{dhtool}, #{brtool}, #{bntool} )")
 	@Options(useGeneratedKeys = true, keyProperty="id", keyColumn="id") 
 	void insertWo( WorkOrder wo);
 	
 	@Update("update operations.wo set caliber_id = #{caliber_id}, steeltype_id = #{steeltype_id}, rifling_id = #{rifling_id}, " +
 			"groove_id = #{groove_id}, twist_id = #{twist_id}, status_id = #{status_id}, steel_id = #{steel_id}, " +
-			"prod_date = #{prod_date}, note = #{note}, updated = now() where id = #{id}")
+			"prod_date = #{prod_date}, note = #{note}, updated = now(), dhtool = #{dhtool}, brtool = #{brtool}, bntool = #{bntool} where id = #{id}")
 	void updateWo( WorkOrder wo);
+	
+	@Insert("insert into operations.wo_tool_history ( woid, tool_identifier, tool_type, updated, updated_by )"
+			+ "VALUES ( #{woid}, #{tool_identifier}, #{tool_type}, now(), #{updated_by} )")
+	void insertWoToolHistory( WoToolHistory wth );
+	
+	@Select("Select * from operations.wo_tool_history where woid = #{woid} order by updated desc")
+	List<WoToolHistory> getWoToolHistory( int  woid );
 	
 	
 	@Select("select id woid, qal_select_match, qal_match, note from operations.wo where id = #{id} ")

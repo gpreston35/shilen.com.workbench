@@ -36,6 +36,8 @@ public interface ToolBRMapper {
 	@Options(useGeneratedKeys = true, keyProperty="id", keyColumn="id") 
 	void Insert( BoreReamer reamer );		
 			
+	@Update( "UPDATE operations.tool_bore_reamer set tool_identifier = #{identifier} where id = #{id}" )
+	void updateToolIdentifier( String identifier, int id );
 			
 	@Update( "UPDATE operations.tool_bore_reamer "
 			+ "  set tool_identifier = #{tool_identifier},"

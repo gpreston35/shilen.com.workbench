@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
@@ -51,9 +53,13 @@ public class ConfigCaliberController {
 		
 		
 		@SuppressWarnings("null")
-		@GetMapping("/config/caliber/read")
+		//@GetMapping("/config/caliber/read")
+		
+		
+		@RequestMapping(value = "/config/caliber/read", method = RequestMethod.GET, 
+        produces = MediaType.TEXT_HTML_VALUE)
 		public String read(@RequestParam(name="id", required=true) int id, @RequestParam(name="message", required=false, defaultValue = "") String message, 
-				HttpServletResponse response,  Model model ) throws Exception {
+				HttpServletResponse response,  Model model) throws Exception {
 			
 	    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
 	 	   	ctx.register(com.shilen.app.workbench.dao.AppConfig.class);

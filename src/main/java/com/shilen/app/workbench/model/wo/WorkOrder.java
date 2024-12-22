@@ -10,7 +10,15 @@ public class WorkOrder {
     
     List<WoQty> woqty = new ArrayList<WoQty>();
     List<WoNote> wonote = new ArrayList<WoNote>();
+    List<WoToolHistory> wotoolhistory = new ArrayList<WoToolHistory>();
     
+	public List<WoToolHistory> getWotoolhistory() {
+		return wotoolhistory;
+	}
+	public void setWotoolhistory(List<WoToolHistory> wotoolhistory) {
+		this.wotoolhistory = wotoolhistory;
+	}
+	
 	private String steeltype_id;
     private int caliber_id;
     private String rifling_id;
@@ -28,6 +36,14 @@ public class WorkOrder {
     private String groove;
     private String screated;
     private String heat_name;
+    
+    private String bntool;
+    private String brtool;
+    private String dhtool;
+    
+    private String current_bntool;
+    private String current_brtool;
+    private String current_dhtool;
         
     private String note;
     
@@ -153,6 +169,42 @@ public class WorkOrder {
 	}
 	public void setWonote(List<WoNote> wonote) {
 		this.wonote = wonote;
+	}
+	public String getBntool() {
+		return bntool;
+	}
+	public String getBrtool() {
+		return brtool;
+	}
+	public String getDhtool() {
+		return dhtool;
+	}
+	public String getCurrent_bntool() {
+		return current_bntool;
+	}
+	public String getCurrent_brtool() {
+		return current_brtool;
+	}
+	public String getCurrent_dhtool() {
+		return current_dhtool;
+	}
+	public void setBntool(String bntool) {
+		this.bntool = bntool;
+	}
+	public void setBrtool(String brtool) {
+		this.brtool = brtool;
+	}
+	public void setDhtool(String dhtool) {
+		this.dhtool = dhtool;
+	}
+	public void setCurrent_bntool(String current_bntool) {
+		this.current_bntool = current_bntool;
+	}
+	public void setCurrent_brtool(String current_brtool) {
+		this.current_brtool = current_brtool;
+	}
+	public void setCurrent_dhtool(String current_dhtool) {
+		this.current_dhtool = current_dhtool;
 	}
 
 }
