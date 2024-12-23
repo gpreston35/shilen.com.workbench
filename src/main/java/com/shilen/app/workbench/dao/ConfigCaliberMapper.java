@@ -32,6 +32,7 @@ public interface ConfigCaliberMapper {
 			
 	@Update( "UPDATE operations.caliber "
 			+ "  set description = #{description},"
+			+ "      caliber = #{caliber}, "
 			+ "      bore_reamer_low = #{bore_reamer_low},"
 			+ "      bore_reamer_high = #{bore_reamer_high},"
 			+ "      button_low = #{button_low},"

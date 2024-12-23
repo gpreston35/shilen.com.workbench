@@ -23,10 +23,10 @@ public class AppConfig {
 		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
        
 		dataSource.setUrl("jdbc:mysql://localhost:3306/operations?useUnicode=true&useJDBCCompliantTimezoneShift=trueode=false&serverTimezone=America/Chicago&allowMultiQueries=true");
-	dataSource.setUsername("root");
-		dataSource.setPassword("notCliff");
-//		dataSource.setUsername("greg");
-//	 	dataSource.setPassword("Bl33dBlu3");
+//	dataSource.setUsername("root");
+//		dataSource.setPassword("notCliff");
+		dataSource.setUsername("greg");
+	 	dataSource.setPassword("Bl33dBlu3");
 	 	
 		return dataSource;
    }
