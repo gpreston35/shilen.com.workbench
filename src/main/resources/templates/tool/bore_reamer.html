@@ -65,8 +65,8 @@
 											<select
 												name="status_id" th:field="*{status_id}" id="status_id"
 												class="form-control form-control-sm" th:required="required">
-													<option th:each="s:${STATUS_LIST}" th:value="${s.id}"
-													th:utext="${s.text}" />
+												<option value=1>Active</option>
+												<option value=0>Not Active</option>
 											</select>
 										</div>
 										

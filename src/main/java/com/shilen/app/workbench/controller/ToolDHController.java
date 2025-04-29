@@ -69,13 +69,13 @@ public class ToolDHController {
 		deephole.setNotes( noteMapper.List( id , MODULE_ID) );
 		deephole.setFiles( fileMapper.getList(Tokens.MODULE_DEEPHOLE, id));
 		
-		List<PickList> toolStatusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
+	//	List<PickList> toolStatusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
 
 		if (message != null & !message.isEmpty() )
 			model.addAttribute("MESSAGE", message);
 		
  	   	model.addAttribute("FORM", deephole );
- 	   	model.addAttribute("STATUS_LIST", toolStatusList );
+ //	   	model.addAttribute("STATUS_LIST", toolStatusList );
  	   	
 		ctx.close();
 		
@@ -92,10 +92,10 @@ public class ToolDHController {
  	   
  	    ToolDHMapper mapper = ctx.getBean( ToolDHMapper.class);
  	    
- 	    List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
+ //	    List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
  	    
  	   	model.addAttribute("FORM", new DeepHole() );
- 	    model.addAttribute("STATUS_LIST", statusList );
+ //	    model.addAttribute("STATUS_LIST", statusList );
  	   
 		ctx.close();
 		

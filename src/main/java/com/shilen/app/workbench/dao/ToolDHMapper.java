@@ -12,10 +12,9 @@ import com.shilen.app.workbench.model.tool.DeepHole;
 public interface ToolDHMapper {
 	
 	
-	@Select("SELECT d.id, d.tool_identifier, d.dos as dos_str, d.eos as eos_str, s.status from "
-			+ "   operations.tool_deephole d,"
-			+ "   operations.lk_tool_status s"
-			+ "   where d.status_id = s.id and upper(d.tool_identifier) like '%' #{search_term} '%' ")
+	@Select("SELECT d.id, d.tool_identifier, d.dos as dos_str, d.eos as eos_str, if(d.status_id=1,'Active','Not Active') as status from "
+			+ "   operations.tool_deephole d"
+			+ "   where upper(d.tool_identifier) like '%' #{search_term} '%' ")
 	List<DeepHole> Search( String search_term );
 	
 	
@@ -76,9 +75,9 @@ public interface ToolDHMapper {
 	 DeepHole Read( Integer id );
 	
 	 
-	 @Select ("SELECT id, status_text text from operations.lk_status where dset = #{dset} and active = 1 "
-		 		+ "ORDER BY id")
-		 List<PickList> GetStatusList( int dset );
+//	 @Select ("SELECT id, status_text text from operations.lk_status where active = 1 "
+//		 		+ "ORDER BY id")
+//		 List<PickList> GetStatusList( int dset );
 		 
 	 
 	 

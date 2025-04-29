@@ -70,13 +70,13 @@ public class ToolBNController {
 		button.setNotes( noteMapper.List( id , MODULE_ID) );
 		button.setFiles( fileMapper.getList(MODULE_ID, id));
 		
-		List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
+	//	List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
 
 		if (message != null & !message.isEmpty() )
 			model.addAttribute("MESSAGE", message);
 		
  	   	model.addAttribute("FORM", button );
- 	   	model.addAttribute("STATUS_LIST", statusList );
+ 	 //  	model.addAttribute("STATUS_LIST", statusList );
  	   	
 		ctx.close();
 		
@@ -93,10 +93,10 @@ public class ToolBNController {
  	   
  	    ToolBNMapper mapper = ctx.getBean( ToolBNMapper.class);
  	    
- 	    List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
+ 	  //  List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
  	    
  	   	model.addAttribute("FORM", new Button() );
- 	    model.addAttribute("STATUS_LIST", statusList );
+ //	    model.addAttribute("STATUS_LIST", statusList );
  	   	
 		ctx.close();
 		

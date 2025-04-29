@@ -139,3 +139,11 @@ public class ServletInitializer extends SpringBootServletInitializer {
 
 }
 
+
+
+ALTER TABLE `operations`.`runout` 
+ADD COLUMN `dhtool` VARCHAR(12) NULL AFTER `scrap_id`,
+ADD COLUMN `brtool` VARCHAR(12) NULL AFTER `dhtool`,
+ADD COLUMN `bntool` VARCHAR(12) NULL AFTER `brtool`;
+
+

@@ -72,13 +72,13 @@ public class ToolCRController {
 		reamer.setFiles( fileMapper.getList(Tokens.MODULE_CHAMBER_REAMER, id));
 		reamer.setNotes( noteMapper.List( id , MODULE_ID) );
 		
-		List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);	
+//		List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);	
 
 		if (message != null & !message.isEmpty() )
 			model.addAttribute("MESSAGE", message);
 		
  	   	model.addAttribute("FORM", reamer );
- 	   	model.addAttribute("STATUS_LIST", statusList );
+ //	   	model.addAttribute("STATUS_LIST", statusList );
  	   	
 		ctx.close();
 		
@@ -95,10 +95,10 @@ public class ToolCRController {
  	   
  	    ToolCRMapper mapper = ctx.getBean( ToolCRMapper.class);
  	    
- 	    List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
+ //	    List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
  	    
  	   	model.addAttribute("FORM", new ChamberReamer() );
- 	    model.addAttribute("STATUS_LIST", statusList );
+ //	    model.addAttribute("STATUS_LIST", statusList );
  	   
  	   	
 		ctx.close();

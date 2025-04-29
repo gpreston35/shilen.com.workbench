@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Update;
 import com.shilen.app.workbench.model.PickList;
 import com.shilen.app.workbench.model.wo.Search;
 import com.shilen.app.workbench.model.wo.SearchResults;
+import com.shilen.app.workbench.model.wo.ToolAnalysis;
 import com.shilen.app.workbench.model.wo.WoNote;
 import com.shilen.app.workbench.model.wo.WoQty;
 import com.shilen.app.workbench.model.wo.WoQuality;
@@ -210,6 +211,56 @@ public interface WorkOrderMapper {
             "   and w.id = #{id}")
 	SearchResults getShortDetail( int id );
 	
+	
+	
+	@Select("select t1.caliber, t1.tool_identifier, format(t1.dia_hs,4) diameter,  t1.storage_location, ifnull(t1.assigned,'N') assigned, "
+			+ "       count(r.id) as \"num_barrels\", sum(if( scrap = 'y',1,0)) as \"num_scrap\","
+			+ "        ifnull(round( sum(if( scrap = 'y',1,0)) / count(r.id) * 100,2),0) as \"scrap_percentage\""
+			+ " from"
+			+ "	( select c.caliber, br.tool_identifier, br.dia_hs, br.storage_location, "
+			+ "       (select 'Y' from wo where brtool = br.tool_identifier and status_id in (1) limit 1 ) as \"assigned\""
+			+ "		from tool_bore_reamer br,"
+			+ "			 caliber c"
+			+ "		where br.dia_hs < c.bore_reamer_high and br.dia_hs > c.bore_reamer_low"
+			+ "		  and c.id = #{id}"
+			+ "          and ( br.eos < now() or br.eos is null )) as t1 "
+			+ "	left join runout r on "
+			+ "      t1.tool_identifier = r.brtool "
+			+ "group by 1, 2, 3, 4, 5")
+	List<ToolAnalysis> getBRToolAnalysis( int id );
 
+	
+	@Select("select t1.caliber, t1.tool_identifier, format(t1.dia_ao,4) as diameter, t1.storage_location, ifnull(t1.assigned,'N') assigned, "
+			+ "       count(r.id) as \"num_barrels\", sum(if( scrap = 'y',1,0)) as \"num_scrap\",\n"
+			+ "        ifnull(round( sum(if( scrap = 'y',1,0)) / count(r.id) * 100,2),0) as \"scrap_percentage\""
+			+ " from\n"
+			+ "	( select c.caliber, dh.tool_identifier, dh.dia_ao, dh.storage_location, "
+			+ "       (select 'Y' from wo where brtool = dh.tool_identifier and status_id in (1) limit 1 ) as \"assigned\""
+			+ "		from tool_deephole dh,"
+			+ "			 caliber c"
+			+ "		where dh.dia_ao < c.bore_reamer_high and dh.dia_ao > c.bore_reamer_low"
+			+ "		  and c.id = #{id} "
+			+ "          and ( dh.eos < now() or dh.eos is null )) as t1"
+			+ "	left join runout r on "
+			+ "      t1.tool_identifier = r.dhtool"
+			+ "group by 1, 2, 3, 4, 5")
+	List<ToolAnalysis> getDHToolAnalysis( int id );
+	
+	
+	@Select("select t1.caliber, t1.tool_identifier, format(t1.major_dia,4) as diameter, t1.storage_location, ifnull(t1.assigned,'N') assigned, "
+			+ "       count(r.id) as \"num_barrels\", sum(if( scrap = 'y',1,0)) as \"num_scrap\","
+			+ "        ifnull(round( sum(if( scrap = 'y',1,0)) / count(r.id) * 100,2),0) as \"scrap_percentage\""
+			+ " from"
+			+ "	( select c.caliber, bn.tool_identifier, bn.major_dia, bn.storage_location, \n"
+			+ "       (select 'Y' from wo where brtool = bn.tool_identifier and status_id in (1) limit 1 ) as \"assigned\""
+			+ "		from tool_button bn,"
+			+ "			 caliber c"
+			+ "		where bn.major_dia < c.bore_reamer_high and bn.major_dia > c.bore_reamer_low"
+			+ "		  and c.id = #{id} "
+			+ "          and ( bn.eos < now() or bn.eos is null )) as t1"
+			+ "	left join runout r on "
+			+ "      t1.tool_identifier = r.bntool"
+			+ " group by 1, 2, 3, 4, 5")
+	List<ToolAnalysis> getBNToolAnalysis( int id );
 	
 }

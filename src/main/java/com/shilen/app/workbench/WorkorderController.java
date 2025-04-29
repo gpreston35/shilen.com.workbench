@@ -32,6 +32,7 @@ import com.shilen.app.workbench.helper.AjaxResponseBody;
 import com.shilen.app.workbench.model.PickList;
 import com.shilen.app.workbench.model.wo.Search;
 import com.shilen.app.workbench.model.wo.SearchResults;
+import com.shilen.app.workbench.model.wo.ToolAnalysis;
 import com.shilen.app.workbench.model.wo.WoNote;
 import com.shilen.app.workbench.model.wo.WoQty;
 import com.shilen.app.workbench.model.wo.WoQuality;
@@ -85,6 +86,66 @@ public class WorkorderController {
 	 	   	return woscraplist;
 	
 	}
+	
+	
+	@RequestMapping(value= "/wo/getBRToolAnalysis/json/{id}", method = RequestMethod.GET, 
+			produces = MediaType.APPLICATION_JSON_VALUE )
+	public @ResponseBody List<ToolAnalysis> getBRToolAnalysisByIDjson(@PathVariable("id") int id)  {
+			
+	    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+	 	   	ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
+	 	   	ctx.refresh();
+	 	   
+	 	   	WorkOrderMapper mapper = ctx.getBean( WorkOrderMapper.class);
+	 	   
+	 	   	
+	 	   	List<ToolAnalysis> toolAnalysis = mapper.getBRToolAnalysis(id);
+	 	   	
+	 	   	ctx.close();
+
+	 	   	return toolAnalysis;
+	
+	}
+	
+	@RequestMapping(value= "/wo/getDHToolAnalysis/json/{id}", method = RequestMethod.GET, 
+			produces = MediaType.APPLICATION_JSON_VALUE )
+	public @ResponseBody List<ToolAnalysis> getDHToolAnalysisByIDjson(@PathVariable("id") int id)  {
+			
+	    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+	 	   	ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
+	 	   	ctx.refresh();
+	 	   
+	 	   	WorkOrderMapper mapper = ctx.getBean( WorkOrderMapper.class);
+	 	   
+	 	   	
+	 	   	List<ToolAnalysis> toolAnalysis = mapper.getDHToolAnalysis(id);
+	 	   	
+	 	   	ctx.close();
+
+	 	   	return toolAnalysis;
+	
+	}
+	
+	@RequestMapping(value= "/wo/getBNToolAnalysis/json/{id}", method = RequestMethod.GET, 
+			produces = MediaType.APPLICATION_JSON_VALUE )
+	public @ResponseBody List<ToolAnalysis> getBNToolAnalysisByIDjson(@PathVariable("id") int id)  {
+			
+	    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+	 	   	ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
+	 	   	ctx.refresh();
+	 	   
+	 	   	WorkOrderMapper mapper = ctx.getBean( WorkOrderMapper.class);
+	 	   
+	 	   	
+	 	   	List<ToolAnalysis> toolAnalysis = mapper.getBNToolAnalysis(id);
+	 	   	
+	 	   	ctx.close();
+
+	 	   	return toolAnalysis;
+	
+	}
+	
+	
 	
 	@RequestMapping(value= "/wo/getQualityCounts/json/{id}", method = RequestMethod.GET, 
 			produces = MediaType.APPLICATION_JSON_VALUE )
@@ -257,6 +318,12 @@ public class WorkorderController {
 	 		if ( !wo.getBntool().equals( wo.getCurrent_bntool() ) ) 
 	 			mapper.insertWoToolHistory( new WoToolHistory( wo.getId() , wo.getBntool(), "BUTTON" ) );
 	 		
+	 		if ( !wo.getDhtool().equals( wo.getCurrent_dhtool() ) ) 
+	 			mapper.insertWoToolHistory( new WoToolHistory( wo.getId() , wo.getDhtool(), "DRILL" ) );
+	 		
+	 		if ( !wo.getBrtool().equals( wo.getCurrent_brtool() ) ) 
+	 			mapper.insertWoToolHistory( new WoToolHistory( wo.getId() , wo.getBrtool(), "REAMER" ) );
+	 		
 		 	
 		 	for ( WoQty woqty : wo.getWoqty() ) {
 		 		
@@ -286,6 +353,7 @@ public class WorkorderController {
 		 	
 		 	wo.setWoqty( mapper.getWorkorderQty(wo.getId()));
 			wo.setWonote( mapper.getWoNotes( wo.getId() ));
+			wo.setWotoolhistory( mapper.getWoToolHistory(wo.getId()));
 			
 			List<PickList> calibers = mapper.getCaliberList();
 			List<PickList> status = mapper.getStatusList();

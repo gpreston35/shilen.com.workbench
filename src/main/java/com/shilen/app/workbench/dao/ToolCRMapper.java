@@ -13,10 +13,9 @@ import com.shilen.app.workbench.model.tool.ChamberReamer;
 public interface ToolCRMapper {
 	
 	
-	@Select("SELECT r.id, r.tool_identifier, r.chamber_name, r.dos as dos_str, r.eos as eos_str, s.status from "
-			+ "   operations.tool_chamber_reamer r,"
-			+ "   operations.lk_tool_status s"
-			+ "   where r.status_id = s.id and ( upper(r.tool_identifier) like '%' #{search_term} '%' "
+	@Select("SELECT r.id, r.tool_identifier, r.chamber_name, r.dos as dos_str, r.eos as eos_str, if(r.status_id = 1,'Active', 'Not Active') as status from "
+			+ "   operations.tool_chamber_reamer r"
+			+ "   where  ( upper(r.tool_identifier) like '%' #{search_term} '%' "
 			+ "   or upper(r.chamber_name) like '%' #{search_term} '%')" )
 	List<ChamberReamer> Search( String search_term );
 	
@@ -77,9 +76,9 @@ public interface ToolCRMapper {
 	 ChamberReamer Read( Integer id );
 	 
 	 
-	 @Select ("SELECT id, status_text text from operations.lk_status where dset = #{dset} and active = 1 "
-	 		+ "ORDER BY id")
-	 List<PickList> GetStatusList( int dset );
+//	 @Select ("SELECT id, status_text text from operations.lk_status where active = 1 "
+//	 		+ "ORDER BY id")
+//	 List<PickList> GetStatusList( int dset );
 	 
 	 
 }

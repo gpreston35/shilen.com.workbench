@@ -70,13 +70,13 @@ public class ToolBRController {
 	 	reamer.setFiles( fileMapper.getList(MODULE_ID, id));
 		
 		reamer.setNotes( noteMapper.List( id , MODULE_ID) );
-		List<PickList> 	statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
+//		List<PickList> 	statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
 
 		if (message != null & !message.isEmpty() )
 			model.addAttribute("MESSAGE", message);
 		
  	   	model.addAttribute("FORM", reamer );
- 	   	model.addAttribute("STATUS_LIST", statusList );
+ 	 //  	model.addAttribute("STATUS_LIST", statusList );
  	   	
 		ctx.close();
 		
@@ -93,10 +93,10 @@ public class ToolBRController {
  	   
  	    ToolBRMapper mapper = ctx.getBean( ToolBRMapper.class);
  	    
- 	    List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
+ 	 //   List<PickList> statusList = mapper.GetStatusList(Tokens.TOOL_STATUS_DSET);
  	    
  	   	model.addAttribute("FORM", new BoreReamer() );
- 	    model.addAttribute("STATUS_LIST", statusList );
+ 	//    model.addAttribute("STATUS_LIST", statusList );
  	   
  	   	
 		ctx.close();

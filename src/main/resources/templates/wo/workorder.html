@@ -5,6 +5,13 @@
 
 <div th:replace="fragments/header"></div>
 
+<style>
+
+.table tbody tr.highlight td {
+  background-color: #ddd;
+}
+
+</style>
 
 </head>
 <body>
@@ -216,100 +223,166 @@
 											<span class="h6 m-0 font-weight-bold text-primary">TOOLS&nbsp;&nbsp;&nbsp;&nbsp;</span>
 										</div>
 
-										<div class="col-md-4 mb-2" style="margin-top: 10px">
+										<div class="col-md-4 mb-2 " style="margin-top: 10px">
 											<!-- form column -->
-											<label class="control-label" for="dhtool">Deep Hole Drill</label> 
-											<input th:field="*{dhtool}" id="dhtool" class="form-control form-control-sm" />
+											<label class="control-label" for="dhtool">Deep Hole
+												Drill</label>
+											<div class="input-group">
+												<input th:field="*{dhtool}" id="dhtool"
+													class="form-control form-control-sm" />
+												<div class="input-group-append">
+													<button id='dhtool_btn' class="btn btn-primary .btn-sm"
+														type="button" data-toggle="modal"
+														data-target="#toolAnalysisModal"><span class="fa-solid fa-magnifying-glass"></span></button>
+												</div>
+											</div>
 										</div>
-										
+
 										<div class="col-md-4 mb-2 ">
 											<!-- form column -->
-											<label class="control-label" for="brtool">Bore Reamer</label> 
-											<input th:field="*{brtool}" id="brtool" class="form-control form-control-sm" />
+											<label class="control-label" for="brtool">Bore Reamer</label>
+											<div class="input-group">
+												<input th:field="*{brtool}" id="brtool"
+													class="form-control form-control-sm" />
+												<div class="input-group-append">
+													<button id='brtool_btn' class="btn btn-primary .btn-sm"
+														type="button" data-toggle="modal"
+														data-target="#toolAnalysisModal"><span class="fa-solid fa-magnifying-glass"></span></button>
+												</div>
+											</div>
 										</div>
-										
+
 										<div class="col-md-4 mb-2">
 											<!-- form column -->
-											<label class="control-label" for="bntool">Button</label> 
-											<input th:field="*{bntool}" id="bntool" class="form-control form-control-sm" style="margin-bottom: 20px"/>
+											<label class="control-label" for="bntool">Button</label>
+											<div class="input-group">
+												<input th:field="*{bntool}" id="bntool"
+													class="form-control form-control-sm"/>
+												<div class="input-group-append">
+													<button id='bntool_btn' class="btn btn-primary .btn-sm"
+														type="button" data-toggle="modal"
+														data-target="#toolAnalysisModal"><span class="fa-solid fa-magnifying-glass"></span></button>
+												</div>
+											</div>
 										</div>
-										
-										
+
+
 										<div class="card-header py-3">
-											<span class="h6 m-0 font-weight-bold text-primary">TOOL HISTORY&nbsp;&nbsp;&nbsp;&nbsp;</span>
+											<span class="h6 m-0 font-weight-bold text-primary">TOOL
+												HISTORY&nbsp;&nbsp;&nbsp;&nbsp;</span>
 										</div>
-										
-										<table class="table table-hover table-sm" style="width: 100%; margin-bottom: 20px">
+
+										<table class="table table-hover table-sm"
+											style="width: 100%; margin-bottom: 20px">
 											<thead>
 												<tr>
-													<th>Updated</th>
+
 													<th>Tool Identifier</th>
 													<th>Tool Type</th>
+													<th>Updated</th>
 												</tr>
 											</thead>
 											<tbody>
 												<tr th:each="h: *{wotoolhistory}">
-													<td th:text="${h.updated}"></td>
 													<td th:text="${h.tool_identifier}"></td>
 													<td th:text="${h.tool_type}"></td>
+													<td th:text="${h.updated}"></td>
 												</tr>
 											</tbody>
 										</table>
-										
-									
+
+
 									</div>
-										
+
 
 									<div class="card shadowmb-4">
-											<div class="card-header py-3">
-												<span class="h6 m-0 font-weight-bold text-primary">NOTES</span>
-											</div>
-											<div class="card-body">
+										<div class="card-header py-3">
+											<span class="h6 m-0 font-weight-bold text-primary">NOTES</span>
+										</div>
+										<div class="card-body">
 
-												<textarea name="note" rows="4" id="note"
-													class="form-control"></textarea>
+											<textarea name="note" rows="4" id="note" class="form-control"></textarea>
 
-
-											</div>
 
 										</div>
 
-
-										<table class="table table-hover table-sm" style="width: 100%">
-											<thead>
-												<tr>
-													<th>CREATED</th>
-													<th>NOTE</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr th:each="n: *{wonote}">
-													<td th:text="${n.fcreated}"></td>
-													<td th:utext="${n.note}" style="white-space: pre;"></td>
-												</tr>
-											</tbody>
-										</table>
-
-
-										<input type="hidden" name="id" th:field="*{id}" />
-										<input type="hidden" name="current_dhtool" th:value="*{dhtool}" />
-										<input type="hidden" name="current_brtool" th:value="*{brtool}" />
-										<input type="hidden" name="current_bntool" th:value="*{bntool}" />
-
-										<button type="submit" class="btn btn-primary" id="btnSubmit">Update</button>
-
-
 									</div>
+
+
+									<table class="table table-hover table-sm" style="width: 100%">
+										<thead>
+											<tr>
+												<th>CREATED</th>
+												<th>NOTE</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="n: *{wonote}">
+												<td th:text="${n.fcreated}"></td>
+												<td th:utext="${n.note}" style="white-space: pre;"></td>
+											</tr>
+										</tbody>
+									</table>
+
+
+									<input type="hidden" name="id" th:field="*{id}" /> <input
+										type="hidden" name="current_dhtool" th:value="*{dhtool}" /> <input
+										type="hidden" name="current_brtool" th:value="*{brtool}" /> <input
+										type="hidden" name="current_bntool" th:value="*{bntool}" />
+
+									<button type="submit" class="btn btn-primary" id="btnSubmit">Update</button>
+
+
 								</div>
+							</div>
 						</form>
 
 
 
-
-
-
-
 						<!--  ************************ Body Content End / Start Modals *************************************************** -->
+
+
+
+						<!-- Modal -->
+						<div class="modal fade" id="toolAnalysisModal" tabindex="-1"
+							role="dialog" aria-labelledby="exampleModalLabel"
+							aria-hidden="true">
+							<div class="modal-dialog modal-lg .modal-dialog-scrollable"
+								role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLabel">Tool Analysis</h5>
+										<button type="button" class="close" data-dismiss="modal"
+											aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body ">
+										<table id="tool_analysis" class="table .table-sm table-hover">
+											<thead class="thead-light">
+												<th>Tool</th>
+												<th>Diameter</th>
+												<th>Location</th>
+												<th>Assigned</th>
+												<th># Barrels</th>
+												<th># Scrap</th>
+												<th>Scrap %</th>
+											</thead>
+											<tbody>
+
+											</tbody>
+										</table>
+
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary"
+											data-dismiss="modal">Close</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
 
 
 
@@ -327,7 +400,7 @@
 										</button>
 									</div>
 									<div class="modal-body">Do you want to delete this
-										object?</div>
+										unit?</div>
 									<div class="modal-footer">
 										<button type="button" class="btn btn-secondary"
 											data-dismiss="modal">NO</button>
@@ -381,9 +454,32 @@
 		src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
 
 
+
 	<script>
 		$(document).ready(
 				function() {
+						
+					$('#tool_analysis').on('click', 'tbody tr', function(event) {
+						  
+						$(this).addClass('highlight').siblings().removeClass('highlight');
+						
+						let selectedTool = event.currentTarget.childNodes[0].innerText;
+						
+						if ( selectedTool != null ) {
+							if ( selectedTool.startsWith("BN") ) {
+								$('#bntool').val( selectedTool );
+							} else if ( selectedTool.startsWith("DH") ) {
+								$('#dhtool').val( selectedTool );
+							} else if ( selectedTool.startsWith("BR") )	{
+								$('#brtool').val( selectedTool );
+							}	
+							$('#toolAnalysisModal').modal('hide');
+						}
+
+					});
+					
+					
+					
 
 					$.validator.addMethod('checkAlpha', function(value,
 							element, param) {
@@ -441,6 +537,14 @@
 					$("#woform").submit(function() {
 
 					})
+
+					$('#toolAnalysisModal').on('show.bs.modal', function(e) {
+
+						var caliber_id = $("#caliber_id option:selected").val();
+
+						getToolAnalysis(caliber_id, e.relatedTarget.id);
+
+					});
 
 				});
 
@@ -513,6 +617,52 @@
 
 			});
 
+		}
+
+
+		function getToolAnalysis(caliber_id, tool) {
+			
+			
+			var url = "";
+			
+			
+			if ( tool === "brtool_btn") 
+				url = '/wo/getBRToolAnalysis/json/';
+			else if ( tool == "bntool_btn")
+				url = '/wo/getBNToolAnalysis/json/';
+			else if ( tool == "dhtool_btn")
+				url = '/wo/getDHToolAnalysis/json/';
+				
+
+			$.getJSON( url + caliber_id, function(data) {
+
+				$('#tool_analysis tbody').empty();
+
+				$.each(data, function(index) {
+
+					var cell;
+					//	if ( data[index].id == -1 ) {
+					//		cell = '';
+					//	} else {
+					//		cell = '<a href="javascript:deleteByID(' + data[index].id + ', ' + data[index].wo_qty_id + ')" class="btn btn-sm btn-icon btn-secondary"><i class="far fa-trash-alt"></i></a>';
+					//	}
+
+					$('#tool_analysis').append(
+							'<tr>' + '<td>' + data[index].tool_identifier + '</td>' 
+									+ '<td>' + data[index].diameter + '</td>' 
+									+ '<td>' + data[index].storage_location + '</td>'
+									+ '<td class="text-center">'
+									+ data[index].assigned + '</td>'
+									+ '<td class="text-right">'
+									+ data[index].num_barrels + '</td>'
+									+ '<td class="text-right">'
+									+ data[index].num_scrap + '</td>'
+									+ '<td class="text-right">'
+									+ data[index].scrap_percentage + '</td>'
+									+ '</tr>')
+
+				});
+			});
 		}
 	</script>
 

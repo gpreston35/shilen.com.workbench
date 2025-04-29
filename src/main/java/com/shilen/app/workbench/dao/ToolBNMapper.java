@@ -13,10 +13,9 @@ import com.shilen.app.workbench.model.tool.Button;
 public interface ToolBNMapper {
 	
 	
-	@Select("SELECT b.id, b.tool_identifier, b.dos, b.eos, s.status from "
-			+ "   operations.tool_button b,"
-			+ "   operations.lk_tool_status s"
-			+ "   where b.status_id = s.id and upper(b.tool_identifier) like '%' #{search_term} '%' ")
+	@Select("SELECT b.id, b.tool_identifier, b.dos, b.eos, if(b.status_id = 1,'Active','Not Active') as status from "
+			+ "   operations.tool_button b"
+			+ "   where upper(b.tool_identifier) like '%' #{search_term} '%' ")
 	List<Button> Search( String search_term );
 	
 	
@@ -75,12 +74,11 @@ public interface ToolBNMapper {
 	 		+ "  from operations.tool_button "
 	 		+ "  where id = #{id}")
 	 Button Read( Integer id );
-	
-	 
+		 
  
-	 @Select ("SELECT id, status_text text from operations.lk_status where dset = #{dset} and active = 1 "
-		 		+ "ORDER BY id")
-		 List<PickList> GetStatusList( int dset );
+//	 @Select ("SELECT id, status_text text from operations.lk_status where active = 1 "
+//		 		+ "ORDER BY id")
+//		 List<PickList> GetStatusList( int dset );
 		 
 	 
 	 
