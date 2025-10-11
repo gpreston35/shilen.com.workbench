@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shilen.app.workbench.dao.LookupMapper;
 import com.shilen.app.workbench.dao.RunoutMapper;
+import com.shilen.app.workbench.helper.Utils;
 import com.shilen.app.workbench.model.ro.Runout;
 import com.shilen.app.workbench.model.ro.Search;
 
@@ -29,7 +30,6 @@ public class RunoutController {
 		ctx.refresh();
 
 		LookupMapper lkupmapper = ctx.getBean(LookupMapper.class);
-	//	RunoutMapper mapper = ctx.getBean(RunoutMapper.class);
 		
 		Search search_form = (Search) session.getAttribute("SEARCH_FORM");
 
@@ -41,6 +41,10 @@ public class RunoutController {
 		} else {
 			
 			search_form = new Search();
+			search_form.setView("data");	
+			search_form.setFromDateInput( Utils.getDateBasedOnCurrent(0));
+			search_form.setToDateInput( Utils.getDateBasedOnCurrent(1));
+			search_form.setPivot_field("o.operator");
 			session.setAttribute("SEARCH_FORM", search_form);
 
 		}
@@ -54,8 +58,6 @@ public class RunoutController {
 		model.addAttribute("SCRAPREASONS", lkupmapper.getLkScrapReasons());
 
 		model.addAttribute("SEARCH_FORM", search_form);
-
-	//	session.setAttribute("name", "Atta");
 
 		ctx.close();
 
@@ -82,6 +84,9 @@ public class RunoutController {
 		model.addAttribute("LENGTHS", lkupmapper.getLengths());
 		model.addAttribute("SCRAPREASONS", lkupmapper.getLkScrapReasons());
 		
+		if ( form.getWoid() == null )
+			form.setWoid(0);
+			
 		
 
 		if ( form.getView().equals("pivot") )

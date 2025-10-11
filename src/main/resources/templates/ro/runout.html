@@ -62,14 +62,13 @@
 														style="margin-bottom: 10px; width: 100px">Save</button>
 
 
-													<div class="form-row" style="margin-bottom: 10px"
-														th:if="*{id==0}">
+													<div class="form-row" style="margin-bottom: 10px">
 														<div class="col-md-12 mb-12">
 															<!-- form column -->
 															<label class="control-label" for="woid">Run Date</label>
 															<input id="run_date" type="text"
-																class="form-control form-control-sm"
-																data-toggle="flatpickr" name="run_date"
+																class="form-control form-control-sm flatpickr"
+																 name="run_date"
 																th:field="*{run_date}">
 														</div>
 													</div>
@@ -315,6 +314,11 @@
 
 
 	<script>
+	
+	$("#run_date").flatpickr({
+	    enableTime: true,
+	    dateFormat: "Y-m-d H:i"
+	});
 		
 	</script>
 

@@ -159,6 +159,7 @@ public class Runout {
 	private int scrap_id;
 	
 	private String updated;
+	private String update_dt;
 	
 	public String getDhtool() {
 		return dhtool;
@@ -171,6 +172,13 @@ public class Runout {
 	}
 	public void setBrtool(String brtool) {
 		this.brtool = brtool;
+	}
+
+	public String getUpdate_dt() {
+		return update_dt;
+	}
+	public void setUpdate_dt(String update_dt) {
+		this.update_dt = update_dt;
 	}
 
 	private String dhtool;

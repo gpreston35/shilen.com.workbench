@@ -49,8 +49,10 @@
 								<div class="card-body">
 									<!-- .table -->
 
-									<form th:action="@{/ro/search}" th:object="${SEARCH_FORM}"
+									<form id="searchForm" th:action="@{/ro/search}" th:object="${SEARCH_FORM}"
 										method="post" >
+										
+										<a type="button" class="btn btn-primary btn-sm" style="margin-bottom: 20px" th:href="@{/ro/add}">&nbsp;&nbsp;Add&nbsp;&nbsp;</a>
 
 										<div class="form-row">
 											<!-- form row -->
@@ -188,7 +190,8 @@
 
 
 										<button type="submit" class="btn btn-primary">Search</button>
-										<a type="button" class="btn btn-primary" th:href="@{/ro/add}">&nbsp;&nbsp;Add&nbsp;&nbsp;</a>
+										<button type="button" class="btn btn-warning" onclick="resetSearchForm()">&nbsp;Reset&nbsp;</button>
+
 
 									</form>
 
@@ -222,7 +225,7 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr th:each="r: ${RESULTS}">
+												<tr th:each="r: ${RESULTS}" th:classappend="${r.scrapreason_id > 0} ? 'bg-danger'" >
 													<td><a th:href="@{'/ro/edit'(id=${r.id})}"
 														role="button" class="btn btn-sm btn-icon btn-secondary"><i
 															class="far fa-edit"></i></a></td>
@@ -343,8 +346,18 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('#results').DataTable();
+			$('#results').DataTable({
+				lengthMenu: [ 50, 25, -1]
+			});
 		});
+		
+		function resetSearchForm() {	
+
+			$('#searchForm').find("input[type=text], textarea").val("");
+
+		}
+		
+		
 	</script>
 
 

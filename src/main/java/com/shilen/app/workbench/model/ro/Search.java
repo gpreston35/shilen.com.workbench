@@ -3,7 +3,7 @@ package com.shilen.app.workbench.model.ro;
 public class Search {
 	
 	
-	private int woid;
+	private Integer woid;
 	private String fromDateInput;
 	private String toDateInput;
 	private int caliber_id;
@@ -16,12 +16,6 @@ public class Search {
 	
 	
 	
-	public int getWoid() {
-		return woid;
-	}
-	public void setWoid(int woid) {
-		this.woid = woid;
-	}
 	public String getFromDateInput() {
 		return fromDateInput;
 	}
@@ -80,6 +74,13 @@ public class Search {
 	}
 	public void setPivot_field(String pivot_field) {
 		this.pivot_field = pivot_field;
+	}
+	
+	public Integer getWoid() {
+		return woid;
+	}
+	public void setWoid(Integer woid) {
+		this.woid = woid;
 	}
 	
 

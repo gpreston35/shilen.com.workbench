@@ -14,7 +14,7 @@ import com.shilen.app.workbench.model.ro.Search;
 public interface RunoutMapper {
 	
 	@Select("<script>SELECT r.id, r.run_date, c.caliber, s.spindle spindle, o.operator, r.muzzle_tir, r.chamber_tir, st.heat_name, "
-			+ "l.length, r.redrill, r.scrap, r.woid, r.scrap_reason "
+			+ "l.length, r.redrill, r.scrap, r.woid, r.scrapreason_id "
 			+ "from runout r,"
 			+ "     caliber c,"
 			+ "     lk_spindle s,"
@@ -38,7 +38,7 @@ public interface RunoutMapper {
 			+ "   <if test=\"steel_id != -1\">"
 			+ "    and r.steel_id = #{steel_id}"
 			+ "  </if>"
-			+ "   <if test=\"woid != ''\">"
+			+ "   <if test=\"woid != 0\">"
 			+ "    and r.woid = #{woid}"
 			+ "  </if>"
 			+ "   <if test=\"fromDateInput != ''\">"
@@ -47,7 +47,7 @@ public interface RunoutMapper {
 			+ "   <if test=\"toDateInput != ''\">"
 			+ "    and r.run_date &lt; #{toDateInput}"
 			+ "  </if>"
-			+ "  limit 22</script>")
+			+ "  limit 500</script>")
 	List<Runout> getSearchRunout( Search search );
 	
 	
@@ -98,16 +98,16 @@ public interface RunoutMapper {
 	Runout getRunout(int id);
 	
 	@Insert("insert into runout (caliber_id, spindle_id, operator_id, muzzle_tir, chamber_tir, steel_id, length_id, "
-			+ "redrill, scrap, woid, scrapreason_id, updated, brtool, dhtool ) "
+			+ "redrill, scrap, woid, scrapreason_id, update_dt, brtool, dhtool, run_date ) "
 			+ "VALUES (  #{caliber_id}, #{spindle_id}, #{operator_id}, #{muzzle_tir}, #{chamber_tir}, #{steel_id}, #{length_id},"
-			+ " #{redrill}, #{scrap}, #{woid}, #{scrapreason_id}, now(), #{brtool}, #{dhtool} )")
+			+ " #{redrill}, #{scrap}, #{woid}, #{scrapreason_id}, now(), #{brtool}, #{dhtool}, #{run_date} )")
 	@Options(useGeneratedKeys = true, keyProperty="id", keyColumn="id") 
 	void insert( Runout ro );
 	
 	@Update("update runout set caliber_id = #{caliber_id}, spindle_id = #{spindle_id}, operator_id = #{operator_id}, steel_id = #{steel_id},"
-			+ "length_id = #{length_id}, redrill = #{redrill}, scrap_id = #{scrap_id} ,woid = #{woid},"
-			+ " brtool = #{brtool}, dhtool = #{dhtool}, "
-			+ "chamber_tir = #{chamber_tir}, muzzle_tir = #{muzzle_tir}, scrapreason_id = #{scrapreason_id}, updated = now() where id = #{id}")
+			+ "length_id = #{length_id}, redrill = #{redrill}, scrap = #{scrap} ,woid = #{woid},"
+			+ " brtool = #{brtool}, dhtool = #{dhtool}, run_date = #{run_date}, "
+			+ "chamber_tir = #{chamber_tir}, muzzle_tir = #{muzzle_tir}, scrapreason_id = #{scrapreason_id}, update_dt = now() where id = #{id}")
 	void update( Runout ro);
 		
 	
