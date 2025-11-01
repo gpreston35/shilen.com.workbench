@@ -14,7 +14,7 @@ import com.shilen.app.workbench.model.ro.Search;
 public interface RunoutMapper {
 	
 	@Select("<script>SELECT r.id, r.run_date, c.caliber, s.spindle spindle, o.operator, r.muzzle_tir, r.chamber_tir, st.heat_name, "
-			+ "l.length, r.redrill, r.scrap, r.woid, r.scrapreason_id "
+			+ "l.length, r.redrill, r.scrap, r.woid, r.update_dt, r.scrapreason_id "
 			+ "from runout r,"
 			+ "     caliber c,"
 			+ "     lk_spindle s,"

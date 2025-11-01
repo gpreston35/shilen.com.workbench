@@ -3,6 +3,8 @@ package com.shilen.app.workbench;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.shilen.app.workbench.dao.LookupMapper;
 import com.shilen.app.workbench.dao.RunoutMapper;
 import com.shilen.app.workbench.helper.Utils;
+import com.shilen.app.workbench.model.ro.Pivot;
 import com.shilen.app.workbench.model.ro.Runout;
 import com.shilen.app.workbench.model.ro.Search;
 
@@ -64,6 +67,65 @@ public class RunoutController {
 		return "ro/home";
 
 	}
+	
+	
+	@RequestMapping("/ro/refresh")
+	public String refresh(Model model, HttpSession session) {
+
+		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+
+		ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
+		ctx.refresh();
+
+		
+		RunoutMapper mapper = ctx.getBean(RunoutMapper.class);
+		LookupMapper lkupmapper = ctx.getBean(LookupMapper.class);
+
+		model.addAttribute("SPINDLES", lkupmapper.getSpindles());
+		model.addAttribute("OPERATORS", lkupmapper.getOperators());
+		model.addAttribute("CALIBERS", lkupmapper.getCalibers());
+		model.addAttribute("STEEL", lkupmapper.getSteel());
+		model.addAttribute("LENGTHS", lkupmapper.getLengths());
+		model.addAttribute("SCRAPREASONS", lkupmapper.getLkScrapReasons());
+		
+		Search search_form = (Search) session.getAttribute("SEARCH_FORM");
+
+		if ( search_form != null) {
+			
+			search_form.setView("data");	
+			session.setAttribute("SEARCH_FORM", search_form);
+			
+			if ( search_form.getView().equals("pivot") ) {
+				model.addAttribute("RESULTS",mapper.pivotSearch(search_form));
+			} else {
+				model.addAttribute("RESULTS", mapper.getSearchRunout(search_form));
+
+			}
+			
+			
+		} else {
+			
+			search_form = new Search();
+			search_form.setView("data");	
+			search_form.setFromDateInput( Utils.getDateBasedOnCurrent(0));
+			search_form.setToDateInput( Utils.getDateBasedOnCurrent(1));
+			search_form.setPivot_field("o.operator");
+			session.setAttribute("SEARCH_FORM", search_form);
+
+		}
+		
+			
+		model.addAttribute("SEARCH_FORM", search_form);
+//		session.setAttribute("SEARCH_FORM", search_form);
+		
+
+		ctx.close();
+
+		return "ro/home";
+
+	}
+
+	
 
 	@RequestMapping("/ro/search")
 	public String search(@ModelAttribute Search form, Model model, HttpSession session) {
@@ -89,14 +151,22 @@ public class RunoutController {
 			
 		
 
-		if ( form.getView().equals("pivot") )
-			model.addAttribute("RESULTS", mapper.pivotSearch(form));
-		else
+		if ( form.getView().equals("pivot") ) {
+			List<Pivot> results  = mapper.pivotSearch(form);
+			model.addAttribute("RESULTS",results );
+		//	session.setAttribute("RESULTS", results);
+		} else {
+			List<Runout> results = mapper.getSearchRunout(form);
 			model.addAttribute("RESULTS", mapper.getSearchRunout(form));
-			
+		//	session.setAttribute("RESULTS", results);
+		}
+		
+
+		
 		
 		model.addAttribute("SEARCH_FORM", form);
 		session.setAttribute("SEARCH_FORM", form);
+		
 
 		ctx.close();
 
