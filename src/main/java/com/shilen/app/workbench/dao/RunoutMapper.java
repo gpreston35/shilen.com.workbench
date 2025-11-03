@@ -94,6 +94,48 @@ public interface RunoutMapper {
 	List<Pivot> pivotSearch( Search search );
 	
 	
+	@Select("<script>select max(muzzle_tir) muzzle_max, format(avg(muzzle_tir),5) muzzle_avg, format(std(muzzle_tir),5) muzzle_std, "
+			+ "               format(max(chamber_tir),5) chamber_max, format(avg(chamber_tir),5) chamber_avg, format(std(chamber_tir),5) chamber_std, "
+			+ "               count(*) samples, count(if(redrill = 'y',1,null)) redrill, "
+			+ "               count(*) - count(if(redrill = 'y',1,null)) num_bars, "
+			+ "               count(if(scrap = 'y',1,null)) scrap , "
+			+ "               format(  count(if(scrap = 'y',1,null)) / count(*) * 100,2) scrap_p"
+			+ " from runout r,"
+			+ "     caliber c,"
+			+ "     lk_spindle s,"
+			+ "     lk_operators o,"
+			+ "     steel st,"
+			+ "     lk_length l"
+			+ " where r.caliber_id = c.id"
+			+ "   and r.spindle_id = s.id"
+			+ "   and r.operator_id = o.id"
+			+ "   and r.length_id = l.id "
+			+ "   and r.steel_id = st.id "
+			+ "   <if test=\"spindle_id != -1\">"
+			+ "    and r.spindle_id = #{spindle_id}"
+			+ "  </if>"
+			+ "   <if test=\"caliber_id != -1\">"
+			+ "    and r.caliber_id = #{caliber_id}"
+			+ "  </if>"
+			+ "   <if test=\"operator_id != -1\">"
+			+ "    and r.operator_id = #{operator_id}"
+			+ "  </if>"
+			+ "   <if test=\"steel_id != -1\">"
+			+ "    and r.steel_id = #{steel_id}"
+			+ "  </if>"
+			+ "   <if test=\"woid != ''\">"
+			+ "    and r.woid = #{woid}"
+			+ "  </if>"
+			+ "   <if test=\"fromDateInput != ''\">"
+			+ "    and r.run_date &gt; #{fromDateInput}"
+			+ "  </if>"
+			+ "   <if test=\"toDateInput != ''\">"
+			+ "    and r.run_date &lt; #{toDateInput}"
+			+ "  </if></script>")
+
+	Pivot pivotSearchTotals( Search search );
+	
+	
 	@Select("select * from runout where id = #{id}")
 	Runout getRunout(int id);
 	

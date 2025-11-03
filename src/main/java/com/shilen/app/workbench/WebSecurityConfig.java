@@ -12,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
-import org.thymeleaf.spring6.expression.Mvc;
 
 
 	
@@ -24,7 +23,9 @@ import org.thymeleaf.spring6.expression.Mvc;
 	    private DataSource dataSource;
 	    
 	    @Autowired
-	    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+	    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+	    	
+	    	
 	        auth.jdbcAuthentication().passwordEncoder(new BCryptPasswordEncoder())
 	            .dataSource(dataSource)
 	            .passwordEncoder( new BCryptPasswordEncoder() )
