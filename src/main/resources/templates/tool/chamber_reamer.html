@@ -46,7 +46,9 @@
 										<!-- .table -->
 										
 										<a type="button" class="btn btn-secondary btn-sm" th:href="@{/tool/cr}" style="margin-bottom: 10px; width:100px">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</a>
-										<button type="submit" class="btn btn-primary btn-sm" style="margin-bottom: 10px; width:100px">Save</button>
+										<span sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">	
+											<button type="submit" class="btn btn-primary btn-sm" style="margin-bottom: 10px; width:100px">Save</button>
+										</span>
 							
 
 										
@@ -233,9 +235,9 @@
 								
 					 <div th:if="*{id} != 0">
 					 
-					 
+					 <span sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">	
 					 	<p><a type="button" class="btn btn-primary btn-sm" th:href="@{/manage-files?referring_module_id=1(module_record_id=*{id})}" style="margin-top: 0px;">&nbsp;&nbsp;Manage Files&nbsp;&nbsp;</a>
-					 
+					 </span>
 					 
 					 
 					 	<div class="card card-fluid" style="margin-top: 5px;">

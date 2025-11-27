@@ -49,8 +49,10 @@
 										<a type="button" class="btn btn-secondary btn-sm"
 											th:href="@{/config/caliber}"
 											style="margin-bottom: 10px; width: 100px">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</a>
-										<button type="submit" class="btn btn-primary btn-sm"
-											style="margin-bottom: 10px; width: 100px">Save</button>
+											<span sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">	
+												<button type="submit" class="btn btn-primary btn-sm"
+													style="margin-bottom: 10px; width: 100px">Save</button>
+											</span>
 
 
 										<div th:if="${MESSAGE}" class="alert alert-primary has-icon"
@@ -244,10 +246,14 @@
 									<!--  Start file upload Section -->
 
 									<p>
+									
+									<span sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">	
 										<a type="button" class="btn btn-primary btn-sm"
 											th:href="@{/manage-files?referring_module_id=5(module_record_id=*{id})}"
 											style="margin-top: 0px;">&nbsp;&nbsp;Manage
 											Files&nbsp;&nbsp;</a>
+										</span>	
+											
 									<div th:if="*{id} != 0">
 
 

@@ -59,10 +59,10 @@
 														style="margin-bottom: 10px; width: 100px"
 														th:href="@{/ro/refresh}">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</a>
 												
-												<div sec:authorize="hasAnyAuthority('VIEW_REPORTS', 'CREATE_REPORTS')">		
+												<span sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">		
 													<button type="submit" class="btn btn-primary btn-sm"
 														style="margin-bottom: 10px; width: 100px">Save</button>
-												</div>
+												</span>
 
 
 													<div class="form-row" style="margin-bottom: 10px">

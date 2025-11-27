@@ -46,7 +46,10 @@
 										<!-- .table -->
 					
 										<a type="button" class="btn btn-secondary btn-sm" th:href="@{/tool/br}" style="margin-bottom: 10px; width:100px">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</a>
-										<button type="submit" class="btn btn-primary btn-sm" style="margin-bottom: 10px; width:100px">Save</button>
+										
+										<span sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">	
+											<button type="submit" class="btn btn-primary btn-sm" style="margin-bottom: 10px; width:100px">Save</button>
+										</span>
 										
 								
 										
@@ -240,9 +243,10 @@
 								
 								
 							    <input type="hidden" name="id" th:field="*{id}" />
-
-								<p><a type="button" class="btn btn-primary btn-sm" th:href="@{/manage-files?referring_module_id=2(module_record_id=*{id})}" style="margin-top: 0px;">&nbsp;&nbsp;Manage Files&nbsp;&nbsp;</a>
-
+							    
+							    <span sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">	
+									<p><a type="button" class="btn btn-primary btn-sm" th:href="@{/manage-files?referring_module_id=2(module_record_id=*{id})}" style="margin-top: 0px;">&nbsp;&nbsp;Manage Files&nbsp;&nbsp;</a>
+								</span>
 								
 					 <div th:if="*{id} != 0">		
 					 
