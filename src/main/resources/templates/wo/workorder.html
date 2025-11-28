@@ -51,8 +51,14 @@
 
 								<div class="card-body">
 									<!-- .table -->
+									
+									<a type="button" class="btn btn-secondary btn-sm"
+											th:href="@{/wo/home}"
+											style="width: 100px">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</a>
+											
+									<button type="submit" class="btn btn-primary btn-sm" style="width: 100px" id="btnSubmit">Save</button>		
 
-									<div class="form-row">
+									<div class="form-row" style="margin-top: 20px">
 
 										<div class="col-md-6 mb-3">
 											<!-- form column -->
@@ -218,6 +224,8 @@
 									</div>
 
 
+				<div th:if="${1 == 2}">
+
 									<div class="card shadow mb-4">
 										<div class="card-header py-3">
 											<span class="h6 m-0 font-weight-bold text-primary">TOOLS&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -295,6 +303,8 @@
 									</div>
 
 
+</div>
+
 									<div class="card shadowmb-4">
 										<div class="card-header py-3">
 											<span class="h6 m-0 font-weight-bold text-primary">NOTES</span>
@@ -330,7 +340,7 @@
 										type="hidden" name="current_brtool" th:value="*{brtool}" /> <input
 										type="hidden" name="current_bntool" th:value="*{bntool}" />
 
-									<button type="submit" class="btn btn-primary" id="btnSubmit">Update</button>
+
 
 
 								</div>
