@@ -224,7 +224,7 @@
 											<div class="form-group col-md-6">
 												<label for="dom_str">Date of Mfg</label> <input type="text"
 													class="form-control form-control-sm" th:field="*{dom_str}"
-													id="dom_str" placeholder="" data-toggle="flatpickr"
+													id="dom_str" placeholder="YYYY-MM-DD" 
 													th:required="required">
 
 											</div>
@@ -238,8 +238,7 @@
 											<div class="form-group col-md-6">
 												<label for="dos_str">Date of Service</label> <input
 													type="text" class="form-control form-control-sm"
-													th:field="*{dos_str}" id="dos_str" placeholder=""
-													data-toggle="flatpickr">
+													th:field="*{dos_str}" id="dos_str" placeholder="YYYY-MM-DD">
 
 											</div>
 
@@ -250,8 +249,7 @@
 											<div class="form-group col-md-6">
 												<label for="eos_str">End of Service</label> <input
 													type="text" class="form-control form-control-sm"
-													th:field="*{eos_str}" id="eos_str" placeholder=""
-													data-toggle="flatpickr">
+													th:field="*{eos_str}" id="eos_str" placeholder="YYYY-MM-DD">
 
 											</div>
 
@@ -438,6 +436,18 @@
 	$(document).ready(function() {
 
 	});
+	
+	flatpickr("#dom_str", {
+	    allowInput: true
+	  });
+
+	flatpickr("#dos_str", {
+	    allowInput: true
+	  });
+	
+	flatpickr("#eos_str", {
+	    allowInput: true
+	  });
 </script>
 
 
