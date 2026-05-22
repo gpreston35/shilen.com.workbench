@@ -52,7 +52,10 @@
 									<form id="searchForm" th:action="@{/ro/search}" th:object="${SEARCH_FORM}"
 										method="post" >
 										
-										<a type="button" class="btn btn-primary btn-sm" style="margin-bottom: 20px" th:href="@{/ro/add}">&nbsp;&nbsp;Add&nbsp;&nbsp;</a>
+										
+										<div sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">
+											<a type="button" class="btn btn-primary btn-sm" style="margin-bottom: 20px" th:href="@{/ro/add}">&nbsp;&nbsp;Add&nbsp;&nbsp;</a>
+										</div>
 
 										<div class="form-row">
 											<!-- form row -->
@@ -72,6 +75,7 @@
 											<!-- /form column -->
 										</div>
 										<!-- /form row -->
+
 
 
 										<div class="form-row">
@@ -241,6 +245,7 @@
 													<td th:text="${r.chamber_tir}" class="text-right" />
 												</tr>
 											</tbody>
+											
 										</table>
 										
 										
@@ -279,6 +284,25 @@
 													<td th:text="${r.scrap_p}" class="table-info text-right"/>
 												</tr>
 											</tbody>
+										
+											 <tfoot>
+										
+									            <tr>
+									                <th>Summary</th>
+									                <th th:text="${RESULTS_TOTAL.muzzle_max}" class="text-right" />
+									                <th th:text="${RESULTS_TOTAL.muzzle_avg}" class="text-right" />
+													<th th:text="${RESULTS_TOTAL.muzzle_std}" class="text-right" />
+													<th th:text="${RESULTS_TOTAL.chamber_max}" class="text-right" />
+													<th th:text="${RESULTS_TOTAL.chamber_avg}" class="text-right" />
+													<th th:text="${RESULTS_TOTAL.chamber_std}" class="text-right" />
+													<th th:text="${RESULTS_TOTAL.samples}" class="table-info text-right"  />
+													<th th:text="${RESULTS_TOTAL.redrill}" class="table-info text-right"/>
+													<th th:text="${RESULTS_TOTAL.num_bars}" class="table-info text-right"/>
+													<th th:text="${RESULTS_TOTAL.scrap}" class="table-info text-right"/>
+													<th th:text="${RESULTS_TOTAL.scrap_p}" class="table-info text-right"/>
+									            </tr>
+        									</tfoot>
+        								
 										</table>
 
 									</div>

@@ -47,6 +47,9 @@ import com.shilen.app.workbench.out.WorkOrderPdf;
 @CrossOrigin() 
 public class WorkorderController {
 	
+	
+	/*
+	
 	 @GetMapping("/wo/test")
 	 public String wo_test() {
 
@@ -65,6 +68,9 @@ public class WorkorderController {
 	 	    
 	 	    return "wo/workorder_tool";
 	 }
+	 */
+	
+	/*
 	 
 	
 	@RequestMapping(value= "/wo/getByWoScrapId/json/{id}", method = RequestMethod.GET, 
@@ -87,6 +93,9 @@ public class WorkorderController {
 	
 	}
 	
+	*/
+	
+	/*
 	
 	@RequestMapping(value= "/wo/getBRToolAnalysis/json/{id}", method = RequestMethod.GET, 
 			produces = MediaType.APPLICATION_JSON_VALUE )
@@ -107,6 +116,10 @@ public class WorkorderController {
 	
 	}
 	
+	*/
+	
+	/*
+	
 	@RequestMapping(value= "/wo/getDHToolAnalysis/json/{id}", method = RequestMethod.GET, 
 			produces = MediaType.APPLICATION_JSON_VALUE )
 	public @ResponseBody List<ToolAnalysis> getDHToolAnalysisByIDjson(@PathVariable("id") int id)  {
@@ -125,6 +138,10 @@ public class WorkorderController {
 	 	   	return toolAnalysis;
 	
 	}
+	
+	*/
+	
+	/*
 	
 	@RequestMapping(value= "/wo/getBNToolAnalysis/json/{id}", method = RequestMethod.GET, 
 			produces = MediaType.APPLICATION_JSON_VALUE )
@@ -145,7 +162,9 @@ public class WorkorderController {
 	
 	}
 	
+	*/
 	
+	/*
 	
 	@RequestMapping(value= "/wo/getQualityCounts/json/{id}", method = RequestMethod.GET, 
 			produces = MediaType.APPLICATION_JSON_VALUE )
@@ -167,6 +186,10 @@ public class WorkorderController {
 	
 	}
 	
+	*/
+	
+	/*
+	
 	 @GetMapping("/wo/short")
 	 public String wo_short(@RequestParam(name="id", required=true) int id, Model model) {
 
@@ -186,6 +209,9 @@ public class WorkorderController {
 	 	    return "wo/workorder_short";
 	 }
 	 
+	 */
+	
+	/*
 	 
 	 @PostMapping("/wo/short/update")
 	 public ResponseEntity<?> wo_short_update(@ModelAttribute WorkOrder wo,  Model model) {
@@ -207,7 +233,7 @@ public class WorkorderController {
 	 	  
 	 }
 	
-
+*/
 		
 		@GetMapping("/wo/home")   
 		public String home(Model model) {
@@ -218,6 +244,7 @@ public class WorkorderController {
 		 	ctx.refresh();
 		 	   
 		 //	WorkOrderMapper mapper = ctx.getBean( WorkOrderMapper.class);
+		 	
 		 	LookupMapper lkMapper = ctx.getBean( LookupMapper.class );
 		 	
 			List<PickList> calibers = lkMapper.getCalibers();
@@ -234,8 +261,10 @@ public class WorkorderController {
 			ctx.close();
 			
 			return "wo/workorder_home";
+			
 		} 
 		
+		/*
 		
 		@GetMapping("/wo/scrap/delete")
 	    public ResponseEntity<?> deleteWoScrap(@RequestParam(name="id", required=true) int id, Model model) {
@@ -254,7 +283,9 @@ public class WorkorderController {
 	 	    result.setMsg("success");
 	 	    return ResponseEntity.ok(result);
 	    }
+		*/
 		
+		/*
 		
 		  @PostMapping("/wo/scrapreason_insert")
 		  public ResponseEntity<?> insertWoScrap(@ModelAttribute WoScrap woscrap, Model model) {
@@ -274,6 +305,9 @@ public class WorkorderController {
 		 	   	
 		  }
 		
+		*/
+		
+		/*
 		
 		@RequestMapping("/wo/quality_update")
 		 public String updateQuality(@ModelAttribute WoQualityRecords wqrs,  Model model) {
@@ -293,6 +327,8 @@ public class WorkorderController {
 	 	    
 	 	    return "wo/workorder_quality";
 		}
+		
+		*/
 		
 
 		 @RequestMapping("/wo/update")
@@ -315,6 +351,9 @@ public class WorkorderController {
 		 	
 		 	}
 		 	
+		 	
+		 	/*
+		 	
 	 		if ( !wo.getBntool().equals( wo.getCurrent_bntool() ) ) 
 	 			mapper.insertWoToolHistory( new WoToolHistory( wo.getId() , wo.getBntool(), "BUTTON" ) );
 	 		
@@ -324,6 +363,7 @@ public class WorkorderController {
 	 		if ( !wo.getBrtool().equals( wo.getCurrent_brtool() ) ) 
 	 			mapper.insertWoToolHistory( new WoToolHistory( wo.getId() , wo.getBrtool(), "REAMER" ) );
 	 		
+		 	*/
 		 	
 		 	for ( WoQty woqty : wo.getWoqty() ) {
 		 		
@@ -332,7 +372,7 @@ public class WorkorderController {
 		 		if ( woqty.getAction().equals("A") ) {
 		 			
 		 			mapper.insertWoQty(woqty);
-		 			mapper.insertWoQuality( new WoQuality( woqty.getId()) );
+		 		//	mapper.insertWoQuality( new WoQuality( woqty.getId()) );
 		 			
 		 		} else if ( woqty.getAction().equals("C") )
 		 			
@@ -341,7 +381,7 @@ public class WorkorderController {
 		 		else if ( woqty.getAction().equals("D")) {
 		 			
 		 			mapper.deleteWoQty(woqty);
-		 			mapper.deleteWoQuality( woqty.getId() );
+		 		//	mapper.deleteWoQuality( woqty.getId() );
 		 			
 		 		}
 
@@ -399,7 +439,7 @@ public class WorkorderController {
 			List<PickList> groove = mapper.getGrooveList();
 			List<PickList> twist = mapper.getTwistList();
 			List<PickList> steeltype = mapper.getSteelTypeList();
-			List<PickList> scrapreasons = mapper.getScrapReasons();
+		//	List<PickList> scrapreasons = mapper.getScrapReasons();
 			
 			
 			model.addAttribute("CALIBERS", calibers);
@@ -409,7 +449,7 @@ public class WorkorderController {
 			model.addAttribute("GROOVE",groove );
 			model.addAttribute("TWIST",twist);
 			model.addAttribute("STEELTYPE", steeltype );
-			model.addAttribute("SCRAP_REASON", scrapreasons );
+		//	model.addAttribute("SCRAP_REASON", scrapreasons );
 
 			
 			model.addAttribute("FORM", new WorkOrder() );
@@ -419,6 +459,8 @@ public class WorkorderController {
 			return "wo/workorder";
 			 
 		 }
+		 
+		 /*
 		  
 		 @GetMapping("/wo/quality")
 		 public String wo_quality(@RequestParam(name="id", required=true) int id, Model model) {
@@ -442,6 +484,7 @@ public class WorkorderController {
 		 	    return "wo/workorder_quality";
 		 }
 		  
+		  */
 		 
 		 @GetMapping("/wo/edit")
 		 public String appreport(@RequestParam(name="id", required=true) int id, Model model) {

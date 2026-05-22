@@ -42,7 +42,7 @@
 							
 
 
-					<p><a type="button" class="btn btn-primary" th:href="@{/wo/add}" style="margin-top: 10px;">Add Workorder</a>
+					<p><a type="button" class="btn btn-primary btn-sm" th:href="@{/wo/add}" style="margin-top: 10px;">Add Workorder</a>
 							
 
 
@@ -122,7 +122,7 @@
 										<!-- /form row -->
 
 
-										<button type="submit" class="btn btn-primary">Search</button>
+										<button type="submit" class="btn btn-primary btn-sm">Search</button>
 
 									</form>
 
@@ -156,7 +156,7 @@
 										<tbody>
 											<tr th:each="r: ${RESULTS}">
 												<td><a th:href="@{'/wo/edit'(id=${r.woid})}"    role="button" class="btn btn-sm btn-icon btn-secondary"><i class="far fa-edit"></i></a> 
-													<a th:href="@{'/wo/quality'(id=${r.woid})}" role="button" class="btn btn-sm btn-icon btn-secondary"><i class="fas fa-balance-scale-right"></i></a>
+										<!-- 		<a th:href="@{'/wo/quality'(id=${r.woid})}" role="button" class="btn btn-sm btn-icon btn-secondary"><i class="fas fa-balance-scale-right"></i></a> -->
 													<a th:href="@{'/wo/view'(id=${r.woid})}"    role="button" class="btn btn-sm btn-icon btn-secondary"><i class="fas fa-print"></i></a>
 												<td th:text="${r.woid}" />
 												<td th:text="${r.created}" />

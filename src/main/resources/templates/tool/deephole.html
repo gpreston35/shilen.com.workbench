@@ -46,7 +46,9 @@
 										<!-- .table -->
 										
 										<a type="button" class="btn btn-secondary btn-sm" th:href="@{/tool/dh}" style="margin-bottom: 10px; width:100px">&nbsp;&nbsp;Cancel&nbsp;&nbsp;</a>
+										<span sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">	
 										<button type="submit" class="btn btn-primary btn-sm" style="margin-bottom: 10px; width:100px">Save</button>
+										</span>]
 									
 										
 										<div th:if="${MESSAGE}" class="alert alert-primary has-icon" role="alert">
@@ -170,7 +172,7 @@
 							   			<div class="form-row">
 											<div class="form-group col-md-6">
 												<label for="dom_str">Date of Mfg</label> 
-												<input type="text" class="form-control form-control-sm" th:field="*{dom_str}" id="dom_str" placeholder="" data-toggle="flatpickr" th:required="required"> 
+												<input type="text" class="form-control form-control-sm" th:field="*{dom_str}" id="dom_str" placeholder="YYYY-MM-DD"  th:required="required"> 
 
 											</div>
 											
@@ -184,7 +186,7 @@
 							   			<div class="form-row">
 											<div class="form-group col-md-6">
 												<label for="dos_str">Date of Service</label> 
-												<input type="text" class="form-control form-control-sm" th:field="*{dos_str}" id="dos_str" placeholder="" data-toggle="flatpickr"> 
+												<input type="text" class="form-control form-control-sm" th:field="*{dos_str}" id="dos_str" placeholder="YYYY-MM-DD" > 
 
 											</div>
 											
@@ -194,7 +196,7 @@
 							   			<div class="form-row">
 											<div class="form-group col-md-6">
 												<label for="eos_str">End of Service</label> 
-												<input type="text" class="form-control form-control-sm" th:field="*{eos_str}" id="eos_str" placeholder="" data-toggle="flatpickr"> 
+												<input type="text" class="form-control form-control-sm" th:field="*{eos_str}" id="eos_str" placeholder="YYYY-MM-DD" > 
 
 											</div>
 											
@@ -239,9 +241,10 @@
 								
 					 <div th:if="*{id} != 0">	
 					 
-					 <p><a type="button" class="btn btn-primary btn-sm" th:href="@{/manage-files?referring_module_id=4(module_record_id=*{id})}" style="margin-top: 0px;">&nbsp;&nbsp;Manage Files&nbsp;&nbsp;</a>
+					 <span sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">	
+						 <p><a type="button" class="btn btn-primary btn-sm" th:href="@{/manage-files?referring_module_id=4(module_record_id=*{id})}" style="margin-top: 0px;">&nbsp;&nbsp;Manage Files&nbsp;&nbsp;</a>
 					 
-					 
+					 </span>
 					 
 					 
 					 					 		<div class="card card-fluid" style="margin-top: 5px;">
@@ -374,6 +377,18 @@
 	    	
 
 	} );
+	
+	flatpickr("#dom_str", {
+	    allowInput: true
+	  });
+
+	flatpickr("#dos_str", {
+	    allowInput: true
+	  });
+	
+	flatpickr("#eos_str", {
+	    allowInput: true
+	  });
 
 
 </script>

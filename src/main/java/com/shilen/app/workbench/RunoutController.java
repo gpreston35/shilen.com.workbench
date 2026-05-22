@@ -13,16 +13,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shilen.app.workbench.dao.LookupMapper;
 import com.shilen.app.workbench.dao.RunoutMapper;
 import com.shilen.app.workbench.helper.Utils;
+import com.shilen.app.workbench.model.PickList;
 import com.shilen.app.workbench.model.ro.Pivot;
 import com.shilen.app.workbench.model.ro.Runout;
 import com.shilen.app.workbench.model.ro.Search;
 
 @Controller
+@SessionAttributes("SEARCH_FORM")
 public class RunoutController {
 
 	@GetMapping("/ro/home")
@@ -35,11 +38,16 @@ public class RunoutController {
 		LookupMapper lkupmapper = ctx.getBean(LookupMapper.class);
 		
 		Search search_form = (Search) session.getAttribute("SEARCH_FORM");
+		
+		System.out.println("search_form = " + search_form );
 
 		if ( search_form != null) {
 			
 			search_form.setView("data");	
 			session.setAttribute("SEARCH_FORM", search_form);
+			
+
+			
 			
 		} else {
 			
@@ -52,13 +60,14 @@ public class RunoutController {
 
 		}
 		
-		
+			
 		model.addAttribute("SPINDLES", lkupmapper.getSpindles());
 		model.addAttribute("OPERATORS", lkupmapper.getOperators());
 		model.addAttribute("CALIBERS", lkupmapper.getCalibers());
 		model.addAttribute("STEEL", lkupmapper.getSteel());
-		model.addAttribute("LENGTHS", lkupmapper.getLengths());
+	//	model.addAttribute("LENGTHS", lkupmapper.getLengths());
 		model.addAttribute("SCRAPREASONS", lkupmapper.getLkScrapReasons());
+
 
 		model.addAttribute("SEARCH_FORM", search_form);
 
@@ -97,6 +106,7 @@ public class RunoutController {
 			
 			if ( search_form.getView().equals("pivot") ) {
 				model.addAttribute("RESULTS",mapper.pivotSearch(search_form));
+				model.addAttribute("RESULTS_TOTAL", mapper.pivotSearchTotals(search_form));
 			} else {
 				model.addAttribute("RESULTS", mapper.getSearchRunout(search_form));
 
@@ -154,6 +164,7 @@ public class RunoutController {
 		if ( form.getView().equals("pivot") ) {
 			List<Pivot> results  = mapper.pivotSearch(form);
 			model.addAttribute("RESULTS",results );
+			model.addAttribute("RESULTS_TOTAL", mapper.pivotSearchTotals(form));
 		//	session.setAttribute("RESULTS", results);
 		} else {
 			List<Runout> results = mapper.getSearchRunout(form);

@@ -145,7 +145,8 @@ public class ToolCRController {
  	 	   	form.setUpdated_by(request.getRemoteUser() );
  	 	   	form.setCreated_by( request.getRemoteUser() );
  	 	    mapper.Insert( form );
- 	 	    mapper.updateToolIdentifier( "CR" + form.getId(), form.getId() );
+ 	 	   // mapper.updateToolIdentifier( "CR" + form.getId(), form.getId() );
+ 	 	    mapper.updateToolIdentifier( "CR" + String.format("%0" + 4 + "d" , form.getId() ), form.getId() );
  	 	    modelAndView.addObject("message", "Record successfully added.");
  	 	    
  	   	} else {

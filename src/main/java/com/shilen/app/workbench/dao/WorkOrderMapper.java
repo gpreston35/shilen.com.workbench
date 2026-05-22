@@ -30,7 +30,7 @@ public interface WorkOrderMapper {
 	@Select("SELECT date_format(created, '%m/%d/%Y %h:%i %p') from operations.wo where id = #{id}")
 	String getWorkorderDate(int id);
 	
-	@Select("SELECT id, status_text value FROM operations.lk_status")
+	@Select("SELECT id, status value FROM operations.lk_status")
 	List<PickList> getStatusList();
 	
 	@Select("SELECT sid sid, rifling value FROM operations.rifling")
@@ -74,7 +74,7 @@ public interface WorkOrderMapper {
 	WorkOrder getWorkorder(int id);
 	
 	
-	@Select("<script>SELECT w.id woid, w.created, s.status_text, c.caliber, st.steeltype, r.rifling " + 
+	@Select("<script>SELECT w.id woid, w.created, s.status, c.caliber, st.steeltype, r.rifling " + 
 			"FROM operations.wo w, " + 
 			"     operations.lk_status s, " + 
 			"     operations.caliber c, " + 
@@ -119,7 +119,8 @@ public interface WorkOrderMapper {
 	WorkOrder getWorkorderPdf(int id);
 	
 	
-	@Select("SELECT id, reason value FROM operations.scrap_reasons where process = 'QA'")
+//	@Select("SELECT id, reason value FROM operations.scrap_reasons where process = 'QA'")
+	@Select("SELECT id, reason value FROM operations.scrap_reasons")
 	List<PickList>getScrapReasons();
 	
 	@Select("SELECT * FROM operations.wo_qty where woid = #{id}")
@@ -198,7 +199,7 @@ public interface WorkOrderMapper {
 	@Select("select replace(note,'\\r\\n','<br>') note, date_format(created, '%Y-%m-%d %H:%i') fcreated from operations.wo_notes where woid = #{id}")
 	List<WoNote> getWoNotes(int id);
 	
-	@Select("SELECT w.id woid, w.created, s.status_text, c.caliber, st.steeltype, r.rifling " + 
+	@Select("SELECT w.id woid, w.created, s.status, c.caliber, st.steeltype, r.rifling " + 
 			"FROM operations.wo w, " + 
 			"     operations.lk_status s, " + 
 			"     operations.caliber c, " + 

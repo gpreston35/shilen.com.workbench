@@ -147,7 +147,8 @@ public class ToolDHController {
  	 	   	form.setUpdated_by(request.getRemoteUser() );
  	 	   	form.setCreated_by( request.getRemoteUser() );
  	 	    mapper.Insert(form);
- 	 	    mapper.updateToolIdentifier( "DH" + form.getId(), form.getId() );
+ 	 	//    mapper.updateToolIdentifier( "DH" + form.getId(), form.getId() );
+ 	 	    mapper.updateToolIdentifier( "DH" + String.format("%0" + 4 + "d" , form.getId() ), form.getId() );
  	 	    modelAndView.addObject("message", "Record successfully added.");
  	 	    
  	   	} else {

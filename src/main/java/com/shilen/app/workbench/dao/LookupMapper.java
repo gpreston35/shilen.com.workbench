@@ -45,7 +45,7 @@ public interface LookupMapper {
 	
 //	@Select ("SELECT status_value value, status_text text from operations.lk_status where dset = #{dset} and active = 1 "
 //		 		+ "ORDER BY status_text")
-	@Select ("SELECT id, status_text value from operations.lk_status order by 2")
+	@Select ("SELECT id, status value from operations.lk_status order by 2")
 	List<PickList> getStatuses();
 	 
 	

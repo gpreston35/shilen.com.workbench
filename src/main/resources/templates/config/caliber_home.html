@@ -36,7 +36,9 @@
 
 							<span class="h5 m-0 font-weight-bold text-primary">CALIBER</span>
 
-							<p><a type="button" class="btn btn-primary btn-sm" th:href="@{/config/caliber/add}" style="margin-top: 10px;">&nbsp;&nbsp;Add&nbsp;&nbsp;</a>
+							<div sec:authorize="hasAnyAuthority('ADMIN', 'POWER_USER')">
+								<p><a type="button" class="btn btn-primary btn-sm" th:href="@{/config/caliber/add}" style="margin-top: 10px;">&nbsp;&nbsp;Add&nbsp;&nbsp;</a>
+							</div>
 
 							<div class="card card-fluid" style="margin-top: 15px;">
 								<div class="card-header"><span class="h6 m-0 font-weight-bold text-primary">SEARCH</span></div>
