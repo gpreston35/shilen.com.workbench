@@ -60,7 +60,7 @@
 
 					<li class="menu-item has-child"><a href="#" class="menu-link"><span
 							class="menu-icon fa-solid fa-database"></span> <span
-							class="menu-text">Data</span></a> <!-- child menu -->
+							class="menu-text">Configuration</span></a> <!-- child menu -->
 							
 							
 						<ul class="menu">
@@ -79,7 +79,8 @@
 							class="menu-icon fa-solid fa-gear"></span> <span
 							class="menu-text">Administration</span></a> <!-- child menu -->
 						<ul class="menu">
-							
+							<li class="menu-item" sec:authorize="hasAuthority('ADMIN')"><a
+								th:href="@{/admin/users}" class="menu-link">User Management</a></li>
 						</ul>
 					</li>
 

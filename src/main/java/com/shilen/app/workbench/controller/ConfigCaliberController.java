@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,155 +30,81 @@ import com.shilen.app.workbench.model.tool.ToolSearchForm;
 @Controller
 @SessionAttributes("STATUS_LIST")
 public class ConfigCaliberController {
-	
-		private final int MODULE_ID = 5;
-	
-		
-		@GetMapping("/config/caliber")   
-		public String home(Model model) {
-			
-			AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-			
-		    ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-		 	ctx.refresh();
-		 	
-		 	ToolSearchForm searchForm = new ToolSearchForm();
-		 	model.addAttribute("SEARCH_FORM", searchForm );
-		 	
-			ctx.close();
-			
-			return "config/caliber_home";
-		} 
-		
-		
-		@SuppressWarnings("null")
-		//@GetMapping("/config/caliber/read")
-		
-		
-		@RequestMapping(value = "/config/caliber/read", method = RequestMethod.GET, 
-        produces = MediaType.TEXT_HTML_VALUE)
-		public String read(@RequestParam(name="id", required=true) int id, @RequestParam(name="message", required=false, defaultValue = "") String message, 
-				HttpServletResponse response,  Model model) throws Exception {
-			
-	    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-	 	   	ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-	 	   	ctx.refresh();
-	 	   	
-	 	    FileStorageMapper fileMapper = ctx.getBean(FileStorageMapper.class);
-	 	    NoteStorageMapper noteMapper = ctx.getBean(NoteStorageMapper.class);
-	 	    ConfigCaliberMapper mapper = ctx.getBean( ConfigCaliberMapper.class );
-	 	    
-	 	    Caliber caliber = mapper.Read( id );
-			caliber.setNotes( noteMapper.List( id , MODULE_ID) );
-			caliber.setFiles( fileMapper.getList(MODULE_ID, id));
-			
 
-			if (message != null & !message.isEmpty() )
-				model.addAttribute("MESSAGE", message);
-			
-	 	   	model.addAttribute("FORM", caliber );
-	 	   	
-			ctx.close();
-			
-			return "config/caliber";
-			
-		}
-		
-		@GetMapping("/config/caliber/add")
-		 public String add(@ModelAttribute Search search,  Model model) {
+	private final int MODULE_ID = 5;
+	private final ConfigCaliberMapper mapper;
+	private final FileStorageMapper fileMapper;
+	private final NoteStorageMapper noteMapper;
 
-	    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-	 	   	ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-	 	   	ctx.refresh();
-	 	   
-	 	   	model.addAttribute("FORM", new Caliber() );
-	 	   	
-			ctx.close();
-			
-			return "config/caliber";
-		 	  
-		 }
-		
+	public ConfigCaliberController(ConfigCaliberMapper mapper, FileStorageMapper fileMapper,
+			NoteStorageMapper noteMapper) {
+		this.mapper = mapper;
+		this.fileMapper = fileMapper;
+		this.noteMapper = noteMapper;
+	}
 
-		@PostMapping("/config/caliber/update")
-		public ModelAndView update(@Valid @ModelAttribute("FORM") Caliber form, BindingResult bindingResult, 
-				RedirectAttributes redirectAttributes, Model model,  HttpServletRequest request) {
-			
+	@GetMapping("/config/caliber")
+	public String home(Model model) {
+		ToolSearchForm searchForm = new ToolSearchForm();
+		model.addAttribute("SEARCH_FORM", searchForm);
+		return "config/caliber_home";
+	}
 
-	    	AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-	 	   	ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-	 	   	ctx.refresh();
-	 	    
-	 	   	ModelAndView modelAndView = new ModelAndView("redirect:/config/caliber/read");
-	 	    NoteStorageMapper noteMapper = ctx.getBean(NoteStorageMapper.class);
-	 	    ConfigCaliberMapper mapper = ctx.getBean( ConfigCaliberMapper.class);
-	 	    
-	 	   /*  	    
-	 	    try {
-	 	       	form.setTool_range_low( Float.parseFloat( form.getTool_range_low_str() ));
-	 	    } catch ( NumberFormatException ne) {
-	 	    	form.setTool_range_low(new Float(0.0));
-	 	    }
-	 	    
-	 	    try {
-	 	       	form.setTool_range_high( Float.parseFloat( form.getTool_range_high_str() ));	
-	 	    } catch ( NumberFormatException ne) {
-	 	    	form.setTool_range_high(new Float(0.0));
-	 	    }
-*/
-	 	    
-	 	   	if ( form.getId() == 0 ) {
-	 	 	   	form.setUpdated_by(request.getRemoteUser() );
-	 	 	   	form.setCreated_by( request.getRemoteUser() );
-	 	 	    mapper.Insert( form );
-	 	 	    modelAndView.addObject("message", "Record successfully added.");
-	 	 	    
-	 	   	} else {
-	 	   		// update
-	 	 	   	form.setUpdated_by(request.getRemoteUser() );
-	 	 	   	mapper.Update(form);
-		 	   	modelAndView.addObject("message", "Record successfully updated.");
-	 	   		
-	 	 	   	if ( !form.getNote().isEmpty() ) {
-	 	 	   		Note note = new Note();
-	 	 	   		note.setCreated_by( request.getRemoteUser() );
-	 	 	   		note.setNote( form.getNote() );
-	 	 	   		note.setModule_id( MODULE_ID );
-	 	 	   		note.setRecord_id( form.getId() );
-	 	 	   		noteMapper.Insert(note);
-	 	 	   		
-	 	 	   	}
-	 	   	}
-	 	   
-	 	   	modelAndView.addObject("id", new Integer( form.getId() ) );
-	 	   	
-	 		ctx.close();
-	 		
-			return modelAndView;
+	@RequestMapping(value = "/config/caliber/read", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	public String read(@RequestParam(name = "id", required = true) int id,
+			@RequestParam(name = "message", required = false, defaultValue = "") String message,
+			HttpServletResponse response, Model model) throws Exception {
+		Caliber caliber = mapper.Read(id);
+		caliber.setNotes(noteMapper.List(id, MODULE_ID));
+		caliber.setFiles(fileMapper.getList(MODULE_ID, id));
 
+		if (message != null & !message.isEmpty()) {
+			model.addAttribute("MESSAGE", message);
 		}
 
+		model.addAttribute("FORM", caliber);
+		return "config/caliber";
+	}
 
-		@RequestMapping("/config/caliber/search")
-		public String read(@ModelAttribute ToolSearchForm form, Model model) {
-			 
-			AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-			
-		    ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-		 	ctx.refresh();
-		 	
-		 	ConfigCaliberMapper mapper = ctx.getBean( ConfigCaliberMapper.class );
-		 	
-		 	
-		 	model.addAttribute("RESULTS", mapper.Search( Utils.ifNull( form.getSearch_term() ).toUpperCase() ) );
-		 	model.addAttribute("SEARCH_FORM", form);
-		 	
-			ctx.close();
-			
-			return "config/caliber_home";
-		 	
-		
-		}	
+	@GetMapping("/config/caliber/add")
+	public String add(@ModelAttribute Search search, Model model) {
+		model.addAttribute("FORM", new Caliber());
+		return "config/caliber";
+	}
 
+	@PostMapping("/config/caliber/update")
+	public ModelAndView update(@Valid @ModelAttribute("FORM") Caliber form, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes, Model model, HttpServletRequest request) {
+		ModelAndView modelAndView = new ModelAndView("redirect:/config/caliber/read");
 
+		if (form.getId() == 0) {
+			form.setUpdated_by(request.getRemoteUser());
+			form.setCreated_by(request.getRemoteUser());
+			mapper.Insert(form);
+			modelAndView.addObject("message", "Record successfully added.");
+		} else {
+			form.setUpdated_by(request.getRemoteUser());
+			mapper.Update(form);
+			modelAndView.addObject("message", "Record successfully updated.");
+
+			if (!form.getNote().isEmpty()) {
+				Note note = new Note();
+				note.setCreated_by(request.getRemoteUser());
+				note.setNote(form.getNote());
+				note.setModule_id(MODULE_ID);
+				note.setRecord_id(form.getId());
+				noteMapper.Insert(note);
+			}
+		}
+
+		modelAndView.addObject("id", Integer.valueOf(form.getId()));
+		return modelAndView;
+	}
+
+	@RequestMapping("/config/caliber/search")
+	public String read(@ModelAttribute ToolSearchForm form, Model model) {
+		model.addAttribute("RESULTS", mapper.Search(Utils.ifNull(form.getSearch_term()).toUpperCase()));
+		model.addAttribute("SEARCH_FORM", form);
+		return "config/caliber_home";
+	}
 }
