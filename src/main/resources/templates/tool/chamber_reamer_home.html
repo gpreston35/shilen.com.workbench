@@ -1,9 +1,10 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 
-<div th:replace="fragments/header"></div>
+<div th:replace="~{fragments/header}"></div>
 
 </head>
 <body>
@@ -14,9 +15,9 @@
       <![endif]-->
 
 
-		<div th:replace="fragments/app_header"></div>
+		<div th:replace="~{fragments/app_header}"></div>
 
-		<div th:replace="fragments/sidebar"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
 
 		<!-- .app-main -->
 		<main class="app-main">
@@ -56,19 +57,16 @@
 									<form th:action="@{/tool/cr/search}" th:object="${SEARCH_FORM}" method="post">
 
 										<div class="form-row">
-											<!-- form row -->
-
 											<div class="col-md-6 mb-3">
-												<!-- form column -->
-												<label class="control-label" for="woid">Search Term</label>
+												<label class="control-label" for="search_term">Identifier or Chamber Name</label>
 												<input type="text" class="form-control form-control-sm" id="search_term"
-													name="woid" th:field="*{search_term}" placeholder="ex 243">
+													th:field="*{search_term}" placeholder="ex CR0243 or 6.5 Creedmoor">
 											</div>
-											<!-- /form column -->
 											<div class="col-md-6 mb-3">
-										
+												<label class="control-label" for="flute_count">Flute Count</label>
+												<input type="number" class="form-control form-control-sm" id="flute_count"
+													th:field="*{flute_count}">
 											</div>
-											
 									    </div>
 
 
@@ -95,6 +93,7 @@
 												<th></th>
 												<th>TOOL IDENTIFER</th>
 												<th>CHAMBER NAME</th>
+												<th>FLUTES</th>
 												<th>Status</th>
 												<th>DOS</th>
 												<th>EOS</th>
@@ -105,6 +104,7 @@
 												<td><a th:href="@{'/tool/cr/read'(id=${r.id})}" role="button" class="btn btn-sm btn-icon btn-secondary"><i class="far fa-edit"></i></a> 
 												<td th:text="${r.tool_identifier}" />
 												<td th:text="${r.chamber_name}" />
+												<td th:text="${r.flute_count}" />
 												<td th:text="${r.status}">DD</td>
 												<td th:text="${r.dos_str}" />
 												<td th:text="${r.eos_str}" />
@@ -129,7 +129,7 @@
 				</div>
 
 
-			<div th:replace="fragments/footer"></div>
+			<div th:replace="~{fragments/footer}"></div>
 
 
 			<!-- /.wrapper -->

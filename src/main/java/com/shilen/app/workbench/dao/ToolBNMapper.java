@@ -9,14 +9,35 @@ import org.apache.ibatis.annotations.Update;
 
 import com.shilen.app.workbench.model.PickList;
 import com.shilen.app.workbench.model.tool.Button;
+import com.shilen.app.workbench.model.tool.ToolSearchForm;
 
 public interface ToolBNMapper {
 	
 	
-	@Select("SELECT b.id, b.tool_identifier, b.dos, b.eos, if(b.status_id = 1,'Active','Not Active') as status from "
-			+ "   operations.tool_button b"
-			+ "   where upper(b.tool_identifier) like '%' #{search_term} '%' ")
-	List<Button> Search( String search_term );
+	@Select("<script>"
+			+ "SELECT b.id, b.tool_identifier, b.rifling_count, b.rifling_type, b.major_dia, "
+			+ "       b.dos as dos_str, b.eos as eos_str, "
+			+ "       if(b.status_id = 1,'Active','Not Active') as status "
+			+ "  FROM operations.tool_button b "
+			+ " WHERE 1 = 1 "
+			+ "   <if test=\"search_term != null and search_term != ''\">"
+			+ "   AND upper(b.tool_identifier) like concat('%', upper(#{search_term}), '%')"
+			+ "   </if>"
+			+ "   <if test=\"rifling_type != null and rifling_type != ''\">"
+			+ "   AND upper(ifnull(b.rifling_type, '')) like concat('%', upper(#{rifling_type}), '%')"
+			+ "   </if>"
+			+ "   <if test=\"rifling_count != null\">"
+			+ "   AND b.rifling_count = #{rifling_count}"
+			+ "   </if>"
+			+ "   <if test=\"diameter_from != null\">"
+			+ "   AND b.major_dia &gt;= #{diameter_from}"
+			+ "   </if>"
+			+ "   <if test=\"diameter_to != null\">"
+			+ "   AND b.major_dia &lt;= #{diameter_to}"
+			+ "   </if>"
+			+ " ORDER BY b.tool_identifier"
+			+ "</script>")
+	List<Button> Search(ToolSearchForm form);
 	
 	
 	@Insert( "INSERT into operations.tool_button "
@@ -83,5 +104,4 @@ public interface ToolBNMapper {
 	 
 	 
 }
-
 

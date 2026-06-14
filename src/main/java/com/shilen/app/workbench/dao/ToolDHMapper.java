@@ -8,14 +8,32 @@ import org.apache.ibatis.annotations.Update;
 
 import com.shilen.app.workbench.model.PickList;
 import com.shilen.app.workbench.model.tool.DeepHole;
+import com.shilen.app.workbench.model.tool.ToolSearchForm;
 
 public interface ToolDHMapper {
 	
 	
-	@Select("SELECT d.id, d.tool_identifier, d.dos as dos_str, d.eos as eos_str, if(d.status_id=1,'Active','Not Active') as status from "
-			+ "   operations.tool_deephole d"
-			+ "   where upper(d.tool_identifier) like '%' #{search_term} '%' ")
-	List<DeepHole> Search( String search_term );
+	@Select("<script>"
+			+ "SELECT d.id, d.tool_identifier, d.style, d.dia_ao, "
+			+ "       d.dos as dos_str, d.eos as eos_str, "
+			+ "       if(d.status_id=1,'Active','Not Active') as status "
+			+ "  FROM operations.tool_deephole d "
+			+ " WHERE 1 = 1 "
+			+ "   <if test=\"search_term != null and search_term != ''\">"
+			+ "   AND upper(d.tool_identifier) like concat('%', upper(#{search_term}), '%')"
+			+ "   </if>"
+			+ "   <if test=\"style != null and style != ''\">"
+			+ "   AND upper(ifnull(d.style, '')) like concat('%', upper(#{style}), '%')"
+			+ "   </if>"
+			+ "   <if test=\"diameter_from != null\">"
+			+ "   AND d.dia_ao &gt;= #{diameter_from}"
+			+ "   </if>"
+			+ "   <if test=\"diameter_to != null\">"
+			+ "   AND d.dia_ao &lt;= #{diameter_to}"
+			+ "   </if>"
+			+ " ORDER BY d.tool_identifier"
+			+ "</script>")
+	List<DeepHole> Search(ToolSearchForm form);
 	
 	
 	@Insert( "INSERT into operations.tool_deephole "
@@ -82,5 +100,4 @@ public interface ToolDHMapper {
 	 
 	 
 }
-
 
