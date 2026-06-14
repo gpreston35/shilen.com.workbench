@@ -1,0 +1,113 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<div th:replace="~{fragments/header}"></div>
+</head>
+<body>
+	<div class="app">
+		<div th:replace="~{fragments/app_header}"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
+
+		<main class="app-main">
+			<div class="wrapper">
+				<div class="page">
+					<div class="page-inner">
+						<header class="page-title-bar"></header>
+
+						<div class="page-section">
+							<span class="h5 m-0 font-weight-bold text-primary">USER MANAGEMENT</span>
+
+							<div>
+								<p>
+									<a type="button" class="btn btn-primary btn-sm"
+										th:href="@{/admin/users/add}" style="margin-top: 10px;">Add</a>
+								</p>
+							</div>
+
+							<div th:if="${MESSAGE}" class="alert alert-primary has-icon"
+								role="alert">
+								<div class="alert-icon">
+									<span class="oi oi-info"></span>
+								</div>
+								<span th:text="${MESSAGE}"></span>
+							</div>
+
+							<div class="card card-fluid" style="margin-top: 15px;">
+								<div class="card-header">
+									<span class="h6 m-0 font-weight-bold text-primary">SEARCH</span>
+								</div>
+
+								<div class="card-body">
+									<form th:action="@{/admin/users}" method="get">
+										<div class="form-row">
+											<div class="col-md-6 mb-3">
+												<label class="control-label" for="search">User</label>
+												<input type="text" class="form-control form-control-sm"
+													id="search" name="search" th:value="${SEARCH}"
+													placeholder="username, first name, or last name">
+											</div>
+										</div>
+										<button type="submit" class="btn btn-primary btn-sm">Search</button>
+									</form>
+								</div>
+							</div>
+
+							<div class="card card-fluid" style="margin-top: 25px;">
+								<div class="card-header">
+									<span class="h6 m-0 font-weight-bold text-primary">RESULTS</span>
+								</div>
+
+								<div class="card-body">
+									<table class="table table-hover table-sm table-bordered"
+										id="results">
+										<thead>
+											<tr>
+												<th></th>
+												<th>USERNAME</th>
+												<th>NAME</th>
+												<th>ENABLED</th>
+												<th>ROLES</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="r: ${RESULTS}">
+												<td><a th:href="@{'/admin/users/read'(id=${r.id})}"
+													role="button" class="btn btn-sm btn-icon btn-secondary"><i
+														class="far fa-edit"></i></a></td>
+												<td th:text="${r.username}"></td>
+												<td th:text="${r.first_name + ' ' + r.last_name}"></td>
+												<td th:text="${r.enabled == 1 ? 'Yes' : 'No'}"></td>
+												<td th:text="${r.roles}"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div th:replace="~{fragments/footer}"></div>
+		</main>
+	</div>
+
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+	<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+	<script th:src="@{/assets/vendor/datatables/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/assets/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+	<script>
+		$(document).ready(function() {
+			$('#results').DataTable();
+		});
+	</script>
+</body>
+</html>
