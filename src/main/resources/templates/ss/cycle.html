@@ -5,6 +5,18 @@
 
 <div th:replace="~{fragments/header}"></div>
 
+<style>
+	.cycle-checkbox-cell {
+		text-align: center;
+		vertical-align: middle;
+		width: 6rem;
+	}
+	.cycle-checkbox {
+		height: 1.1rem;
+		width: 1.1rem;
+		margin: 0;
+	}
+</style>
 
 
 
@@ -44,38 +56,29 @@
 								</div>
 								<div class="card-body">
 
-									<form action="/ss/cycle/insert" th:object="${FORM}" method="post" id="cycleform">
+									<form th:action="${EDIT_MODE} ? @{/ss/cycle/maintain} : @{/ss/cycle/insert}" th:object="${FORM}" method="post" id="cycleform">
+										<div th:if="${CYCLE_ERROR}" class="alert alert-danger" th:text="${CYCLE_ERROR}"></div>
+										<input type="hidden" th:field="*{cycle_id}" />
+										<input type="hidden" th:field="*{poll_frequency}" />
 										<div class="form-group">
 											<label for="equipment_id">Equipment</label> 
-											<select class="form-control form-control-sm" id="equipment_id" name="equipment_id">
+											<select th:if="${!EDIT_MODE}" class="form-control form-control-sm" id="equipment_id" name="equipment_id"
+												th:data-selected="*{equipment_id}">
 											</select>
-										</div>
-										<div class="form-group">
-											<label for="poll_frequency">Poll Frequency (minutes)</label> 
-											<select class="form-control form-control-sm" id="poll_frequency" name="polling_frequency">
-												<option value="1">1</option>
-												<option value="2">2</option>
-												<option value="3">3</option>
-												<option value="4">4</option>
-												<option value="5">5</option>
-												<option value="10">10</option>
-												<option value="15">15</option>
-											</select>
+											<input th:if="${EDIT_MODE}" type="text" class="form-control form-control-sm"
+												th:value="*{equipment_name}" readonly />
+											<input th:if="${EDIT_MODE}" type="hidden" th:field="*{equipment_id}" />
 										</div>
 										<div class="form-group">
 											<label for="profile">Profile</label> 
-											<select class="form-control form-control-sm" id="profile" name="profile">
-												<option value="Profile 1">Profile 1</option>
-												<option value="Profile 2">Profile 2</option>
-												<option value="Profile 3">Profile 3</option>
-												<option value="Profile 4">Profile 4</option>
-												<option value="Profile 5">Profile 5</option>
-												<option value="Profile 6">Profile 6</option>
+											<select class="form-control form-control-sm" id="profile" th:field="*{profile}">
+												<option value="">-- Select Profile --</option>
+												<option th:each="p : ${PROFILES}" th:value="${p.name}" th:text="${p.name}"></option>
 											</select>
 										</div>
 										<div class="form-group">
 											<label for="number_of_barrels">Number of barrels</label> 
-											<input type="text" name="number_of_barrels"  class="form-control form-control-sm" />
+											<input type="text" th:field="*{number_of_barrels}" class="form-control form-control-sm" />
 										</div>
 
 
@@ -92,8 +95,9 @@
 										<tbody id="notification_tbody">
 											<tr th:each="a, itemStat: *{alerts}">
 												
-												<td><input type="hidden" th:field="*{alerts[__${itemStat.index}__].type}"/>
-													<input type="checkbox" class="form-control" th:value="2" th:field="*{alerts[__${itemStat.index}__].selected}"/>
+												<td class="cycle-checkbox-cell"><input type="hidden" th:field="*{alerts[__${itemStat.index}__].type}"/>
+													<input type="hidden" th:field="*{alerts[__${itemStat.index}__].selected}" class="alert-selected-hidden"/>
+													<input type="checkbox" class="cycle-checkbox alert-selected-toggle" th:checked="${a.selected == 2}"/>
 												</td>
 												<td><select class="form-control form-control-sm" th:field="*{alerts[__${itemStat.index}__].notification_type}">
 														<option value="E">Error</option>
@@ -119,14 +123,14 @@
 										<tbody>
 											<tr th:each="u, itemStat: *{users}">
 												
-												<td><input type="checkbox" class="form-control" th:checked="${u.checked}" value="1" th:field="*{users[__${itemStat.index}__].checked}"/></td>
+												<td class="cycle-checkbox-cell"><input type="hidden" th:field="*{users[__${itemStat.index}__].checked}" class="user-checked-hidden"/><input type="checkbox" class="cycle-checkbox user-checked-toggle" th:checked="${u.checked == 1}"/></td>
 												<td><span th:text="*{users[__${itemStat.index}__].full_name}"></span></td>
 											</tr>
 										</tbody>
 									</table>
 									
 									
-									<button type="submit" class="btn btn-primary">Save</button>
+									<button type="submit" class="btn btn-primary" th:text="${EDIT_MODE} ? 'Save Maintenance' : 'Save'">Save</button>
 
 
 									</form>
@@ -170,16 +174,11 @@
 	<script th:src="@{/assets/javascript/theme.min.js}"></script>
 	<!-- END THEME JS -->
 	
-	
-
-	<p th:text="@{/lkup/equipment/json}">	
-
-
-
 	<script>
 	
 	 $(document).ready(function() {
 	
+		if ($('#equipment_id').length) {
 		$.getJSON('/lkup/equipment/json',
 			function(data) {
 		
@@ -187,20 +186,29 @@
 	            $.each(data, function(i, obj){
 	                    $('#equipment_id').append($('<option>').text(obj.value).attr('value', obj.id));
 	            });
+	            var selectedEquipment = $('#equipment_id').data('selected');
+	            if (selectedEquipment !== undefined && selectedEquipment !== null && selectedEquipment !== '' && Number(selectedEquipment) > 0) {
+	            	$('#equipment_id').val(String(selectedEquipment));
+	            }
 
 			});
-		
-		
-		var rowCount = $('#notification_tbody tr').length;
-		var i;
-		
-		for ( i = 0; i < rowCount; i++ ) {
-			$( '#alerts' + i + '.selected1' ).attr( "checked");
-			//$('input[type=checkbox]').attr('checked');
-
 		}
 		
 		
+		function syncCycleMaintenanceFields() {
+			$('.alert-selected-toggle').each(function(index) {
+				$('.alert-selected-hidden').eq(index).val(this.checked ? '2' : '1');
+			});
+			$('.user-checked-toggle').each(function(index) {
+				$('.user-checked-hidden').eq(index).val(this.checked ? '1' : '0');
+			});
+		}
+
+		syncCycleMaintenanceFields();
+
+		$('#cycleform').on('submit', function() {
+			syncCycleMaintenanceFields();
+		});
 		
 	
 	 });

@@ -33,13 +33,33 @@
 						<header class="page-title-bar"> </header>
 						<!-- /.page-title-bar -->
 
-						<div class="page-section">
+							<div class="page-section">
 
-							<!-- .page-section -->
+								<!-- .page-section -->
+
+								<div class="d-flex align-items-center justify-content-between flex-wrap"
+									style="margin: 20px 20px 15px 20px">
+									<span class="h5 m-0 font-weight-bold text-primary">SENSORS</span>
+									<div class="btn-group btn-group-sm mt-2 mt-sm-0" role="group"
+										aria-label="Sensors navigation">
+										<a th:href="@{/ss/equipment}" class="btn btn-secondary">
+											<i class="fas fa-industry"></i>&nbsp;Equipment
+										</a>
+										<a th:href="@{/ss/sensor}" class="btn btn-secondary">
+											<i class="fas fa-microchip"></i>&nbsp;Sensor
+										</a>
+										<a th:href="@{/ss/profile}" class="btn btn-secondary">
+											<i class="fas fa-sliders-h"></i>&nbsp;Profiles
+										</a>
+										<a th:href="@{/ss/cycle/add}" class="btn btn-secondary">
+											<i class="fas fa-sync-alt"></i>&nbsp;Cycle
+										</a>
+									</div>
+								</div>
 
 
-							<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
-								<div class="card-header py-3">
+								<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
+									<div class="card-header py-3">
 									<span class="h6 m-0 font-weight-bold text-primary">ALERTS</span>
 								</div>
 								<div class="card-body">
@@ -73,14 +93,19 @@
 
 							<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
 								<div class="card-header py-3">
-									<span class="h6 m-0 font-weight-bold text-primary">ACTIVE
-										JOBS</span>
+									<div class="d-flex align-items-center justify-content-between">
+										<span class="h6 m-0 font-weight-bold text-primary">ACTIVE JOBS</span>
+										<a th:href="@{/ss/home}" class="btn btn-sm btn-outline-secondary">
+											<i class="fas fa-sync-alt"></i>&nbsp;Refresh
+										</a>
+									</div>
 								</div>
 								<div class="card-body">
 									<table class="table table-hover table-sm" id="results"
 										style="width: 100%;">
 										<thead>
 											<tr>
+												<th>Cycle</th>
 												<th>ID</th>
 												<th>EQUIPMENT</th>
 												<th>SENSOR</th>
@@ -88,12 +113,19 @@
 												<th>POLLED</th>
 												<th>ERRORS</th>
 												<th>LAST POLL</th>
-												<th>LAST RESULT</th>
+												<th>Cycle Profile</th>
 											</tr>
 										</thead>
 										<tbody id="activeTable">
 											<tr th:each="job : ${ACTIVE_JOBS}"
 												th:id="${job.cycle_sensor_id}">
+												<td>
+													<a th:href="@{/ss/cycle/edit/{id}(id=${job.cycle_id})}"
+													   class="btn btn-sm btn-secondary"
+													   onclick="event.stopPropagation();">
+														<i class="far fa-edit"></i>
+													</a>
+												</td>
 												<td th:text="${job.cycle_sensor_id}" />
 												<td th:text="${job.equipment}" />
 												<td th:text="${job.sensor}" />
@@ -101,18 +133,64 @@
 												<td th:text="${job.times_polled}" />
 												<td th:text="${job.errors}" />
 												<td th:text="${job.last_poll}" />
-												<td th:text="${job.result}" />
+												<td>
+													<span th:if="${job.profile_maintained == 'Y' and job.barrels_maintained == 'Y'}" class="badge badge-success">Complete</span>
+													<span th:if="${!(job.profile_maintained == 'Y' and job.barrels_maintained == 'Y')}" class="badge badge-warning">Update Needed</span>
+												</td>
 											</tr>
 										</tbody>
 
 									</table>
+									</div>
+								</div>
+
+								<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">COMPLETED CYCLES (LAST 7 DAYS)</span>
+								</div>
+								<div class="card-body">
+									<table class="table table-hover table-sm" style="width: 100%;">
+										<thead>
+											<tr>
+												<th>Cycle</th>
+												<th>ID</th>
+												<th>EQUIPMENT</th>
+												<th>SENSOR</th>
+												<th>RUNTIME</th>
+												<th>POLLED</th>
+												<th>ERRORS</th>
+												<th>LAST POLL</th>
+												<th>Cycle Profile</th>
+											</tr>
+										</thead>
+										<tbody id="completedTable">
+											<tr th:each="job : ${COMPLETED_JOBS}" th:id="${job.cycle_sensor_id}">
+												<td>
+													<a th:href="@{/ss/cycle/edit/{id}(id=${job.cycle_id})}"
+													   class="btn btn-sm btn-secondary"
+													   onclick="event.stopPropagation();">
+														<i class="far fa-edit"></i>
+													</a>
+												</td>
+												<td th:text="${job.cycle_sensor_id}" />
+												<td th:text="${job.equipment}" />
+												<td th:text="${job.sensor}" />
+												<td th:text="${job.runtime}" />
+												<td th:text="${job.times_polled}" />
+												<td th:text="${job.errors}" />
+												<td th:text="${job.last_poll}" />
+												<td>
+													<span th:if="${job.profile_maintained == 'Y' and job.barrels_maintained == 'Y'}" class="badge badge-success">Complete</span>
+													<span th:if="${!(job.profile_maintained == 'Y' and job.barrels_maintained == 'Y')}" class="badge badge-warning">Update Needed</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
 								</div>
 							</div>
 
-	<p th:text="@{/lkup/equipment/json}" id="baseurl">	
-	
 
-							<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
+								<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
 								<div class="card-header py-3">
 									<span class="h6 m-0 font-weight-bold text-primary">GRAPH</span>
 								</div>
@@ -180,6 +258,11 @@ $(document).ready(function(){
     	refreshChartData(this.id);
 
     });
+
+    $("#completedTable").delegate('tr', 'click', function() {
+    	refreshChartData(this.id);
+
+    });
     
     $("#alertTable").delegate('tr', 'click', function() {
     	refreshChartData(this.id);
@@ -187,8 +270,10 @@ $(document).ready(function(){
     });
     
     
-    var id = $("#activeTable tr:first")[0].id;
-    getChartData(id);
+    var firstActiveRow = $("#activeTable tr:first")[0];
+    if (firstActiveRow) {
+        getChartData(firstActiveRow.id);
+    }
 
     
 });
@@ -198,7 +283,7 @@ var myLineChart;
 
 function refreshChartData(cycle_sensor_id) {
 	 $.ajax({
-	     url: '/workbench/ss/samples/json/' + cycle_sensor_id,
+	     url: '/ss/samples/json/' + cycle_sensor_id,
 	     dataType: 'json',
 	     success: function (data) {
 	    	 
@@ -227,7 +312,7 @@ function refreshChartData(cycle_sensor_id) {
 	    	myLineChart.data.datasets[1].data = zone_one;
 		    myLineChart.data.datasets[2].data = zone_two;
 		    myLineChart.data.datasets[3].data = zone_three;
-		    myLineChart.options.title.text = 'CYCLE TEMPERATURE: #' + cycle_sensor_id;
+		    myLineChart.options.plugins.title.text = 'CYCLE TEMPERATURE: #' + cycle_sensor_id;
 		    myLineChart.data.labels = labels;
 		    myLineChart.update();
 	    }
@@ -237,7 +322,7 @@ function refreshChartData(cycle_sensor_id) {
 
 function getChartData(cycle_sensor_id) {
 	 $.ajax({
-	     url: '/workbench/ss/samples/json/' + cycle_sensor_id,
+	     url: '/ss/samples/json/' + cycle_sensor_id,
 	     dataType: 'json',
 	     success: function (retData) {
 	        plot(retData, cycle_sensor_id);
@@ -246,7 +331,7 @@ function getChartData(cycle_sensor_id) {
 }
 
  function plot(data, cycle_id) {     
-	 var ctx = $('#canvas');
+	 var ctx = document.getElementById('canvas');
 	 var zone_zero = data.map(function(e) {
 		 return e.zone_zero;
 	 })
@@ -270,13 +355,19 @@ function getChartData(cycle_sensor_id) {
 	 myLineChart = new Chart(ctx, {
 		    type: 'line',
 		    options: {
-		    	title: {
-		         	display: true,
-	            	text: 'CYCLE TEMPERATURE: #' + cycle_id,
-			    	maintainAspectRatio: true,
-			    	responsive: true,
-			    	fontSize: 14
-
+		    	maintainAspectRatio: false,
+		    	responsive: true,
+		    	plugins: {
+		    		legend: {
+		    			display: false
+		    		},
+		    		title: {
+			         	display: true,
+		            	text: 'CYCLE TEMPERATURE: #' + cycle_id,
+				    	font: {
+				    		size: 14
+				    	}
+			    	}
 		    	},
 	        },
 		    data: {

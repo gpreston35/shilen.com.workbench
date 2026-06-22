@@ -10,6 +10,7 @@ public class Alert {
 	private long value;
 	private int alert_id;
 	private String notified;
+	private String enabled = "Y";
 	private String description;
 	private int selected = 1;
 
@@ -39,6 +40,12 @@ public class Alert {
 	}
 	public void setNotified(String notified) {
 		this.notified = notified;
+	}
+	public String getEnabled() {
+		return enabled;
+	}
+	public void setEnabled(String enabled) {
+		this.enabled = enabled;
 	}
 	public String getRecipient() {
 		return recipient;

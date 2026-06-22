@@ -2,8 +2,10 @@ package com.shilen.app.workbench.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -16,6 +18,7 @@ import com.shilen.app.workbench.model.ss.Cycle;
 import com.shilen.app.workbench.model.ss.CycleSensor;
 import com.shilen.app.workbench.model.ss.Equipment;
 import com.shilen.app.workbench.model.ss.GraphCycle;
+import com.shilen.app.workbench.model.ss.Profile;
 import com.shilen.app.workbench.model.ss.Sample;
 import com.shilen.app.workbench.model.ss.Sensor;
 
@@ -24,16 +27,36 @@ public interface SensorsMapper {
 	
 
 	
-	@Select ("SELECT e.name equipment, concat('S',s.sensor_id) sensor, SEC_TO_TIME(TIMESTAMPDIFF(SECOND,start_cycle, NOW())) runtime," + 
-			"       result, errors, state, times_polled, last_poll, cs.cycle_sensor_id " + 
+	@Select ("SELECT e.name equipment, concat('S',s.sensor_id) sensor, SEC_TO_TIME(TIMESTAMPDIFF(SECOND, cs.start_cycle, NOW())) runtime," + 
+			"       cs.result, cs.errors, cs.state, cs.times_polled, cs.last_poll, cs.cycle_sensor_id, cs.cycle_id, " + 
+			"       CASE WHEN c.profile IS NULL OR TRIM(c.profile) = '' THEN 'N' ELSE 'Y' END AS profile_maintained, " +
+			"       CASE WHEN c.number_of_barrels IS NULL OR c.number_of_barrels <= 0 THEN 'N' ELSE 'Y' END AS barrels_maintained " +
 			"   FROM sensors.cycle_sensor cs, " + 
 			"        sensors.sensor s, " + 
-			"        sensors.equipment e " + 
+			"        sensors.equipment e, " +
+			"        sensors.cycle c " + 
 			"where " + 
 			"	cs.sensor_id = s.sensor_id " + 
 			"    AND s.equipment_id = e.equipment_id " + 
-			"	 AND state = 'RUNNING'")
+			"    AND cs.cycle_id = c.cycle_id " +
+			"	 AND UPPER(cs.state) IN ('RUNNING','ACTIVE')")
 	List<CycleSensor> getActive();
+
+	@Select ("SELECT e.name equipment, concat('S',s.sensor_id) sensor, SEC_TO_TIME(TIMESTAMPDIFF(SECOND, cs.start_cycle, IFNULL(cs.end_cycle, NOW()))) runtime," +
+			"       cs.result, cs.errors, cs.state, cs.times_polled, cs.last_poll, cs.cycle_sensor_id, cs.cycle_id, " +
+			"       CASE WHEN c.profile IS NULL OR TRIM(c.profile) = '' THEN 'N' ELSE 'Y' END AS profile_maintained, " +
+			"       CASE WHEN c.number_of_barrels IS NULL OR c.number_of_barrels <= 0 THEN 'N' ELSE 'Y' END AS barrels_maintained " +
+			"  FROM sensors.cycle_sensor cs, " +
+			"       sensors.sensor s, " +
+			"       sensors.equipment e, " +
+			"       sensors.cycle c " +
+			" WHERE cs.sensor_id = s.sensor_id " +
+			"   AND s.equipment_id = e.equipment_id " +
+			"   AND cs.cycle_id = c.cycle_id " +
+			"   AND UPPER(IFNULL(cs.state,'')) = 'COMPLETE' " +
+			"   AND IFNULL(cs.end_cycle, cs.last_poll) >= DATE_SUB(NOW(), INTERVAL 7 DAY) " +
+			" ORDER BY IFNULL(cs.end_cycle, cs.last_poll) DESC")
+	List<CycleSensor> getCompletedLast7Days();
 	
 	@Select ("SELECT sample, ts FROM sensors.sample where cycle_sensor_id = #{id} order by ts")
 	List<Sample> getSamples(int id);
@@ -64,7 +87,8 @@ public interface SensorsMapper {
 			"         sensors.alerts a " + 
 			"         inner join " + 
 			"         sensors.alert_recipients ar on a.cycle_id = ar.cycle_id " + 
-			"         and a.cycle_id in ( select cycle_id from sensors.cycle_sensor where state = 'RUNNING') " + 
+			"         and a.cycle_id in ( select cycle_id from sensors.cycle_sensor where UPPER(state) IN ('RUNNING','ACTIVE')) " + 
+			"         and UPPER(IFNULL(a.enabled,'Y')) = 'Y' " +
 			"         and a.notified = 'X' " + 
 			"         group by a.cycle_id, a.type, a.notification_type, a.notified_date, a.value")
 	@Results(value = {
@@ -82,7 +106,7 @@ public interface SensorsMapper {
 			"  and cs.cycle_id = #{cycle_id}")
 	List<CycleSensor> getCycleSensors( int cycle_id );
 	
-	@Select("select c.profile, e.name, c.cycle_id, c.number_of_barrels from " + 
+	@Select("select c.equipment_id, c.profile, c.poll_frequency, e.name as equipment_name, c.cycle_id, c.number_of_barrels, c.updated_dt from " + 
 			"		   sensors.cycle c, sensors.equipment e " + 
 			"	where " + 
 			"       c.equipment_id = e.equipment_id\n" + 
@@ -111,6 +135,19 @@ public interface SensorsMapper {
 	
 	@Select("SELECT * FROM sensors.sensor")
 	List<Sensor> getSensor();
+
+	@Select("SELECT s.*, " +
+			"CASE " +
+			"  WHEN EXISTS ( " +
+			"    SELECT 1 FROM sensors.cycle_sensor cs " +
+			"    WHERE cs.sensor_id = s.sensor_id " +
+			"      AND (UPPER(IFNULL(cs.state,'')) IN ('ACTIVE','RUNNING') " +
+			"           OR (cs.end_cycle IS NULL AND UPPER(IFNULL(cs.state,'')) <> 'COMPLETE'))" +
+			"  ) THEN 'RUNNING' " +
+			"  ELSE 'IDLE' " +
+			"END AS cycle_state " +
+			"FROM sensors.sensor s")
+	List<Sensor> getDashboardSensors();
 	
 	@Insert("INSERT into sensors.sensor ( equipment_id, ip_address, port, check_cmd, name, external, mac_address, description, active ) "
 			+ " value( #{equipment_id}, #{ip_address}, #{port}, #{check_cmd}, #{name}, #{external}, #{mac_address}, #{description}, #{active} )" )
@@ -122,15 +159,42 @@ public interface SensorsMapper {
 	
 	@Select("SELECT * from sensors.sensor where sensor_id = #{id}")
 	Sensor getSensorById(int id);
+
+	@Select("SELECT * FROM sensors.profile")
+	List<Profile> getProfile();
+
+	@Select("SELECT * FROM sensors.profile WHERE profile_id = #{id}")
+	Profile getProfileById(int id);
+
+	@Insert("INSERT INTO sensors.profile (name, description) VALUES (#{name}, #{description})")
+	void insertProfile(Profile profile);
+
+	@Update("UPDATE sensors.profile SET name = #{name}, description = #{description} WHERE profile_id = #{profile_id}")
+	void updateProfile(Profile profile);
+
+	@Update("DELETE FROM sensors.profile WHERE profile_id = #{id}")
+	void deleteProfile(int id);
 	
 	
 	@Insert("INSERT into sensors.cycle ( equipment_id, profile, poll_frequency, number_of_barrels, created ) values ( "
 			+ " #{equipment_id}, #{profile}, #{poll_frequency}, #{number_of_barrels}, NOW() )")
 	@Options(useGeneratedKeys = true, keyProperty="cycle_id", keyColumn="cycle_id") 
 	void insertCycle( Cycle cycle);
+
+	@Update("UPDATE sensors.cycle SET profile = #{profile}, number_of_barrels = #{number_of_barrels}, updated_dt = NOW() WHERE cycle_id = #{cycle_id}")
+	void updateCycleMaintenance(Cycle cycle);
 	
-	@Insert("INSERT into sensors.alerts ( cycle_id, type, notification_type, value, created ) values ( #{cycle_id}, #{type}, #{notification_type}, #{value}, NOW() )")
+	@Insert("INSERT into sensors.alerts ( cycle_id, type, notification_type, enabled, value, created ) values ( #{cycle_id}, #{type}, #{notification_type}, #{enabled}, #{value}, NOW() )")
 	void insertAlert( Alert alert );
+
+	@Delete("DELETE FROM sensors.alerts WHERE cycle_id = #{cycleId}")
+	void deleteCycleAlerts(@Param("cycleId") int cycleId);
+
+	@Delete("DELETE FROM sensors.alert_recipients WHERE cycle_id = #{cycleId}")
+	void deleteCycleAlertRecipients(@Param("cycleId") int cycleId);
+
+	@Insert("INSERT INTO sensors.alert_recipients (cycle_id, recipient) VALUES (#{cycleId}, #{recipient})")
+	void insertAlertRecipient(@Param("cycleId") int cycleId, @Param("recipient") String recipient);
 	
 
 }
