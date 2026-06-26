@@ -1,6 +1,5 @@
 package com.shilen.app.workbench;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -102,25 +100,39 @@ public class SensorsController {
 		return ResponseEntity.ok(result);
 	}
 	
-	
 	@PostMapping("/ss/cycle/insert")
-	 public String cycle_insert(@ModelAttribute Cycle cycle, Errors errors, Model model) {
+	@Transactional
+	public String cycle_insert(@ModelAttribute("FORM") Cycle cycle, Model model) {
+		cycle.setPoll_frequency(defaultInt(cycle.getPoll_frequency(), 1));
+		cycle.setNumber_of_barrels(defaultInt(cycle.getNumber_of_barrels(), 0));
+		prepareCycleCreateSubmission(cycle);
 
-		  cycle.setPoll_frequency(defaultInt(cycle.getPoll_frequency(), 1));
-		  cycle.setNumber_of_barrels(defaultInt(cycle.getNumber_of_barrels(), 0));
-		  if (cycle.getAlerts() == null || cycle.getAlerts().isEmpty()) {
-		  	prepareCycleForm(cycle, false);
-		  }
+		Integer equipmentId = cycle.getEquipment_id();
+		if (equipmentId == null) {
+			model.addAttribute("FORM", cycle);
+			model.addAttribute("PROFILES", sensorsMapper.getProfile());
+			model.addAttribute("EDIT_MODE", false);
+			model.addAttribute("CYCLE_ERROR", "Unable to start cycle: equipment is required.");
+			return "ss/cycle";
+		}
 
-		  sensorsMapper.insertCycle(cycle);
-		  persistCycleAlerts(cycle.getCycle_id(), cycle.getAlerts());
-		    
-	 	  model.addAttribute("FORM", cycle);
-		  
-	 	 return "ss/cycle";
-	 	  
-	 }
+		Integer primarySensorId = sensorsMapper.findPrimaryActiveSensorIdForEquipment(equipmentId);
+		if (primarySensorId == null) {
+			model.addAttribute("FORM", cycle);
+			model.addAttribute("PROFILES", sensorsMapper.getProfile());
+			model.addAttribute("EDIT_MODE", false);
+			model.addAttribute("CYCLE_ERROR", "Unable to start cycle: no active sensor is configured for this equipment.");
+			return "ss/cycle";
+		}
 
+		sensorsMapper.insertCycle(cycle);
+		sensorsMapper.insertCycleSensor(cycle.getCycle_id(), primarySensorId);
+		persistCycleAlerts(cycle.getCycle_id(), cycle.getAlerts());
+		persistCycleRecipients(cycle.getCycle_id(), cycle.getUsers());
+		return renderCyclePage(cycle.getCycle_id(), "Cycle successfully added", model);
+	}
+	
+	
 	@PostMapping("/ss/cycle/maintain")
 	@Transactional
 	public String cycle_maintain(@ModelAttribute("FORM") Cycle cycle, Model model) {
@@ -139,16 +151,8 @@ public class SensorsController {
 		sensorsMapper.updateCycleMaintenance(cycle);
 
 		persistCycleAlerts(cycleId, cycle.getAlerts());
-
-		sensorsMapper.deleteCycleAlertRecipients(cycleId);
-		if (cycle.getUsers() != null) {
-			for (User user : cycle.getUsers()) {
-				if (user != null && user.getChecked() == 1 && StringUtils.hasText(user.getSms_email())) {
-					sensorsMapper.insertAlertRecipient(cycleId, user.getSms_email());
-				}
-			}
-		}
-		return "redirect:/ss/home";
+		persistCycleRecipients(cycleId, cycle.getUsers());
+		return renderCyclePage(cycleId, "Cycle successfully updated", model);
 	}
 	
 	
@@ -196,21 +200,17 @@ public class SensorsController {
 		return sensorsMapper.getProfileById( id );
 
 	}
-	
-	
-	@GetMapping("/ss/cycle/add")   
-	public String cycle_add(Model model) {
 
+
+	@GetMapping("/ss/cycle/add")
+	public String cycle_add(Model model) {
 		Cycle cycle = new Cycle();
 		prepareCycleForm(cycle, false);
-		
-		model.addAttribute("FORM", cycle );
+		model.addAttribute("FORM", cycle);
 		model.addAttribute("PROFILES", sensorsMapper.getProfile());
 		model.addAttribute("EDIT_MODE", false);
-
 		return "ss/cycle";
-
-	} 	
+	}
 
 	@GetMapping("/ss/cycle/edit/{id}")
 	public String cycle_edit(@PathVariable("id") int id, Model model) {
@@ -222,16 +222,45 @@ public class SensorsController {
 		return "ss/cycle";
 	}
 
+	private String renderCyclePage(int cycleId, String successMessage, Model model) {
+		Cycle savedCycle = sensorsMapper.getCycle(cycleId);
+		if (savedCycle == null) {
+			Cycle emptyCycle = new Cycle();
+			prepareCycleForm(emptyCycle, false);
+			model.addAttribute("FORM", emptyCycle);
+			model.addAttribute("PROFILES", sensorsMapper.getProfile());
+			model.addAttribute("EDIT_MODE", false);
+			model.addAttribute("CYCLE_ERROR", "Unable to load cycle after save.");
+			return "ss/cycle";
+		}
+		prepareCycleForm(savedCycle, true);
+		model.addAttribute("FORM", savedCycle);
+		model.addAttribute("PROFILES", sensorsMapper.getProfile());
+		model.addAttribute("EDIT_MODE", true);
+		model.addAttribute("CYCLE_SUCCESS", successMessage);
+		return "ss/cycle";
+	}
+
 	private void prepareCycleForm(Cycle cycle, boolean isEdit) {
 		List<Alert> persistedAlerts = List.of();
-		Set<String> persistedRecipients = new HashSet<>();
+		Map<Integer, String> persistedRecipientsByUserId = Map.of();
+		Map<String, String> persistedRecipientsByAddress = Map.of();
 		boolean hasPersistedConfig = false;
 		if (isEdit && cycle.getCycle_id() != null) {
 			persistedAlerts = sensorsMapper.getCycleAlerts(cycle.getCycle_id());
-			persistedRecipients = sensorsMapper.getCycleAlertRecipient(cycle.getCycle_id()).stream()
-					.map(Alert::getRecipient)
-					.filter(StringUtils::hasText)
-					.collect(Collectors.toCollection(HashSet::new));
+			List<Alert> persistedRecipients = sensorsMapper.getCycleAlertRecipient(cycle.getCycle_id());
+			persistedRecipientsByUserId = persistedRecipients.stream()
+					.filter(alert -> alert.getUser_id() != null)
+					.collect(Collectors.toMap(
+							Alert::getUser_id,
+							alert -> StringUtils.hasText(alert.getEnabled()) ? alert.getEnabled().trim() : "Y",
+							(first, second) -> second));
+			persistedRecipientsByAddress = persistedRecipients.stream()
+					.filter(alert -> StringUtils.hasText(alert.getRecipient()))
+					.collect(Collectors.toMap(
+							alert -> alert.getRecipient().trim(),
+							alert -> StringUtils.hasText(alert.getEnabled()) ? alert.getEnabled().trim() : "Y",
+							(first, second) -> second));
 			hasPersistedConfig = !persistedAlerts.isEmpty()
 					|| !persistedRecipients.isEmpty()
 					|| StringUtils.hasText(cycle.getUpdated_dt());
@@ -285,14 +314,42 @@ public class SensorsController {
 				}
 			} else {
 				for (User user : cycle.getUsers()) {
-					user.setChecked(persistedRecipients.contains(user.getSms_email()) ? 1 : 0);
+					String enabled = persistedRecipientsByUserId.get(user.getId());
+					if (!StringUtils.hasText(enabled) && StringUtils.hasText(user.getSms_email())) {
+						enabled = persistedRecipientsByAddress.get(user.getSms_email().trim());
+					}
+					user.setChecked("Y".equalsIgnoreCase(enabled) ? 1 : 0);
 				}
+			}
+		} else {
+			for (User user : cycle.getUsers()) {
+				user.setChecked(1);
 			}
 		}
 	}
 
 	private int defaultInt(Integer value, int fallback) {
 		return value == null ? fallback : value;
+	}
+
+	private void prepareCycleCreateSubmission(Cycle cycle) {
+		if (cycle.getAlerts() == null || cycle.getAlerts().isEmpty()) {
+			cycle.getAlerts().add(new Alert("ALERT_MAX_ERRORS", "E", "Error threshold", 10));
+			cycle.getAlerts().add(new Alert("ALERT_TEMP_ASC", "W", "Temp threshold (ascending)", 675));
+			cycle.getAlerts().add(new Alert("ALERT_TEMP_DESC", "W", "Temp threshold (descending)", 300));
+			cycle.getAlerts().add(new Alert("ALERT_MAX_TEMP", "W", "Temp threshold (max)", 1200));
+			cycle.getAlerts().add(new Alert("ALERT_MAX_RUNTIME", "W", "Cycle run time (hours)", 24));
+			for (Alert alert : cycle.getAlerts()) {
+				alert.setSelected(2);
+			}
+		}
+
+		if (cycle.getUsers() == null || cycle.getUsers().isEmpty()) {
+			cycle.setUsers(lookupMapper.getSensorUsers());
+			for (User user : cycle.getUsers()) {
+				user.setChecked(1);
+			}
+		}
 	}
 
 	private void persistCycleAlerts(Integer cycleId, List<Alert> alerts) {
@@ -310,6 +367,26 @@ public class SensorsController {
 			alert.setCycle_id(cycleId);
 			alert.setEnabled(alert.getSelected() == 2 ? "Y" : "N");
 			sensorsMapper.insertAlert(alert);
+		}
+	}
+
+	private void persistCycleRecipients(Integer cycleId, List<User> users) {
+		if (cycleId == null) {
+			return;
+		}
+		sensorsMapper.deleteCycleAlertRecipients(cycleId);
+		if (users == null) {
+			return;
+		}
+		for (User user : users) {
+			if (user == null || !StringUtils.hasText(user.getSms_email())) {
+				continue;
+			}
+			sensorsMapper.insertAlertRecipient(
+					cycleId,
+					user.getId(),
+					user.getSms_email().trim(),
+					user.getChecked() == 1 ? "Y" : "N");
 		}
 	}
 

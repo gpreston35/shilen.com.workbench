@@ -56,19 +56,20 @@
 								</div>
 								<div class="card-body">
 
-									<form th:action="${EDIT_MODE} ? @{/ss/cycle/maintain} : @{/ss/cycle/insert}" th:object="${FORM}" method="post" id="cycleform">
-										<div th:if="${CYCLE_ERROR}" class="alert alert-danger" th:text="${CYCLE_ERROR}"></div>
-										<input type="hidden" th:field="*{cycle_id}" />
-										<input type="hidden" th:field="*{poll_frequency}" />
-										<div class="form-group">
-											<label for="equipment_id">Equipment</label> 
-											<select th:if="${!EDIT_MODE}" class="form-control form-control-sm" id="equipment_id" name="equipment_id"
-												th:data-selected="*{equipment_id}">
-											</select>
-											<input th:if="${EDIT_MODE}" type="text" class="form-control form-control-sm"
-												th:value="*{equipment_name}" readonly />
-											<input th:if="${EDIT_MODE}" type="hidden" th:field="*{equipment_id}" />
-										</div>
+										<form th:action="${EDIT_MODE} ? @{/ss/cycle/maintain} : @{/ss/cycle/insert}" th:object="${FORM}" method="post" id="cycleform">
+											<div th:if="${CYCLE_ERROR}" class="alert alert-danger" th:text="${CYCLE_ERROR}"></div>
+											<div th:if="${CYCLE_SUCCESS}" class="alert alert-success" th:text="${CYCLE_SUCCESS}"></div>
+											<input type="hidden" th:field="*{cycle_id}" />
+											<input type="hidden" th:field="*{poll_frequency}" />
+											<div class="form-group">
+												<label for="equipment_id">Equipment</label> 
+												<select th:if="${!EDIT_MODE}" class="form-control form-control-sm" id="equipment_id" name="equipment_id"
+													th:data-selected="*{equipment_id}">
+												</select>
+												<input th:if="${EDIT_MODE}" type="text" class="form-control form-control-sm"
+													th:value="*{equipment_name}" readonly />
+												<input th:if="${EDIT_MODE}" type="hidden" th:field="*{equipment_id}" />
+											</div>
 										<div class="form-group">
 											<label for="profile">Profile</label> 
 											<select class="form-control form-control-sm" id="profile" th:field="*{profile}">
@@ -123,14 +124,21 @@
 										<tbody>
 											<tr th:each="u, itemStat: *{users}">
 												
-												<td class="cycle-checkbox-cell"><input type="hidden" th:field="*{users[__${itemStat.index}__].checked}" class="user-checked-hidden"/><input type="checkbox" class="cycle-checkbox user-checked-toggle" th:checked="${u.checked == 1}"/></td>
+												<td class="cycle-checkbox-cell">
+													<input type="hidden" th:field="*{users[__${itemStat.index}__].id}" />
+													<input type="hidden" th:field="*{users[__${itemStat.index}__].sms_email}" />
+													<input type="hidden" th:field="*{users[__${itemStat.index}__].first_name}" />
+													<input type="hidden" th:field="*{users[__${itemStat.index}__].last_name}" />
+													<input type="hidden" th:field="*{users[__${itemStat.index}__].checked}" class="user-checked-hidden"/>
+													<input type="checkbox" class="cycle-checkbox user-checked-toggle" th:checked="${u.checked == 1}"/>
+												</td>
 												<td><span th:text="*{users[__${itemStat.index}__].full_name}"></span></td>
 											</tr>
 										</tbody>
 									</table>
 									
 									
-									<button type="submit" class="btn btn-primary" th:text="${EDIT_MODE} ? 'Save Maintenance' : 'Save'">Save</button>
+										<button type="submit" class="btn btn-primary" th:text="${EDIT_MODE} ? 'Update' : 'Save'">Save</button>
 
 
 									</form>
@@ -178,24 +186,21 @@
 	
 	 $(document).ready(function() {
 	
-		if ($('#equipment_id').length) {
-		$.getJSON('/lkup/equipment/json',
-			function(data) {
-		
-				$('#equipment_id').empty();
-	            $.each(data, function(i, obj){
-	                    $('#equipment_id').append($('<option>').text(obj.value).attr('value', obj.id));
-	            });
-	            var selectedEquipment = $('#equipment_id').data('selected');
-	            if (selectedEquipment !== undefined && selectedEquipment !== null && selectedEquipment !== '' && Number(selectedEquipment) > 0) {
-	            	$('#equipment_id').val(String(selectedEquipment));
-	            }
+			if ($('#equipment_id').length) {
+				$.getJSON('/lkup/equipment/json',
+					function(data) {
+						$('#equipment_id').empty();
+						$.each(data, function(i, obj) {
+							$('#equipment_id').append($('<option>').text(obj.value).attr('value', obj.id));
+						});
+						var selectedEquipment = $('#equipment_id').data('selected');
+						if (selectedEquipment !== undefined && selectedEquipment !== null && selectedEquipment !== '' && Number(selectedEquipment) > 0) {
+							$('#equipment_id').val(String(selectedEquipment));
+						}
+					});
+			}
 
-			});
-		}
-		
-		
-		function syncCycleMaintenanceFields() {
+			function syncCycleMaintenanceFields() {
 			$('.alert-selected-toggle').each(function(index) {
 				$('.alert-selected-hidden').eq(index).val(this.checked ? '2' : '1');
 			});

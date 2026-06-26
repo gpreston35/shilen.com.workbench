@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Select;
 
+import com.shilen.app.workbench.model.DashboardLink;
 import com.shilen.app.workbench.model.PickList;
 import com.shilen.app.workbench.model.User;
 
@@ -21,9 +22,16 @@ public interface LookupMapper {
 	@Select("SELECT equipment_id id, name value FROM sensors.equipment")
 	List<PickList> getEquipment();
 	
-	@Select("SELECT first_name, last_name, sms_email FROM operations.user")
+	@Select("SELECT id, first_name, last_name, sms_email "
+			+ "FROM operations.user "
+			+ "WHERE IFNULL(TRIM(sms_email), '') <> '' "
+			+ "ORDER BY first_name, last_name")
 	List<User> getSensorUsers();
 	
+
+	@Select("SELECT id, IFNULL(label, '') label, IFNULL(url, '') url FROM operations.dashboard_link ORDER BY id")
+	List<DashboardLink> getDashboardLinks();
+
 	@Select("SELECT id, spindle value FROM operations.lk_spindle order by spindle")
 	List<PickList> getSpindles();
 	

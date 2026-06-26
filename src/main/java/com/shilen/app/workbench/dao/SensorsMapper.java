@@ -87,6 +87,7 @@ public interface SensorsMapper {
 			"         sensors.alerts a " + 
 			"         inner join " + 
 			"         sensors.alert_recipients ar on a.cycle_id = ar.cycle_id " + 
+			"         and UPPER(IFNULL(ar.enabled,'Y')) = 'Y' " +
 			"         and a.cycle_id in ( select cycle_id from sensors.cycle_sensor where UPPER(state) IN ('RUNNING','ACTIVE')) " + 
 			"         and UPPER(IFNULL(a.enabled,'Y')) = 'Y' " +
 			"         and a.notified = 'X' " + 
@@ -116,7 +117,7 @@ public interface SensorsMapper {
 	@Select("SELECT * FROM sensors.alerts where cycle_id = #{cycle_id}")
 	List<Alert> getCycleAlerts( int cycle_id );
 	
-	@Select("SELECT recipient FROM sensors.alert_recipients where cycle_id = #{cycle_id}")
+	@Select("SELECT user_id, recipient, IFNULL(enabled,'Y') enabled FROM sensors.alert_recipients where cycle_id = #{cycle_id}")
 	List<Alert> getCycleAlertRecipient( int cycle_id );
 	
 	@Select("SELECT * from sensors.equipment")
@@ -181,6 +182,17 @@ public interface SensorsMapper {
 	@Options(useGeneratedKeys = true, keyProperty="cycle_id", keyColumn="cycle_id") 
 	void insertCycle( Cycle cycle);
 
+	@Select("SELECT sensor_id FROM sensors.sensor " +
+			"WHERE equipment_id = #{equipmentId} " +
+			"  AND UPPER(IFNULL(active,'Y')) = 'Y' " +
+			"ORDER BY sensor_id " +
+			"LIMIT 1")
+	Integer findPrimaryActiveSensorIdForEquipment(@Param("equipmentId") int equipmentId);
+
+	@Insert("INSERT INTO sensors.cycle_sensor (cycle_id, sensor_id, start_cycle, last_poll, times_polled, errors, state) " +
+			"VALUES (#{cycleId}, #{sensorId}, NOW(), NOW(), 0, 0, 'Active')")
+	void insertCycleSensor(@Param("cycleId") int cycleId, @Param("sensorId") int sensorId);
+
 	@Update("UPDATE sensors.cycle SET profile = #{profile}, number_of_barrels = #{number_of_barrels}, updated_dt = NOW() WHERE cycle_id = #{cycle_id}")
 	void updateCycleMaintenance(Cycle cycle);
 	
@@ -193,8 +205,8 @@ public interface SensorsMapper {
 	@Delete("DELETE FROM sensors.alert_recipients WHERE cycle_id = #{cycleId}")
 	void deleteCycleAlertRecipients(@Param("cycleId") int cycleId);
 
-	@Insert("INSERT INTO sensors.alert_recipients (cycle_id, recipient) VALUES (#{cycleId}, #{recipient})")
-	void insertAlertRecipient(@Param("cycleId") int cycleId, @Param("recipient") String recipient);
+	@Insert("INSERT INTO sensors.alert_recipients (cycle_id, user_id, recipient, enabled) VALUES (#{cycleId}, #{userId}, #{recipient}, #{enabled})")
+	void insertAlertRecipient(@Param("cycleId") int cycleId, @Param("userId") Integer userId, @Param("recipient") String recipient, @Param("enabled") String enabled);
 	
 
 }

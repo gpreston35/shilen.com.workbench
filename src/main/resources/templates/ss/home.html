@@ -190,22 +190,9 @@
 							</div>
 
 
-								<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
-								<div class="card-header py-3">
-									<span class="h6 m-0 font-weight-bold text-primary">GRAPH</span>
-								</div>
-								<div class="card-body">
-									<div class="chart-container"
-										style="position: relative; height: 40vh; width: 100%">
-										<canvas id="canvas"></canvas>
-									</div>
-								</div>
 							</div>
-
-
+							<!-- /.page-section -->
 						</div>
-						<!-- /.page-section -->
-					</div>
 					<!-- /.page-inner -->
 				</div>
 				<!-- /.page -->
@@ -214,11 +201,29 @@
 			<div th:replace="~{fragments/footer}"></div>
 
 
-			<!-- /.wrapper -->
-		</main>
-		<!-- /.app-main -->
-	</div>
-	<!-- /.app -->
+				<!-- /.wrapper -->
+			</main>
+			<!-- /.app-main -->
+		</div>
+		<!-- /.app -->
+
+		<div class="modal fade" id="cycleGraphModal" tabindex="-1" role="dialog" aria-labelledby="cycleGraphModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-xl" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="cycleGraphModalLabel">Cycle Temperature Graph</h5>
+					</div>
+					<div class="modal-body">
+						<div class="chart-container" style="position: relative; height: 55vh; width: 100%">
+							<canvas id="canvas"></canvas>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 
 	<!-- BEGIN BASE JS -->
@@ -255,36 +260,34 @@
 
 $(document).ready(function(){
     $("#activeTable").delegate('tr', 'click', function() {
-    	refreshChartData(this.id);
-
+		openCycleGraph(this.id);
     });
 
     $("#completedTable").delegate('tr', 'click', function() {
-    	refreshChartData(this.id);
-
+		openCycleGraph(this.id);
     });
-    
-    $("#alertTable").delegate('tr', 'click', function() {
-    	refreshChartData(this.id);
-    	
-    });
-    
-    
-    var firstActiveRow = $("#activeTable tr:first")[0];
-    if (firstActiveRow) {
-        getChartData(firstActiveRow.id);
-    }
-
-    
 });
 
 
 var myLineChart; 
 
+function openCycleGraph(cycle_sensor_id) {
+	if (!cycle_sensor_id) {
+		return;
+	}
+	$('#cycleGraphModal').modal('show');
+	refreshChartData(cycle_sensor_id);
+}
+
 function refreshChartData(cycle_sensor_id) {
-	 $.ajax({
-	     url: '/ss/samples/json/' + cycle_sensor_id,
-	     dataType: 'json',
+	 if (!myLineChart) {
+		 getChartData(cycle_sensor_id);
+		 return;
+	 }
+
+		 $.ajax({
+		     url: '/ss/samples/json/' + cycle_sensor_id,
+		     dataType: 'json',
 	     success: function (data) {
 	    	 
 	    	 var zone_zero = data.map(function(e) {
