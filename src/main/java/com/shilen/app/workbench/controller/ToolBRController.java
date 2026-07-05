@@ -45,6 +45,7 @@ public class ToolBRController {
 	public String home(Model model, final HttpServletRequest request) {
 		ToolSearchForm searchForm = new ToolSearchForm();
 		model.addAttribute("SEARCH_FORM", searchForm);
+		model.addAttribute("PRESETS", mapper.GetBoreReamerPresets());
 		return "tool/bore_reamer_home";
 	}
 
@@ -121,8 +122,9 @@ public class ToolBRController {
 
 	@RequestMapping("/tool/br/search")
 	public String read(@ModelAttribute ToolSearchForm form, Model model) {
-		model.addAttribute("RESULTS", mapper.Search(Utils.ifNull(form.getSearch_term()).toUpperCase()));
+		model.addAttribute("RESULTS", mapper.Search(form));
 		model.addAttribute("SEARCH_FORM", form);
+		model.addAttribute("PRESETS", mapper.GetBoreReamerPresets());
 		return "tool/bore_reamer_home";
 	}
 }

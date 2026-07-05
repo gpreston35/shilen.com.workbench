@@ -59,30 +59,40 @@
 
 										<div class="form-row">
 											<div class="col-md-6 mb-3">
+												<label class="control-label" for="active">Active</label>
+												<select name="active" th:field="*{active}" id="active"
+													class="form-control form-control-sm">
+													<option value=""></option>
+													<option value="1">Yes</option>
+													<option value="0">No</option>
+												</select>
+											</div>
+											<div class="col-md-6 mb-3">
 												<label class="control-label" for="search_term">Tool Identifier</label>
 												<input type="text" class="form-control form-control-sm" id="search_term"
 													th:field="*{search_term}" placeholder="ex BR0243">
-											</div>
-											<div class="col-md-6 mb-3">
-												<label class="control-label" for="style">Style</label>
-												<input type="text" class="form-control form-control-sm" id="style"
-													th:field="*{style}">
 											</div>
 									    </div>
 
 										<div class="form-row">
 											<div class="col-md-4 mb-3">
-												<label class="control-label" for="flute_count">Flute Count</label>
-												<input type="number" class="form-control form-control-sm" id="flute_count"
-													th:field="*{flute_count}">
+												<label class="control-label" for="preset_id">Caliber</label>
+												<select name="preset_id" th:field="*{preset_id}"
+													id="preset_id" class="form-control form-control-sm">
+													<option value=""></option>
+													<option th:each="preset : ${PRESETS}" th:value="${preset.id}"
+														th:data-low="${#numbers.formatDecimal(preset.bore_reamer_low, 1, 4)}"
+														th:data-high="${#numbers.formatDecimal(preset.bore_reamer_high, 1, 4)}"
+														th:text="${preset.caliber}"></option>
+												</select>
 											</div>
 											<div class="col-md-4 mb-3">
-												<label class="control-label" for="diameter_from">Diameter Measured From</label>
+												<label class="control-label" for="diameter_from">As Measured Low</label>
 												<input type="number" step="0.0001" class="form-control form-control-sm"
 													id="diameter_from" th:field="*{diameter_from}">
 											</div>
 											<div class="col-md-4 mb-3">
-												<label class="control-label" for="diameter_to">Diameter Measured To</label>
+												<label class="control-label" for="diameter_to">As Measured High</label>
 												<input type="number" step="0.0001" class="form-control form-control-sm"
 													id="diameter_to" th:field="*{diameter_to}">
 											</div>
@@ -187,7 +197,12 @@
 
 
 	<script>
-    
+		$('#preset_id').on('change', function() {
+			var selected = $(this).find('option:selected');
+			$('#diameter_from').val(selected.data('low') || '');
+			$('#diameter_to').val(selected.data('high') || '');
+		});
+		
 	    $(document).ready(function() {
 	        $('#results').DataTable();
 	    } );

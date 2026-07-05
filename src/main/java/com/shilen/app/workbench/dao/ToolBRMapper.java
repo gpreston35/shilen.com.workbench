@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.shilen.app.workbench.model.PickList;
+import com.shilen.app.workbench.model.config.Caliber;
 import com.shilen.app.workbench.model.tool.BoreReamer;
 import com.shilen.app.workbench.model.tool.ToolSearchForm;
 
@@ -34,9 +34,19 @@ public interface ToolBRMapper {
 			+ "   <if test=\"diameter_to != null\">"
 			+ "   AND r.dia_am &lt;= #{diameter_to}"
 			+ "   </if>"
+			+ "   <if test=\"active != null\">"
+			+ "   AND r.status_id = #{active}"
+			+ "   </if>"
 			+ " ORDER BY r.tool_identifier"
 			+ "</script>")
 	List<BoreReamer> Search(ToolSearchForm form);
+
+	@Select("SELECT id, caliber, bore_reamer_low, bore_reamer_high "
+			+ "FROM operations.caliber "
+			+ "WHERE IFNULL(bore_reamer_low, 0) <> 0 "
+			+ "  AND IFNULL(bore_reamer_high, 0) <> 0 "
+			+ "ORDER BY caliber")
+	List<Caliber> GetBoreReamerPresets();
 	
 	
 	@Insert( "INSERT into operations.tool_bore_reamer "
@@ -103,4 +113,3 @@ public interface ToolBRMapper {
 		 
 	  
 }
-

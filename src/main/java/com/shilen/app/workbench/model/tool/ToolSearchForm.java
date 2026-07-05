@@ -12,6 +12,8 @@ public class ToolSearchForm {
 	private String rifling_type;
 	private BigDecimal diameter_from;
 	private BigDecimal diameter_to;
+	private Integer preset_id;
+	private Integer active;
 
 	public String getSearch_term() {
 		return search_term;
@@ -67,5 +69,21 @@ public class ToolSearchForm {
 
 	public void setDiameter_to(BigDecimal diameter_to) {
 		this.diameter_to = diameter_to;
+	}
+
+	public Integer getPreset_id() {
+		return preset_id;
+	}
+
+	public void setPreset_id(Integer preset_id) {
+		this.preset_id = preset_id;
+	}
+
+	public Integer getActive() {
+		return active;
+	}
+
+	public void setActive(Integer active) {
+		this.active = active;
 	}
 }
