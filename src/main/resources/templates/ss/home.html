@@ -51,6 +51,9 @@
 										<a th:href="@{/ss/profile}" class="btn btn-secondary">
 											<i class="fas fa-sliders-h"></i>&nbsp;Profiles
 										</a>
+										<a th:href="@{/ss/alerttype}" class="btn btn-secondary">
+											<i class="fas fa-bell"></i>&nbsp;Alert Types
+										</a>
 										<a th:href="@{/ss/cycle/add}" class="btn btn-secondary">
 											<i class="fas fa-sync-alt"></i>&nbsp;Cycle
 										</a>
@@ -67,18 +70,28 @@
 										style="width: 100%;">
 										<thead>
 											<tr>
-												<th>ID</th>
+												<th>CYCLE ID</th>
 												<th>TYPE</th>
 												<th>NOTIFICATION</th>
 												<th>VALUE</th>
-												<th>DATE</th>
+												<th>TRIGGER TIMESTAMP</th>
 											</tr>
 										</thead>
 										<tbody id="alertTable">
 											<tr th:each="alert : ${ALERTS}" th:id="${alert.cycle_id}">
 												<td th:text="${alert.cycle_id}" />
-												<td th:text="${alert.notification_type}" />
 												<td th:text="${alert.type}" />
+												<td>
+													<span class="badge badge-danger"
+													      th:if="${alert.notification_type != null and #strings.toUpperCase(alert.notification_type) == 'E'}">Error</span>
+													<span class="badge badge-warning"
+													      th:if="${alert.notification_type != null and #strings.toUpperCase(alert.notification_type) == 'W'}">Warning</span>
+													<span class="badge badge-info"
+													      th:if="${alert.notification_type != null and #strings.toUpperCase(alert.notification_type) == 'I'}">Information</span>
+													<span class="badge badge-secondary"
+													      th:if="${alert.notification_type == null or (#strings.toUpperCase(alert.notification_type) != 'E' and #strings.toUpperCase(alert.notification_type) != 'W' and #strings.toUpperCase(alert.notification_type) != 'I')}"
+													      th:text="${alert.notification_type}"></span>
+												</td>
 												<td th:text="${alert.value}" />
 												<td th:text="${alert.notified_date}" />
 											</tr>
@@ -126,7 +139,7 @@
 														<i class="far fa-edit"></i>
 													</a>
 												</td>
-												<td th:text="${job.cycle_sensor_id}" />
+												<td th:text="${job.cycle_id}" />
 												<td th:text="${job.equipment}" />
 												<td th:text="${job.sensor}" />
 												<td th:text="${job.runtime}" />
@@ -172,7 +185,7 @@
 														<i class="far fa-edit"></i>
 													</a>
 												</td>
-												<td th:text="${job.cycle_sensor_id}" />
+												<td th:text="${job.cycle_id}" />
 												<td th:text="${job.equipment}" />
 												<td th:text="${job.sensor}" />
 												<td th:text="${job.runtime}" />
@@ -213,11 +226,11 @@
 					<div class="modal-header">
 						<h5 class="modal-title" id="cycleGraphModalLabel">Cycle Temperature Graph</h5>
 					</div>
-					<div class="modal-body">
-						<div class="chart-container" style="position: relative; height: 55vh; width: 100%">
-							<canvas id="canvas"></canvas>
+						<div class="modal-body">
+							<div class="chart-container" style="position: relative; height: 55vh; width: 100%">
+								<div id="cycle-chart" style="height: 100%; width: 100%"></div>
+							</div>
 						</div>
-					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 					</div>
@@ -247,8 +260,8 @@
 	<script
 		th:src="@{/assets/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
 
-	<!-- Page level plugins -->
-	<script th:src="@{/assets/vendor/chart.js/Chart.min.js}"></script>
+		<!-- Page level plugins -->
+		<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 
 
 
@@ -269,165 +282,88 @@ $(document).ready(function(){
 });
 
 
-var myLineChart; 
+var cycleChart;
 
 function openCycleGraph(cycle_sensor_id) {
 	if (!cycle_sensor_id) {
 		return;
 	}
 	$('#cycleGraphModal').modal('show');
-	refreshChartData(cycle_sensor_id);
+	loadCycleChartData(cycle_sensor_id);
 }
 
-function refreshChartData(cycle_sensor_id) {
-	 if (!myLineChart) {
-		 getChartData(cycle_sensor_id);
-		 return;
-	 }
-
-		 $.ajax({
-		     url: '/ss/samples/json/' + cycle_sensor_id,
-		     dataType: 'json',
-	     success: function (data) {
-	    	 
-	    	 var zone_zero = data.map(function(e) {
-	    		 return e.zone_zero;
-	    	 })
-	    	 
-	    	 var zone_one = data.map(function(e) {
-	    		 return e.zone_one;
-	    	 })
-	    	 
-	    	 var zone_two = data.map(function(e) {
-	    		 return e.zone_two;
-	    	 })
-	    	 
-	    	 var zone_three = data.map(function(e) {
-	    		 return e.zone_three;
-	    	 })
-	    	 
-	    	 var labels = data.map(function(e) {
-	    		 return e.timeblock;
-	    	 })
-	    	 
-	    	myLineChart.clear(); 
-	    	myLineChart.data.datasets[0].data = zone_zero;
-	    	myLineChart.data.datasets[1].data = zone_one;
-		    myLineChart.data.datasets[2].data = zone_two;
-		    myLineChart.data.datasets[3].data = zone_three;
-		    myLineChart.options.plugins.title.text = 'CYCLE TEMPERATURE: #' + cycle_sensor_id;
-		    myLineChart.data.labels = labels;
-		    myLineChart.update();
-	    }
-	 });
-}
-
-
-function getChartData(cycle_sensor_id) {
+function loadCycleChartData(cycle_sensor_id) {
 	 $.ajax({
 	     url: '/ss/samples/json/' + cycle_sensor_id,
 	     dataType: 'json',
-	     success: function (retData) {
-	        plot(retData, cycle_sensor_id);
+	     success: function (data) {
+	        renderCycleChart(data, cycle_sensor_id);
 	    }
 	 });
 }
 
- function plot(data, cycle_id) {     
-	 var ctx = document.getElementById('canvas');
-	 var zone_zero = data.map(function(e) {
-		 return e.zone_zero;
-	 })
-	 
-	 var zone_one = data.map(function(e) {
-		 return e.zone_one;
-	 })
-	 
-	 var zone_two = data.map(function(e) {
-		 return e.zone_two;
-	 })
-	 
-	 var zone_three = data.map(function(e) {
-		 return e.zone_three;
-	 })
-	 
-	 var labels = data.map(function(e) {
-		 return e.timeblock;
-	 })
-	 
-	 myLineChart = new Chart(ctx, {
-		    type: 'line',
-		    options: {
-		    	maintainAspectRatio: false,
-		    	responsive: true,
-		    	plugins: {
-		    		legend: {
-		    			display: false
-		    		},
-		    		title: {
-			         	display: true,
-		            	text: 'CYCLE TEMPERATURE: #' + cycle_id,
-				    	font: {
-				    		size: 14
-				    	}
-			    	}
-		    	},
-	        },
-		    data: {
-		    	labels: labels,
-		    	datasets: [{
-		    		label: "External A",
-		    		stacked: false,
-		    		data: zone_zero,
-		    		borderWidth: 1,
-		    		pointRadius: 0,
-		            fill: false,
-		            borderColor: "rgba(0, 0, 255, 1)",
-		            pointBackgroundColor: "rgba(225, 225, 225, 1)",
-		            pointBorderColor: "rgba(0, 0, 255, 1)",
-		            pointHoverBackgroundColor: "rgba(0, 0, 255, 1)",
-		            pointHoverBorderColor: "#fff"
-		    	},{
-		    		label: "Internal A",
-		    		stacked: false,
-		    		data: zone_one,
-		    		borderWidth: 1,
-		    		pointRadius: 0,
-		            fill: false,
-		            borderColor: "rgba(255, 0, 255, 1)",
-		            pointBackgroundColor: "rgba(225, 225, 225, 1)",
-		            pointBorderColor: "rgba(255, 0, 255, 1)",
-		            pointHoverBackgroundColor: "rgba(255, 0, 255, 1)",
-		            pointHoverBorderColor: "#fff"			    	
-		    	},{
-		    		label: "Internal B",
-		    		stacked: false,
-		    		data: zone_two,
-		    		borderWidth: 1,
-		    		pointRadius: 0,
-		            fill: false,
-		            borderColor: "rgba(255, 0, 0, 1)",
-		            pointBackgroundColor: "rgba(225, 225, 225, 1)",
-		            pointBorderColor: "rgba(255, 0, 0, 1)",
-		            pointHoverBackgroundColor: "rgba(255, 0, 0, 1)",
-		            pointHoverBorderColor: "#fff"			    	
-		    	},{
-		    		label: "Internal C",
-		    		stacked: false,
-		    		data: zone_three,
-		    		borderWidth: 1,
-		    		pointRadius: 0,
-		            fill: false,
-		            borderColor: "rgba(6, 167, 125, 1)",
-		            pointBackgroundColor: "rgba(225, 225, 225, 1)",
-		            pointBorderColor: "rgba(6, 167, 125, 1)",
-		            pointHoverBackgroundColor: "rgba(6, 167, 125, 1)",
-		            pointHoverBorderColor: "#fff"			    	
-		    	}]
-		    }
-	 });
+function renderCycleChart(data, cycleId) {
+	var chartElement = document.getElementById('cycle-chart');
+	if (!chartElement) {
+		return;
+	}
 
-};
+	if (!cycleChart) {
+		cycleChart = echarts.init(chartElement);
+	}
+
+	var labels = data.map(function(e) { return e.timeblock; });
+	var zone_zero = data.map(function(e) { return e.zone_zero; });
+	var zone_one = data.map(function(e) { return e.zone_one; });
+	var zone_two = data.map(function(e) { return e.zone_two; });
+	var zone_three = data.map(function(e) { return e.zone_three; });
+
+	cycleChart.setOption({
+		animation: false,
+		title: {
+			text: 'CYCLE TEMPERATURE: #' + cycleId,
+			left: 'center'
+		},
+		tooltip: {
+			trigger: 'axis'
+		},
+		legend: {
+			bottom: 0,
+			data: ['External A', 'Internal A', 'Internal B', 'Internal C']
+		},
+		grid: {
+			left: 55,
+			right: 20,
+			top: 60,
+			bottom: 60
+		},
+		xAxis: {
+			type: 'category',
+			data: labels
+		},
+		yAxis: {
+			type: 'value'
+		},
+		series: [
+			{ name: 'External A', type: 'line', showSymbol: false, data: zone_zero, lineStyle: { color: 'rgba(0, 0, 255, 1)' } },
+			{ name: 'Internal A', type: 'line', showSymbol: false, data: zone_one, lineStyle: { color: 'rgba(255, 0, 255, 1)' } },
+			{ name: 'Internal B', type: 'line', showSymbol: false, data: zone_two, lineStyle: { color: 'rgba(255, 0, 0, 1)' } },
+			{ name: 'Internal C', type: 'line', showSymbol: false, data: zone_three, lineStyle: { color: 'rgba(6, 167, 125, 1)' } }
+		]
+	}, true);
+}
+
+$('#cycleGraphModal').on('shown.bs.modal', function() {
+	if (cycleChart) {
+		cycleChart.resize();
+	}
+});
+
+$(window).on('resize', function() {
+	if (cycleChart && $('#cycleGraphModal').hasClass('show')) {
+		cycleChart.resize();
+	}
+});
 
 
 

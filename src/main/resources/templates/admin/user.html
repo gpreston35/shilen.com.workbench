@@ -90,6 +90,14 @@
 												<input type="text" class="form-control form-control-sm"
 													id="sms_email" th:field="*{sms_email}">
 											</div>
+											<div class="form-group col-md-6">
+												<label for="sensor_notifications">Sensor Notifications</label>
+												<select class="form-control form-control-sm"
+													id="sensor_notifications" th:field="*{sensor_notifications}">
+													<option value="">No</option>
+													<option value="Y">Yes</option>
+												</select>
+											</div>
 										</div>
 
 										<span class="h6 m-0 font-weight-bold text-primary">PASSWORD</span>

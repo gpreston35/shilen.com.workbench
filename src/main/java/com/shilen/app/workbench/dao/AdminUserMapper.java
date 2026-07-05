@@ -14,7 +14,7 @@ import com.shilen.app.workbench.model.admin.AdminUser;
 
 public interface AdminUserMapper {
 
-	@Select("SELECT u.id, u.username, u.enabled, u.first_name, u.last_name, u.sms_email, "
+	@Select("SELECT u.id, u.username, u.enabled, u.first_name, u.last_name, u.sms_email, u.sensor_notifications, "
 			+ "       group_concat(r.role order by r.role separator ', ') roles "
 			+ "  FROM operations.user u "
 			+ "  LEFT JOIN operations.user_role_mapping m ON m.user_id = u.id "
@@ -22,11 +22,11 @@ public interface AdminUserMapper {
 			+ " WHERE upper(u.username) like concat('%', upper(#{searchTerm}), '%') "
 			+ "    OR upper(ifnull(u.first_name, '')) like concat('%', upper(#{searchTerm}), '%') "
 			+ "    OR upper(ifnull(u.last_name, '')) like concat('%', upper(#{searchTerm}), '%') "
-			+ " GROUP BY u.id, u.username, u.enabled, u.first_name, u.last_name, u.sms_email "
+			+ " GROUP BY u.id, u.username, u.enabled, u.first_name, u.last_name, u.sms_email, u.sensor_notifications "
 			+ " ORDER BY u.username")
 	List<AdminUser> searchUsers(@Param("searchTerm") String searchTerm);
 
-	@Select("SELECT id, username, enabled, first_name, last_name, sms_email "
+	@Select("SELECT id, username, enabled, first_name, last_name, sms_email, sensor_notifications "
 			+ "  FROM operations.user "
 			+ " WHERE id = #{id}")
 	AdminUser readUser(@Param("id") int id);
@@ -44,8 +44,8 @@ public interface AdminUserMapper {
 	int countByUsername(@Param("username") String username);
 
 	@Insert("INSERT INTO operations.user "
-			+ "       (username, password, enabled, first_name, last_name, sms_email) "
-			+ "VALUES (#{username}, #{password}, #{enabled}, #{first_name}, #{last_name}, #{sms_email})")
+			+ "       (username, password, enabled, first_name, last_name, sms_email, sensor_notifications) "
+			+ "VALUES (#{username}, #{password}, #{enabled}, #{first_name}, #{last_name}, #{sms_email}, #{sensor_notifications})")
 	@Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
 	void insertUser(AdminUser user);
 
@@ -53,7 +53,8 @@ public interface AdminUserMapper {
 			+ "   SET enabled = #{enabled}, "
 			+ "       first_name = #{first_name}, "
 			+ "       last_name = #{last_name}, "
-			+ "       sms_email = #{sms_email} "
+			+ "       sms_email = #{sms_email}, "
+			+ "       sensor_notifications = #{sensor_notifications} "
 			+ " WHERE id = #{id}")
 	void updateUser(AdminUser user);
 

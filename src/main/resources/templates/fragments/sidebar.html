@@ -21,12 +21,14 @@
 							<span class="menu-text">Dashboard</span></a></li>
 					<!-- /.menu-item -->
 
-					<li class="menu-item has-child"><a href="#" class="menu-link"><span
+					<li class="menu-item has-child has-open"><a href="#" class="menu-link"><span
 							class="menu-icon fa-solid fa-bullseye"></span> <span
 							class="menu-text">Applications</span></a> <!-- child menu -->
-						<ul class="menu">
+						<ul class="menu ">
 							<li class="menu-item"><a th:href="@{/ro/home}"
 								class="menu-link">Runout</a></li>
+							<li class="menu-item"><a th:href="@{/ss/home}"
+								class="menu-link">Sensors</a></li>
 								
 							<!-- 	
 							<li class="menu-item"><a th:href="@{/wo/home}"
@@ -81,6 +83,8 @@
 						<ul class="menu">
 							<li class="menu-item" sec:authorize="hasAuthority('ADMIN')"><a
 								th:href="@{/admin/users}" class="menu-link">User Management</a></li>
+							<li class="menu-item" sec:authorize="hasAuthority('ADMIN')"><a
+								href="https://vault.shilen.gun:3443/" target="_blank" class="menu-link">Password Management</a></li>	
 						</ul>
 					</li>
 

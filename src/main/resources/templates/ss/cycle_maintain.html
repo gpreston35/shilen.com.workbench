@@ -1,0 +1,84 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<div th:replace="~{fragments/header}"></div>
+</head>
+<body>
+	<div class="app">
+		<div th:replace="~{fragments/app_header}"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
+
+		<main class="app-main">
+			<div class="wrapper">
+				<div class="page">
+					<div class="page-inner">
+						<header class="page-title-bar"></header>
+
+						<div class="page-section">
+							<div class="d-flex align-items-center justify-content-between flex-wrap"
+								style="margin: 20px 20px 15px 20px">
+								<span class="h5 m-0 font-weight-bold text-primary">CYCLE MAINTENANCE</span>
+								<a th:href="@{/ss/home}" class="btn btn-sm btn-secondary">
+									<i class="fas fa-arrow-left"></i>&nbsp;Sensors
+								</a>
+							</div>
+
+							<div class="card shadow col-md-8" style="margin: 20px 20px 20px 20px">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">OPERATOR MAINTENANCE</span>
+								</div>
+								<div class="card-body">
+									<form action="/ss/cycle/maintain" method="post" th:object="${FORM}">
+										<input type="hidden" name="cycle_id" th:value="${FORM.cycle_id}" />
+
+										<div class="form-group">
+											<label>Cycle ID</label>
+											<input type="text" class="form-control form-control-sm" th:value="${FORM.cycle_id}" readonly />
+										</div>
+
+										<div class="form-group">
+											<label>Equipment</label>
+											<input type="text" class="form-control form-control-sm" th:value="${FORM.equipment_name}" readonly />
+										</div>
+
+										<div class="form-group">
+											<label for="profile">Profile</label>
+											<select class="form-control form-control-sm" id="profile" name="profile">
+												<option value="">-- Select Profile --</option>
+												<option th:each="p : ${PROFILES}" th:value="${p.name}" th:text="${p.name}"
+													th:selected="${FORM.profile == p.name}"></option>
+											</select>
+										</div>
+
+										<div class="form-group">
+											<label for="number_of_barrels">Number of barrels</label>
+											<input type="number" min="0" class="form-control form-control-sm" id="number_of_barrels"
+												name="number_of_barrels" th:value="${FORM.number_of_barrels}" />
+										</div>
+
+										<button type="submit" class="btn btn-primary">Save</button>
+									</form>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div th:replace="~{fragments/footer}"></div>
+		</main>
+	</div>
+
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+	<script th:src="@{/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+</body>
+</html>
+

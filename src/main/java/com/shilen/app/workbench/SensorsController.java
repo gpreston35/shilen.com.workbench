@@ -30,6 +30,7 @@ import com.shilen.app.workbench.model.ss.CycleSensor;
 import com.shilen.app.workbench.model.ss.Equipment;
 import com.shilen.app.workbench.model.ss.GraphCycle;
 import com.shilen.app.workbench.model.ss.Profile;
+import com.shilen.app.workbench.model.ss.AlertType;
 import com.shilen.app.workbench.model.ss.Sensor;
 
 
@@ -96,6 +97,34 @@ public class SensorsController {
 
 		AjaxResponseBody result = new AjaxResponseBody();
 		sensorsMapper.deleteProfile(profile.getProfile_id());
+		result.setMsg("success");
+		return ResponseEntity.ok(result);
+	}
+
+	@PostMapping("/ss/alerttype/update")
+	public ResponseEntity<?> alert_type_update(@ModelAttribute AlertType alertType, Model model) {
+		AjaxResponseBody result = new AjaxResponseBody();
+		if (!isAlertTypeTableReady()) {
+			result.setMsg("sensors.alert_type table is missing. Please run DB migration first.");
+			return ResponseEntity.badRequest().body(result);
+		}
+		if (alertType.getAlert_type_id() == -1) {
+			sensorsMapper.insertAlertType(alertType);
+		} else {
+			sensorsMapper.updateAlertType(alertType);
+		}
+		result.setMsg("success");
+		return ResponseEntity.ok(result);
+	}
+
+	@PostMapping("/ss/alerttype/delete")
+	public ResponseEntity<?> alert_type_delete(@ModelAttribute AlertType alertType, Model model) {
+		AjaxResponseBody result = new AjaxResponseBody();
+		if (!isAlertTypeTableReady()) {
+			result.setMsg("sensors.alert_type table is missing. Please run DB migration first.");
+			return ResponseEntity.badRequest().body(result);
+		}
+		sensorsMapper.deleteAlertType(alertType.getAlert_type_id());
 		result.setMsg("success");
 		return ResponseEntity.ok(result);
 	}
@@ -176,6 +205,15 @@ public class SensorsController {
 	public @ResponseBody List<Profile> getProfile()  {
 		return sensorsMapper.getProfile();
 	}
+
+	@RequestMapping(value= "/ss/alerttype/json", method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE )
+	public @ResponseBody List<AlertType> getAlertType()  {
+		if (!isAlertTypeTableReady()) {
+			return List.of();
+		}
+		return sensorsMapper.getAlertType();
+	}
 	
 	
 	
@@ -198,6 +236,16 @@ public class SensorsController {
 			produces = MediaType.APPLICATION_JSON_VALUE )
 	public @ResponseBody Profile getProfileByID(@PathVariable("id") int id)  {
 		return sensorsMapper.getProfileById( id );
+
+	}
+
+	@RequestMapping(value= "/ss/alerttype/json/{id}", method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE )
+	public @ResponseBody AlertType getAlertTypeByID(@PathVariable("id") int id)  {
+		if (!isAlertTypeTableReady()) {
+			return new AlertType();
+		}
+		return sensorsMapper.getAlertTypeById( id );
 
 	}
 
@@ -267,19 +315,13 @@ public class SensorsController {
 		}
 
 		if (cycle.getAlerts() == null || cycle.getAlerts().isEmpty()) {
-			cycle.getAlerts().add(new Alert("ALERT_MAX_ERRORS", "E", "Error threshold", 10));
-			cycle.getAlerts().add(new Alert("ALERT_TEMP_ASC", "W", "Temp threshold (ascending)", 675));
-			cycle.getAlerts().add(new Alert("ALERT_TEMP_DESC", "W", "Temp threshold (descending)", 300));
-			cycle.getAlerts().add(new Alert("ALERT_MAX_TEMP", "W", "Temp threshold (max)", 1200));
-			cycle.getAlerts().add(new Alert("ALERT_MAX_RUNTIME", "W", "Cycle run time (hours)", 24));
+			cycle.setAlerts(loadDefaultAlerts());
 		}
 
-		if (isEdit && cycle.getCycle_id() != null) {
-			if (!hasPersistedConfig) {
-				for (Alert alert : cycle.getAlerts()) {
-					alert.setSelected(2);
-				}
-			} else {
+			if (isEdit && cycle.getCycle_id() != null) {
+				if (!hasPersistedConfig) {
+					// Keep default enabled/disabled choices from sensors.alert_type.
+				} else {
 				Map<String, Alert> persistedByType = persistedAlerts.stream()
 						.collect(Collectors.toMap(
 								alert -> normalizeAlertType(alert.getType()),
@@ -300,11 +342,9 @@ public class SensorsController {
 					}
 				}
 			}
-		} else {
-			for (Alert alert : cycle.getAlerts()) {
-				alert.setSelected(2);
+			} else {
+				// Keep default enabled/disabled choices from sensors.alert_type.
 			}
-		}
 
 		cycle.setUsers(lookupMapper.getSensorUsers());
 		if (isEdit && cycle.getCycle_id() != null) {
@@ -334,14 +374,7 @@ public class SensorsController {
 
 	private void prepareCycleCreateSubmission(Cycle cycle) {
 		if (cycle.getAlerts() == null || cycle.getAlerts().isEmpty()) {
-			cycle.getAlerts().add(new Alert("ALERT_MAX_ERRORS", "E", "Error threshold", 10));
-			cycle.getAlerts().add(new Alert("ALERT_TEMP_ASC", "W", "Temp threshold (ascending)", 675));
-			cycle.getAlerts().add(new Alert("ALERT_TEMP_DESC", "W", "Temp threshold (descending)", 300));
-			cycle.getAlerts().add(new Alert("ALERT_MAX_TEMP", "W", "Temp threshold (max)", 1200));
-			cycle.getAlerts().add(new Alert("ALERT_MAX_RUNTIME", "W", "Cycle run time (hours)", 24));
-			for (Alert alert : cycle.getAlerts()) {
-				alert.setSelected(2);
-			}
+			cycle.setAlerts(loadDefaultAlerts());
 		}
 
 		if (cycle.getUsers() == null || cycle.getUsers().isEmpty()) {
@@ -349,6 +382,46 @@ public class SensorsController {
 			for (User user : cycle.getUsers()) {
 				user.setChecked(1);
 			}
+		}
+	}
+
+	private List<Alert> loadDefaultAlerts() {
+		List<Alert> defaults = List.of();
+		if (isAlertTypeTableReady()) {
+			defaults = sensorsMapper.getAlertTypeDefaults();
+		}
+		if (defaults == null || defaults.isEmpty()) {
+			defaults = List.of(
+					new Alert("ALERT_MAX_ERRORS", "E", "Error threshold", 10),
+					new Alert("ALERT_TEMP_ASC", "W", "Temp threshold (ascending)", 675),
+					new Alert("ALERT_TEMP_DESC", "W", "Temp threshold (descending)", 300),
+					new Alert("ALERT_MAX_TEMP", "W", "Temp threshold (max)", 1200),
+					new Alert("ALERT_MAX_RUNTIME", "W", "Cycle run time (hours)", 24)
+			);
+		}
+		return defaults.stream().map(this::copyDefaultAlert).collect(Collectors.toList());
+	}
+
+	private Alert copyDefaultAlert(Alert source) {
+		Alert alert = new Alert();
+		alert.setType(source.getType());
+		alert.setNotification_type(source.getNotification_type());
+		alert.setDescription(source.getDescription());
+		alert.setValue(source.getValue());
+		String enabled = source.getEnabled();
+		if (!StringUtils.hasText(enabled)) {
+			enabled = "Y";
+		}
+		alert.setEnabled(enabled);
+		alert.setSelected("Y".equalsIgnoreCase(enabled) ? 2 : 1);
+		return alert;
+	}
+
+	private boolean isAlertTypeTableReady() {
+		try {
+			return sensorsMapper.alertTypeTableExists() > 0;
+		} catch (Exception ex) {
+			return false;
 		}
 	}
 
@@ -418,6 +491,11 @@ public class SensorsController {
 	public String profile_home(Model model) {
 
 		return "ss/profile";
+	}
+
+	@GetMapping("/ss/alerttype")
+	public String alert_type_home(Model model) {
+		return "ss/alert_type";
 	}
 	
 	@GetMapping("/ss/home")   

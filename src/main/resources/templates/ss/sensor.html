@@ -33,13 +33,21 @@
 						<header class="page-title-bar"> </header>
 						<!-- /.page-title-bar -->
 
-						<div class="page-section">
+							<div class="page-section">
 
-							<!-- .page-section -->
+								<!-- .page-section -->
 
-						     <div class="card shadow mb-4">
-						          <div class="card-header py-3">
-						             <span class="h6 m-0 font-weight-bold text-primary">EQUIPMENT&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:newObj()" role="button" class="btn btn-sm btn-icon btn-secondary" ><i class="fas fa-plus"></i></a></span>  	
+								<div class="d-flex align-items-center justify-content-between flex-wrap"
+									style="margin: 20px 20px 15px 20px">
+									<span class="h5 m-0 font-weight-bold text-primary">SENSOR</span>
+									<a th:href="@{/ss/home}" class="btn btn-sm btn-secondary">
+										<i class="fas fa-arrow-left"></i>&nbsp;Sensors
+									</a>
+								</div>
+
+							     <div class="card shadow mb-4">
+							          <div class="card-header py-3">
+							             <span class="h6 m-0 font-weight-bold text-primary">SENSOR&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:newObj()" role="button" class="btn btn-sm btn-icon btn-secondary" ><i class="fas fa-plus"></i></a></span>  	
 						          </div>
 						         <div class="card-body">
 								      <table class="table table-hover table-sm" id="results" style="width: 100%">
@@ -71,17 +79,18 @@
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Table Maintenance</h5>
+							<h5 class="modal-title" id="exampleModalLabel">Sensor</h5>
 							<button class="close" type="button" data-dismiss="modal"
 								aria-label="Close">
 								<span aria-hidden="true">&times;</span>
 							</button>
 						</div>
 						<form>
-							<div class="modal-body">
-								<input type="hidden" id="form-sensor_id" name="sensor_id"/>
-								<div class="form-group">
-									<label for="name">Name</label> 
+								<div class="modal-body">
+									<input type="hidden" id="form-sensor_id" name="sensor_id"/>
+									<input type="hidden" id="form-external" name="external" value="N"/>
+									<div class="form-group">
+										<label for="name">Name</label> 
 									<input type="text"
 										class="form-control form-control-sm" id="form-name"
 										placeholder="sensor name..." name="name">
@@ -110,26 +119,24 @@
 										placeholder="1000..." name="port">
 								</div>
 								<div class="form-group">
-									<label for="name">Check CMD</label> 
-									<input type="text"
-										class="form-control form-control-sm" id="form-check_cmd"
-										placeholder="httpget.exe -r -S '*SRTF\r'..." name="check_cmd">
-								</div>
-								<div class="form-group">
-									<label for="name">MAC Address</label> 
-									<input type="text"
-										class="form-control form-control-sm" id="form-mac_address"
-										placeholder="5ccf7fc41652..." name="mac_address">
-								</div>	
-								<div class="form-group">
-									<label for="description">Bartlett Controller</label>
+									<label for="description">Check Adapter</label>
 									<select class="form-control form-control-sm"
-										id="form-external" name="external">
-										<option value="N">No</option>
-										<option value="Y">Yes</option>
+										id="form-adapter" name="adapter">
+										<option value="HTTPGET">HTTPGET</option>
 									</select>
 								</div>
-								
+								<div class="form-group">
+									<label for="name">Check CMD Parameter(s)</label> 
+									<input type="text"
+										class="form-control form-control-sm" id="form-adapter_parameter"
+										placeholder="*SRTF\\r" name="adapter_parameter">
+								</div>
+								<div class="form-group">
+									<label for="name">Temperature Threshold (Fahrenheit)</label> 
+									<input type="number" step="0.1"
+										class="form-control form-control-sm" id="form-threshold_temp"
+										placeholder="200" name="threshold_temp">
+								</div>
 								<div class="form-group">
 									<label for="description">Active</label>
 									<select class="form-control form-control-sm"
@@ -141,6 +148,7 @@
 								
 							</div>
 							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 								<button type="submit" class="btn btn-primary">Update</button>
 							</div>
 						</form>
@@ -244,38 +252,44 @@
 	    
     
 	function fetchID(id) {
-		
-		$.getJSON('/lkup/equipment/json',
-				function(data) {
-			
-					$('#form-equipment_id').empty();
-		            $.each(data, function(i, obj){
-		                    $('#form-equipment_id').append($('<option>').text(obj.value).attr('value', obj.id));
-		            });
-		            
-		    		$.getJSON('/ss/sensor/json/' + id,
-		    				function(data) {
+		$.when(
+			$.getJSON('/lkup/equipment/json'),
+			$.getJSON('/ss/sensor/json/' + id)
+		).done(function(equipmentResponse, sensorResponse) {
+			var equipment = equipmentResponse[0];
+			var sensor = sensorResponse[0];
 
-		    				$('#form-name').val(data.name);
-		    				$('#form-sensor_id').val(data.sensor_id);
-		    				$('#form-description').val(data.description);
-		    				$('#form-mac_address').val(data.mac_address);
-		    				$('#form-equipment_id').val(data.equipment_id);
-		    				$('#form-check_cmd').val(data.check_cmd);
-		    				$('#form-external').val(data.external);
-		    				$('#form-active').val(data.active);
-		    				$('#form-port').val(data.port);
-		    				
-		    	
-		    		})
-	
+			$('#form-equipment_id').empty();
+			$.each(equipment, function(i, obj) {
+				$('#form-equipment_id').append($('<option>').text(obj.value).attr('value', obj.id));
+			});
+			ensureAdapterOption(sensor.adapter);
+
+			$('#form-name').val(sensor.name);
+			$('#form-sensor_id').val(sensor.sensor_id);
+			$('#form-description').val(sensor.description);
+			$('#form-ip_address').val(sensor.ip_address);
+			$('#form-equipment_id').val(sensor.equipment_id);
+			$('#form-adapter').val(sensor.adapter || 'HTTPGET');
+			$('#form-adapter_parameter').val(sensor.adapter_parameter || sensor.check_cmd || '');
+			$('#form-threshold_temp').val(sensor.threshold_temp);
+			$('#form-external').val(sensor.external);
+			$('#form-active').val(sensor.active);
+			$('#form-port').val(sensor.port);
+
+			$('#formModal').modal('show');
+		}).fail(function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
 		});
+	}
 
-
-
-		$('#formModal').modal('show');
-
-
+	function ensureAdapterOption(adapterValue) {
+		if (!adapterValue) {
+			return;
+		}
+		if ($('#form-adapter option[value="' + adapterValue + '"]').length === 0) {
+			$('#form-adapter').append($('<option>').val(adapterValue).text(adapterValue));
+		}
 	}
 	
 	function newObj() {
@@ -284,8 +298,10 @@
 		$('#form-name').val("");
 		$('#form-sensor_id').val("-1");
 		$('#form-description').val("");
-		$('#form-mac_address').val("");
-		$('#form-check_cmd').val("");
+		$('#form-ip_address').val("");
+		$('#form-adapter').val("HTTPGET");
+		$('#form-adapter_parameter').val("");
+		$('#form-threshold_temp').val("");
 		$('#form-external').val("N");
 		$('#form-active').val("Y");
 		$('#form-port').val("0")
@@ -321,8 +337,10 @@
 					$('#form-name').val("");
 					$('#form-sensor_id').val("-1");
 					$('#form-description').val("");
-					$('#form-mac_address').val("");
-					$('#form-check_cmd').val("");
+					$('#form-ip_address').val("");
+					$('#form-adapter').val("HTTPGET");
+					$('#form-adapter_parameter').val("");
+					$('#form-threshold_temp').val("");
 					$('#form-external').val("N");
 					$('#form-active').val("Y");
 					$('#form-port').val("0");

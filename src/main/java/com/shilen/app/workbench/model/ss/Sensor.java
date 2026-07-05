@@ -7,6 +7,9 @@ public class Sensor {
 	private String ip_address;
 	private int port;
 	private String check_cmd;
+	private String adapter;
+	private String adapter_parameter;
+	private Double threshold_temp;
 	private String admin_url;
 	private String name;
 	private String equipment;
@@ -14,6 +17,10 @@ public class Sensor {
 	private String mac_address;
 	private String description;
 	private String active;
+	private Double last_read_value;
+	private String last_read_status;
+	private Integer offline_streak;
+	private String cycle_state;
 	
 	
 	public String getExternal() {
@@ -58,6 +65,24 @@ public class Sensor {
 	public void setCheck_cmd(String check_cmd) {
 		this.check_cmd = check_cmd;
 	}
+	public String getAdapter() {
+		return adapter;
+	}
+	public void setAdapter(String adapter) {
+		this.adapter = adapter;
+	}
+	public String getAdapter_parameter() {
+		return adapter_parameter;
+	}
+	public void setAdapter_parameter(String adapter_parameter) {
+		this.adapter_parameter = adapter_parameter;
+	}
+	public Double getThreshold_temp() {
+		return threshold_temp;
+	}
+	public void setThreshold_temp(Double threshold_temp) {
+		this.threshold_temp = threshold_temp;
+	}
 	public String getAdmin_url() {
 		return admin_url;
 	}
@@ -87,6 +112,30 @@ public class Sensor {
 	}
 	public void setActive(String active) {
 		this.active = active;
+	}
+	public Double getLast_read_value() {
+		return last_read_value;
+	}
+	public void setLast_read_value(Double last_read_value) {
+		this.last_read_value = last_read_value;
+	}
+	public String getLast_read_status() {
+		return last_read_status;
+	}
+	public void setLast_read_status(String last_read_status) {
+		this.last_read_status = last_read_status;
+	}
+	public Integer getOffline_streak() {
+		return offline_streak;
+	}
+	public void setOffline_streak(Integer offline_streak) {
+		this.offline_streak = offline_streak;
+	}
+	public String getCycle_state() {
+		return cycle_state;
+	}
+	public void setCycle_state(String cycle_state) {
+		this.cycle_state = cycle_state;
 	}
 	
 	

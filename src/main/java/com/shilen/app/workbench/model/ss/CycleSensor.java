@@ -3,6 +3,7 @@ package com.shilen.app.workbench.model.ss;
 public class CycleSensor {
 	
 	private int cycle_sensor_id;
+	private int cycle_id;
 	private String equipment;
 	private String sensor;
 	private String runtime;
@@ -16,6 +17,8 @@ public class CycleSensor {
 	
 	private String mac_address;
 	private String data_collection;
+	private String profile_maintained;
+	private String barrels_maintained;
 	
 	public String getMac_address() {
 		return mac_address;
@@ -28,6 +31,18 @@ public class CycleSensor {
 	}
 	public void setData_collection(String data_collection) {
 		this.data_collection = data_collection;
+	}
+	public String getProfile_maintained() {
+		return profile_maintained;
+	}
+	public void setProfile_maintained(String profile_maintained) {
+		this.profile_maintained = profile_maintained;
+	}
+	public String getBarrels_maintained() {
+		return barrels_maintained;
+	}
+	public void setBarrels_maintained(String barrels_maintained) {
+		this.barrels_maintained = barrels_maintained;
 	}
 
 	
@@ -96,6 +111,12 @@ public class CycleSensor {
 	}
 	public void setCycle_sensor_id(int cycle_sensor_id) {
 		this.cycle_sensor_id = cycle_sensor_id;
+	}
+	public int getCycle_id() {
+		return cycle_id;
+	}
+	public void setCycle_id(int cycle_id) {
+		this.cycle_id = cycle_id;
 	}
 	
 	
