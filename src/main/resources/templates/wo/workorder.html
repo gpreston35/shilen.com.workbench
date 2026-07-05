@@ -3,7 +3,7 @@
 
 <head>
 
-<div th:replace="fragments/header"></div>
+<div th:replace="~{fragments/header}"></div>
 
 <style>
 
@@ -22,9 +22,9 @@
       <![endif]-->
 
 
-		<div th:replace="fragments/app_header"></div>
+		<div th:replace="~{fragments/app_header}"></div>
 
-		<div th:replace="fragments/sidebar"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
 
 		<!-- .app-main -->
 		<main class="app-main">
@@ -431,7 +431,7 @@
 				<!-- /.page -->
 			</div>
 
-			<div th:replace="fragments/footer"></div>
+			<div th:replace="~{fragments/footer}"></div>
 
 
 			<!-- /.wrapper -->

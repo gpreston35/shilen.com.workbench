@@ -9,15 +9,27 @@ import org.apache.ibatis.annotations.Update;
 
 import com.shilen.app.workbench.model.PickList;
 import com.shilen.app.workbench.model.tool.ChamberReamer;
+import com.shilen.app.workbench.model.tool.ToolSearchForm;
 
 public interface ToolCRMapper {
 	
 	
-	@Select("SELECT r.id, r.tool_identifier, r.chamber_name, r.dos as dos_str, r.eos as eos_str, if(r.status_id = 1,'Active', 'Not Active') as status from "
-			+ "   operations.tool_chamber_reamer r"
-			+ "   where  ( upper(r.tool_identifier) like '%' #{search_term} '%' "
-			+ "   or upper(r.chamber_name) like '%' #{search_term} '%')" )
-	List<ChamberReamer> Search( String search_term );
+	@Select("<script>"
+			+ "SELECT r.id, r.tool_identifier, r.chamber_name, r.flute_count, "
+			+ "       r.dos as dos_str, r.eos as eos_str, "
+			+ "       if(r.status_id = 1,'Active', 'Not Active') as status "
+			+ "  FROM operations.tool_chamber_reamer r "
+			+ " WHERE 1 = 1 "
+			+ "   <if test=\"search_term != null and search_term != ''\">"
+			+ "   AND (upper(r.tool_identifier) like concat('%', upper(#{search_term}), '%') "
+			+ "        OR upper(ifnull(r.chamber_name, '')) like concat('%', upper(#{search_term}), '%'))"
+			+ "   </if>"
+			+ "   <if test=\"flute_count != null\">"
+			+ "   AND r.flute_count = #{flute_count}"
+			+ "   </if>"
+			+ " ORDER BY r.tool_identifier"
+			+ "</script>")
+	List<ChamberReamer> Search(ToolSearchForm form);
 	
 	
 	@Insert( "INSERT into operations.tool_chamber_reamer "
@@ -82,5 +94,4 @@ public interface ToolCRMapper {
 	 
 	 
 }
-
 

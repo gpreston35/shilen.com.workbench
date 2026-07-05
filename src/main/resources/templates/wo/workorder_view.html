@@ -3,7 +3,7 @@
 
   <head>
   
-	<div th:replace="fragments/header"></div>
+	<div th:replace="~{fragments/header}"></div>
   
   
   </head>
@@ -15,9 +15,9 @@
       <![endif]-->
       
       
-    	<div th:replace="fragments/app_header"></div>  
+    	<div th:replace="~{fragments/app_header}"></div>  
 	
-		<div th:replace="fragments/sidebar"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
       
       <!-- .app-main -->
       <main class="app-main">
@@ -78,7 +78,7 @@
                 <div class="card-body">
                   <h4 class="card-title"> Progress </h4>
                   <div class="progress progress-sm rounded-0 mb-1">
-                    <div class="progress-bar bg-success w-10" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-success w-10" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100}"></div>
                   </div>
                   <p class="text-muted text-weight-bolder small">  </p>
                 </div><!-- .card-body -->
@@ -161,7 +161,7 @@
           </div><!-- /.page -->
         </div>
         
-		<div th:replace="fragments/footer"></div>
+		<div th:replace="~{fragments/footer}"></div>
         
         
         <!-- /.wrapper -->

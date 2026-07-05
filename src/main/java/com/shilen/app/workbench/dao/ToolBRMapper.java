@@ -6,16 +6,47 @@ import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.shilen.app.workbench.model.PickList;
+import com.shilen.app.workbench.model.config.Caliber;
 import com.shilen.app.workbench.model.tool.BoreReamer;
+import com.shilen.app.workbench.model.tool.ToolSearchForm;
 
 public interface ToolBRMapper {
 	
 	
-	@Select("SELECT r.id, r.tool_identifier, r.dos as dos_str, r.eos as eos_str, if(r.status_id=1,'Active','Not Active') as status from "
-			+ "   operations.tool_bore_reamer r"
-			+ "   where upper(r.tool_identifier) like '%' #{search_term} '%' ")
-	List<BoreReamer> Search( String search_term );
+	@Select("<script>"
+			+ "SELECT r.id, r.tool_identifier, r.style, r.flute_count, r.dia_am, "
+			+ "       r.dos as dos_str, r.eos as eos_str, "
+			+ "       if(r.status_id=1,'Active','Not Active') as status "
+			+ "  FROM operations.tool_bore_reamer r "
+			+ " WHERE 1 = 1 "
+			+ "   <if test=\"search_term != null and search_term != ''\">"
+			+ "   AND upper(r.tool_identifier) like concat('%', upper(#{search_term}), '%')"
+			+ "   </if>"
+			+ "   <if test=\"style != null and style != ''\">"
+			+ "   AND upper(ifnull(r.style, '')) like concat('%', upper(#{style}), '%')"
+			+ "   </if>"
+			+ "   <if test=\"flute_count != null\">"
+			+ "   AND r.flute_count = #{flute_count}"
+			+ "   </if>"
+			+ "   <if test=\"diameter_from != null\">"
+			+ "   AND r.dia_am &gt;= #{diameter_from}"
+			+ "   </if>"
+			+ "   <if test=\"diameter_to != null\">"
+			+ "   AND r.dia_am &lt;= #{diameter_to}"
+			+ "   </if>"
+			+ "   <if test=\"active != null\">"
+			+ "   AND r.status_id = #{active}"
+			+ "   </if>"
+			+ " ORDER BY r.tool_identifier"
+			+ "</script>")
+	List<BoreReamer> Search(ToolSearchForm form);
+
+	@Select("SELECT id, caliber, bore_reamer_low, bore_reamer_high "
+			+ "FROM operations.caliber "
+			+ "WHERE IFNULL(bore_reamer_low, 0) <> 0 "
+			+ "  AND IFNULL(bore_reamer_high, 0) <> 0 "
+			+ "ORDER BY caliber")
+	List<Caliber> GetBoreReamerPresets();
 	
 	
 	@Insert( "INSERT into operations.tool_bore_reamer "
@@ -82,5 +113,3 @@ public interface ToolBRMapper {
 		 
 	  
 }
-
-

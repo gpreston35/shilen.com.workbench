@@ -4,7 +4,7 @@
 
 <head>
 
-	<div th:replace="fragments/header"></div>
+	<div th:replace="~{fragments/header}"></div>
 
 </head>
 
@@ -61,18 +61,11 @@
 
 
 
-	<form class="auth-form" method="POST" th:action="@{/login}" >
-        <!-- .form-group -->
-        
-            <input type="hidden" id="username" name="username" value="GUEST">
-            <input type="hidden" id="password" name="password" value="7&^hG0816_hElP@z">        <!-- .form-group -->
-            
+	<form class="auth-form" method="POST" th:action="@{/guest-login}"
+		th:if="${guestLoginEnabled}">
         <div class="form-group">
           <button class="btn btn-lg btn-warning btn-block" type="submit">Sign In as Guest</button>
         </div><!-- /.form-group -->
-        <!-- .form-group -->
-        
-        <!-- recovery links -->
       </form><!-- /.auth-form -->
       <!-- copyright -->
 
@@ -83,7 +76,7 @@
     
     
     
- 			<div th:replace="fragments/footer"></div>
+ 			<div th:replace="~{fragments/footer}"></div>
 
 
 

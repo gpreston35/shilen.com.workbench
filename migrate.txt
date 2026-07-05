@@ -147,3 +147,38 @@ ADD COLUMN `brtool` VARCHAR(12) NULL AFTER `dhtool`,
 ADD COLUMN `bntool` VARCHAR(12) NULL AFTER `brtool`;
 
 
+*** user_role_mapping migration / admin users
+
+ALTER TABLE `operations`.`user_role_mapping`
+ADD COLUMN `user_id` INT NULL AFTER `username`;
+
+UPDATE `operations`.`user_role_mapping` m
+JOIN `operations`.`user` u
+  ON u.username = m.username
+SET m.user_id = u.id;
+
+ALTER TABLE `operations`.`user_role_mapping`
+MODIFY COLUMN `user_id` INT NOT NULL;
+
+ALTER TABLE `operations`.`user_role_mapping`
+ADD CONSTRAINT `fk_user_role_mapping_user`
+FOREIGN KEY (`user_id`) REFERENCES `operations`.`user` (`id`);
+
+ALTER TABLE `operations`.`user_role_mapping`
+ADD CONSTRAINT `fk_user_role_mapping_role`
+FOREIGN KEY (`user_role_id`) REFERENCES `operations`.`user_role` (`id`);
+
+ALTER TABLE `operations`.`user_role_mapping`
+ADD CONSTRAINT `uk_user_role_mapping_user_role`
+UNIQUE (`user_id`, `user_role_id`);
+
+ALTER TABLE `operations`.`user_role_mapping`
+MODIFY COLUMN `id` INT NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `operations`.`user_role_mapping`
+DROP COLUMN `username`;
+
+*** user table migration / admin users
+
+ALTER TABLE `operations`.`user`
+MODIFY COLUMN `id` INT NOT NULL AUTO_INCREMENT;

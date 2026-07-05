@@ -1,9 +1,10 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 
-<div th:replace="fragments/header"></div>
+<div th:replace="~{fragments/header}"></div>
 
 </head>
 <body>
@@ -14,9 +15,9 @@
       <![endif]-->
 
 
-		<div th:replace="fragments/app_header"></div>
+		<div th:replace="~{fragments/app_header}"></div>
 
-		<div th:replace="fragments/sidebar"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
 
 		<!-- .app-main -->
 		<main class="app-main">
@@ -57,20 +58,35 @@
 									<form th:action="@{/tool/bn/search}" th:object="${SEARCH_FORM}" method="post">
 
 										<div class="form-row">
-											<!-- form row -->
-
 											<div class="col-md-6 mb-3">
-												<!-- form column -->
-												<label class="control-label" for="search">Search Term</label>
+												<label class="control-label" for="search_term">Tool Identifier</label>
 												<input type="text" class="form-control form-control-sm" id="search_term"
-													name="search_term" th:field="*{search_term}" placeholder="ex 243">
+													th:field="*{search_term}" placeholder="ex BN0243">
 											</div>
-											<!-- /form column -->
 											<div class="col-md-6 mb-3">
-										
+												<label class="control-label" for="rifling_type">Rifling Type</label>
+												<input type="text" class="form-control form-control-sm" id="rifling_type"
+													th:field="*{rifling_type}">
 											</div>
-											
 									    </div>
+
+										<div class="form-row">
+											<div class="col-md-4 mb-3">
+												<label class="control-label" for="rifling_count">Rifling Count</label>
+												<input type="number" class="form-control form-control-sm" id="rifling_count"
+													th:field="*{rifling_count}">
+											</div>
+											<div class="col-md-4 mb-3">
+												<label class="control-label" for="diameter_from">Major Dia From</label>
+												<input type="number" step="0.0001" class="form-control form-control-sm"
+													id="diameter_from" th:field="*{diameter_from}">
+											</div>
+											<div class="col-md-4 mb-3">
+												<label class="control-label" for="diameter_to">Major Dia To</label>
+												<input type="number" step="0.0001" class="form-control form-control-sm"
+													id="diameter_to" th:field="*{diameter_to}">
+											</div>
+										</div>
 
 
 										<button type="submit" class="btn btn-primary btn-sm" >Search</button>
@@ -97,6 +113,9 @@
 											<tr>
 												<th></th>
 												<th>TOOL IDENTIFER</th>
+												<th>RIFLING TYPE</th>
+												<th>COUNT</th>
+												<th>MAJOR DIA</th>
 												<th>STATUS</th>
 												<th>DOS</th>
 												<th>EOS</th>
@@ -106,9 +125,12 @@
 											<tr th:each="r: ${RESULTS}">
 												<td><a th:href="@{'/tool/bn/read'(id=${r.id})}" role="button" class="btn btn-sm btn-icon btn-secondary"><i class="far fa-edit"></i></a> 
 												<td th:text="${r.tool_identifier}" />
+												<td th:text="${r.rifling_type}" />
+												<td th:text="${r.rifling_count}" />
+												<td th:text="${#numbers.formatDecimal(r.major_dia,1,4)}" />
 												<td th:text="${r.status}" />
-												<td th:text="${r.dos}" />
-												<td th:text="${r.eos}" />
+												<td th:text="${r.dos_str}" />
+												<td th:text="${r.eos_str}" />
 											</tr>
 										</tbody>
 									</table>
@@ -130,7 +152,7 @@
 				</div>
 
 
-			<div th:replace="fragments/footer"></div>
+			<div th:replace="~{fragments/footer}"></div>
 
 
 			<!-- /.wrapper -->

@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.shilen.app.workbench.dao.LookupMapper;
 import com.shilen.app.workbench.dao.RunoutMapper;
 import com.shilen.app.workbench.helper.Utils;
-import com.shilen.app.workbench.model.PickList;
 import com.shilen.app.workbench.model.ro.Pivot;
 import com.shilen.app.workbench.model.ro.Runout;
 import com.shilen.app.workbench.model.ro.Search;
@@ -28,240 +26,128 @@ import com.shilen.app.workbench.model.ro.Search;
 @SessionAttributes("SEARCH_FORM")
 public class RunoutController {
 
+	private final LookupMapper lookupMapper;
+	private final RunoutMapper runoutMapper;
+
+	public RunoutController(LookupMapper lookupMapper, RunoutMapper runoutMapper) {
+		this.lookupMapper = lookupMapper;
+		this.runoutMapper = runoutMapper;
+	}
+
 	@GetMapping("/ro/home")
 	public String home(@ModelAttribute Search search, Model model, HttpSession session) {
+		Search searchForm = (Search) session.getAttribute("SEARCH_FORM");
 
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-		ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-		ctx.refresh();
-
-		LookupMapper lkupmapper = ctx.getBean(LookupMapper.class);
-		
-		Search search_form = (Search) session.getAttribute("SEARCH_FORM");
-		
-		System.out.println("search_form = " + search_form );
-
-		if ( search_form != null) {
-			
-			search_form.setView("data");	
-			session.setAttribute("SEARCH_FORM", search_form);
-			
-
-			
-			
+		if (searchForm != null) {
+			searchForm.setView("data");
+			session.setAttribute("SEARCH_FORM", searchForm);
 		} else {
-			
-			search_form = new Search();
-			search_form.setView("data");	
-			search_form.setFromDateInput( Utils.getDateBasedOnCurrent(0));
-			search_form.setToDateInput( Utils.getDateBasedOnCurrent(1));
-			search_form.setPivot_field("o.operator");
-			session.setAttribute("SEARCH_FORM", search_form);
-
+			searchForm = new Search();
+			searchForm.setView("data");
+			searchForm.setFromDateInput(Utils.getDateBasedOnCurrent(0));
+			searchForm.setToDateInput(Utils.getDateBasedOnCurrent(1));
+			searchForm.setPivot_field("o.operator");
+			session.setAttribute("SEARCH_FORM", searchForm);
 		}
-		
-			
-		model.addAttribute("SPINDLES", lkupmapper.getSpindles());
-		model.addAttribute("OPERATORS", lkupmapper.getOperators());
-		model.addAttribute("CALIBERS", lkupmapper.getCalibers());
-		model.addAttribute("STEEL", lkupmapper.getSteel());
-	//	model.addAttribute("LENGTHS", lkupmapper.getLengths());
-		model.addAttribute("SCRAPREASONS", lkupmapper.getLkScrapReasons());
 
-
-		model.addAttribute("SEARCH_FORM", search_form);
-
-		ctx.close();
+		populateLookups(model, false);
+		model.addAttribute("SEARCH_FORM", searchForm);
 
 		return "ro/home";
-
 	}
-	
-	
+
 	@RequestMapping("/ro/refresh")
 	public String refresh(Model model, HttpSession session) {
+		populateLookups(model, true);
 
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		Search searchForm = (Search) session.getAttribute("SEARCH_FORM");
 
-		ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-		ctx.refresh();
+		if (searchForm != null) {
+			searchForm.setView("data");
+			session.setAttribute("SEARCH_FORM", searchForm);
 
-		
-		RunoutMapper mapper = ctx.getBean(RunoutMapper.class);
-		LookupMapper lkupmapper = ctx.getBean(LookupMapper.class);
-
-		model.addAttribute("SPINDLES", lkupmapper.getSpindles());
-		model.addAttribute("OPERATORS", lkupmapper.getOperators());
-		model.addAttribute("CALIBERS", lkupmapper.getCalibers());
-		model.addAttribute("STEEL", lkupmapper.getSteel());
-		model.addAttribute("LENGTHS", lkupmapper.getLengths());
-		model.addAttribute("SCRAPREASONS", lkupmapper.getLkScrapReasons());
-		
-		Search search_form = (Search) session.getAttribute("SEARCH_FORM");
-
-		if ( search_form != null) {
-			
-			search_form.setView("data");	
-			session.setAttribute("SEARCH_FORM", search_form);
-			
-			if ( search_form.getView().equals("pivot") ) {
-				model.addAttribute("RESULTS",mapper.pivotSearch(search_form));
-				model.addAttribute("RESULTS_TOTAL", mapper.pivotSearchTotals(search_form));
+			if (searchForm.getView().equals("pivot")) {
+				model.addAttribute("RESULTS", runoutMapper.pivotSearch(searchForm));
+				model.addAttribute("RESULTS_TOTAL", runoutMapper.pivotSearchTotals(searchForm));
 			} else {
-				model.addAttribute("RESULTS", mapper.getSearchRunout(search_form));
-
+				model.addAttribute("RESULTS", runoutMapper.getSearchRunout(searchForm));
 			}
-			
-			
 		} else {
-			
-			search_form = new Search();
-			search_form.setView("data");	
-			search_form.setFromDateInput( Utils.getDateBasedOnCurrent(0));
-			search_form.setToDateInput( Utils.getDateBasedOnCurrent(1));
-			search_form.setPivot_field("o.operator");
-			session.setAttribute("SEARCH_FORM", search_form);
-
+			searchForm = new Search();
+			searchForm.setView("data");
+			searchForm.setFromDateInput(Utils.getDateBasedOnCurrent(0));
+			searchForm.setToDateInput(Utils.getDateBasedOnCurrent(1));
+			searchForm.setPivot_field("o.operator");
+			session.setAttribute("SEARCH_FORM", searchForm);
 		}
-		
-			
-		model.addAttribute("SEARCH_FORM", search_form);
-//		session.setAttribute("SEARCH_FORM", search_form);
-		
 
-		ctx.close();
-
+		model.addAttribute("SEARCH_FORM", searchForm);
 		return "ro/home";
-
 	}
-
-	
 
 	@RequestMapping("/ro/search")
 	public String search(@ModelAttribute Search form, Model model, HttpSession session) {
+		populateLookups(model, true);
 
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-
-		ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-		ctx.refresh();
-
-		
-		RunoutMapper mapper = ctx.getBean(RunoutMapper.class);
-		LookupMapper lkupmapper = ctx.getBean(LookupMapper.class);
-
-		model.addAttribute("SPINDLES", lkupmapper.getSpindles());
-		model.addAttribute("OPERATORS", lkupmapper.getOperators());
-		model.addAttribute("CALIBERS", lkupmapper.getCalibers());
-		model.addAttribute("STEEL", lkupmapper.getSteel());
-		model.addAttribute("LENGTHS", lkupmapper.getLengths());
-		model.addAttribute("SCRAPREASONS", lkupmapper.getLkScrapReasons());
-		
-		if ( form.getWoid() == null )
+		if (form.getWoid() == null) {
 			form.setWoid(0);
-			
-		
-
-		if ( form.getView().equals("pivot") ) {
-			List<Pivot> results  = mapper.pivotSearch(form);
-			model.addAttribute("RESULTS",results );
-			model.addAttribute("RESULTS_TOTAL", mapper.pivotSearchTotals(form));
-		//	session.setAttribute("RESULTS", results);
-		} else {
-			List<Runout> results = mapper.getSearchRunout(form);
-			model.addAttribute("RESULTS", mapper.getSearchRunout(form));
-		//	session.setAttribute("RESULTS", results);
 		}
-		
 
-		
-		
+		if (form.getView().equals("pivot")) {
+			List<Pivot> results = runoutMapper.pivotSearch(form);
+			model.addAttribute("RESULTS", results);
+			model.addAttribute("RESULTS_TOTAL", runoutMapper.pivotSearchTotals(form));
+		} else {
+			List<Runout> results = runoutMapper.getSearchRunout(form);
+			model.addAttribute("RESULTS", results);
+		}
+
 		model.addAttribute("SEARCH_FORM", form);
 		session.setAttribute("SEARCH_FORM", form);
-		
-
-		ctx.close();
 
 		return "ro/home";
-
 	}
 
 	@GetMapping("/ro/edit")
 	public String edit(@RequestParam(name = "id", required = true) int id, Model model) throws Exception {
+		Runout runout = runoutMapper.getRunout(id);
 
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-		ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-		ctx.refresh();
-
-		RunoutMapper mapper = ctx.getBean(RunoutMapper.class);
-		LookupMapper lkupmapper = ctx.getBean(LookupMapper.class);
-
-		Runout runout = mapper.getRunout(id);
-
-		model.addAttribute("FORM", new Search());
-		model.addAttribute("SPINDLES", lkupmapper.getSpindles());
-		model.addAttribute("OPERATORS", lkupmapper.getOperators());
-		model.addAttribute("CALIBERS", lkupmapper.getCalibers());
-		model.addAttribute("STEEL", lkupmapper.getSteel());
-		model.addAttribute("LENGTHS", lkupmapper.getLengths());
-		model.addAttribute("SCRAPREASONS", lkupmapper.getLkScrapReasons());
-
+		populateLookups(model, true);
 		model.addAttribute("FORM", runout);
-
-		ctx.close();
 
 		return "ro/runout";
 	}
 
 	@GetMapping("/ro/add")
 	public String add(Model model) throws Exception {
-
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-		ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-		ctx.refresh();
-
-		LookupMapper lkupmapper = ctx.getBean(LookupMapper.class);
-
-		model.addAttribute("FORM", new Search());
-		model.addAttribute("SPINDLES", lkupmapper.getSpindles());
-		model.addAttribute("OPERATORS", lkupmapper.getOperators());
-		model.addAttribute("CALIBERS", lkupmapper.getCalibers());
-		model.addAttribute("STEEL", lkupmapper.getSteel());
-		model.addAttribute("LENGTHS", lkupmapper.getLengths());
-		model.addAttribute("SCRAPREASONS", lkupmapper.getLkScrapReasons());
-
+		populateLookups(model, true);
 		model.addAttribute("FORM", new Runout());
-
-		ctx.close();
-
 		return "ro/runout";
 	}
 
 	@RequestMapping("/ro/update")
 	public String upsert(@Valid @ModelAttribute("FORM") Runout ro, BindingResult result, Model model,
 			RedirectAttributes redirAttrs) {
-
-		AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-		ctx.register(com.shilen.app.workbench.dao.AppConfig.class);
-		ctx.refresh();
-
-		RunoutMapper mapper = ctx.getBean(RunoutMapper.class);
-
 		if (ro.getId() == 0) {
-			mapper.insert(ro);
+			runoutMapper.insert(ro);
 			redirAttrs.addFlashAttribute(Tokens.SUCCESS, "Record successfully inserted.");
-
 		} else {
-			mapper.update(ro);
+			runoutMapper.update(ro);
 			redirAttrs.addFlashAttribute(Tokens.SUCCESS, "Record successfully updated.");
-
 		}
 
 		redirAttrs.addAttribute("id", ro.getId());
-
-		ctx.close();
-
 		return "redirect:/ro/edit";
-
 	}
 
+	private void populateLookups(Model model, boolean includeLengths) {
+		model.addAttribute("SPINDLES", lookupMapper.getSpindles());
+		model.addAttribute("OPERATORS", lookupMapper.getOperators());
+		model.addAttribute("CALIBERS", lookupMapper.getCalibers());
+		model.addAttribute("STEEL", lookupMapper.getSteel());
+		if (includeLengths) {
+			model.addAttribute("LENGTHS", lookupMapper.getLengths());
+		}
+		model.addAttribute("SCRAPREASONS", lookupMapper.getLkScrapReasons());
+	}
 }

@@ -1,9 +1,10 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 
-<div th:replace="fragments/header"></div>
+<div th:replace="~{fragments/header}"></div>
 
 </head>
 <body>
@@ -14,9 +15,9 @@
       <![endif]-->
 
 
-		<div th:replace="fragments/app_header"></div>
+		<div th:replace="~{fragments/app_header}"></div>
 
-		<div th:replace="fragments/sidebar"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
 
 		<!-- .app-main -->
 		<main class="app-main">
@@ -118,7 +119,7 @@
 				</div>
 
 
-			<div th:replace="fragments/footer"></div>
+			<div th:replace="~{fragments/footer}"></div>
 
 
 			<!-- /.wrapper -->

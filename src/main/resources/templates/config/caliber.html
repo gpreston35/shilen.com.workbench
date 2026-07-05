@@ -1,9 +1,10 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 
-<div th:replace="fragments/header"></div>
+<div th:replace="~{fragments/header}"></div>
 
 
 
@@ -15,9 +16,9 @@
       <div class="page-message" role="alert">You are using an <strong>outdated</strong> browser. Please <a class="alert-link" href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</div>
       <![endif]-->
 
-		<div th:replace="fragments/app_header"></div>
+		<div th:replace="~{fragments/app_header}"></div>
 
-		<div th:replace="fragments/sidebar"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
 
 		<!-- .app-main -->
 		<main class="app-main">
@@ -367,7 +368,7 @@
 </body>
 
 
-<div th:replace="fragments/footer"></div>
+<div th:replace="~{fragments/footer}"></div>
 
 
 <!-- BEGIN BASE JS -->
