@@ -68,6 +68,7 @@
 												<th>USERNAME</th>
 												<th>NAME</th>
 												<th>ENABLED</th>
+												<th>SENSOR NOTIFY</th>
 												<th>ROLES</th>
 											</tr>
 										</thead>
@@ -79,6 +80,7 @@
 												<td th:text="${r.username}"></td>
 												<td th:text="${r.first_name + ' ' + r.last_name}"></td>
 												<td th:text="${r.enabled == 1 ? 'Yes' : 'No'}"></td>
+												<td th:text="${r.sensor_notifications == 'Y' ? 'Yes' : 'No'}"></td>
 												<td th:text="${r.roles}"></td>
 											</tr>
 										</tbody>

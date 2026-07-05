@@ -6,18 +6,15 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.LocalDateTimeTypeHandler;
 
 import com.shilen.app.workbench.model.ss.Alert;
 import com.shilen.app.workbench.model.ss.Cycle;
 import com.shilen.app.workbench.model.ss.CycleSensor;
 import com.shilen.app.workbench.model.ss.Equipment;
 import com.shilen.app.workbench.model.ss.GraphCycle;
+import com.shilen.app.workbench.model.ss.AlertType;
 import com.shilen.app.workbench.model.ss.Profile;
 import com.shilen.app.workbench.model.ss.Sample;
 import com.shilen.app.workbench.model.ss.Sensor;
@@ -83,19 +80,16 @@ public interface SensorsMapper {
 			"     and cs.cycle_sensor_id = #{cycle_sensor_id}")
 	CycleSensor getDateParameters( int cycle_sensor_id );
 	
-	@Select("select a.cycle_id, a.type, a.notification_type, a.value, group_concat( ar.recipient separator '; ') recipients from " + 
-			"         sensors.alerts a " + 
-			"         inner join " + 
-			"         sensors.alert_recipients ar on a.cycle_id = ar.cycle_id " + 
-			"         and UPPER(IFNULL(ar.enabled,'Y')) = 'Y' " +
-			"         and a.cycle_id in ( select cycle_id from sensors.cycle_sensor where UPPER(state) IN ('RUNNING','ACTIVE')) " + 
-			"         and UPPER(IFNULL(a.enabled,'Y')) = 'Y' " +
-			"         and a.notified = 'X' " + 
-			"         group by a.cycle_id, a.type, a.notification_type, a.notified_date, a.value")
-	@Results(value = {
-            @Result(property = "notified_date", column = "notified_date", typeHandler = LocalDateTimeTypeHandler.class, jdbcType = JdbcType.DATE),
-
-    })
+	@Select("SELECT a.cycle_id, a.type, a.notification_type, a.value, a.notified_date, a.result " +
+			"  FROM sensors.alerts a " +
+			" WHERE UPPER(IFNULL(a.enabled,'Y')) = 'Y' " +
+			"   AND a.notified = 'X' " +
+			"   AND EXISTS ( " +
+			"       SELECT 1 FROM sensors.cycle_sensor cs " +
+			"        WHERE cs.cycle_id = a.cycle_id " +
+			"          AND UPPER(IFNULL(cs.state,'')) IN ('RUNNING','ACTIVE') " +
+			"   ) " +
+			" ORDER BY a.notified_date DESC, a.cycle_id, a.type")
 	List<Alert> getAlerts();
 	
 	@Select("select cs.cycle_sensor_id, cs.state, cs.cycle_id, cs.sensor_id, cs.start_cycle, cs.end_cycle, cs.times_polled, cs.result, timediff(cs.end_cycle, cs.start_cycle) " + 
@@ -150,11 +144,11 @@ public interface SensorsMapper {
 			"FROM sensors.sensor s")
 	List<Sensor> getDashboardSensors();
 	
-	@Insert("INSERT into sensors.sensor ( equipment_id, ip_address, port, check_cmd, name, external, mac_address, description, active ) "
-			+ " value( #{equipment_id}, #{ip_address}, #{port}, #{check_cmd}, #{name}, #{external}, #{mac_address}, #{description}, #{active} )" )
+	@Insert("INSERT into sensors.sensor ( equipment_id, ip_address, port, check_cmd, adapter, adapter_parameter, threshold_temp, name, external, mac_address, description, active ) "
+			+ " value( #{equipment_id}, #{ip_address}, #{port}, #{adapter_parameter}, #{adapter}, #{adapter_parameter}, #{threshold_temp}, #{name}, #{external}, #{mac_address}, #{description}, #{active} )" )
 	void insertSensor( Sensor sensor );
 	
-	@Update("UPDATE sensors.sensor set equipment_id = #{equipment_id}, ip_address = #{ip_address}, port = #{port}, check_cmd = #{check_cmd}, "
+	@Update("UPDATE sensors.sensor set equipment_id = #{equipment_id}, ip_address = #{ip_address}, port = #{port}, check_cmd = #{adapter_parameter}, adapter = #{adapter}, adapter_parameter = #{adapter_parameter}, threshold_temp = #{threshold_temp}, "
 			+ "name = #{name}, external = #{external}, mac_address = #{mac_address}, description = #{description}, active = #{active} where sensor_id = #{sensor_id}")
 	void updateSensor( Sensor sensor );
 	
@@ -163,6 +157,37 @@ public interface SensorsMapper {
 
 	@Select("SELECT * FROM sensors.profile")
 	List<Profile> getProfile();
+
+	@Select("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'sensors' AND table_name = 'alert_type'")
+	int alertTypeTableExists();
+
+	@Select("SELECT * FROM sensors.alert_type ORDER BY sort_order, alert_type")
+	List<AlertType> getAlertType();
+
+	@Select("SELECT * FROM sensors.alert_type WHERE alert_type_id = #{id}")
+	AlertType getAlertTypeById(int id);
+
+	@Insert("INSERT INTO sensors.alert_type (alert_type, alert_description, alert_default_value, notification_type, default_enabled, unit, sort_order) "
+			+ "VALUES (#{alert_type}, #{alert_description}, #{alert_default_value}, #{notification_type}, #{default_enabled}, #{unit}, #{sort_order})")
+	void insertAlertType(AlertType alertType);
+
+	@Update("UPDATE sensors.alert_type SET alert_type = #{alert_type}, alert_description = #{alert_description}, "
+			+ "alert_default_value = #{alert_default_value}, notification_type = #{notification_type}, default_enabled = #{default_enabled}, "
+			+ "unit = #{unit}, sort_order = #{sort_order} WHERE alert_type_id = #{alert_type_id}")
+	void updateAlertType(AlertType alertType);
+
+	@Delete("DELETE FROM sensors.alert_type WHERE alert_type_id = #{id}")
+	void deleteAlertType(int id);
+
+	@Select("SELECT "
+			+ " alert_type AS type, "
+			+ " notification_type, "
+			+ " alert_description AS description, "
+			+ " alert_default_value AS value, "
+			+ " default_enabled AS enabled "
+			+ "FROM sensors.alert_type "
+			+ "ORDER BY sort_order, alert_type")
+	List<Alert> getAlertTypeDefaults();
 
 	@Select("SELECT * FROM sensors.profile WHERE profile_id = #{id}")
 	Profile getProfileById(int id);

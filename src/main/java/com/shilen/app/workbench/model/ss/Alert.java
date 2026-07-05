@@ -17,6 +17,7 @@ public class Alert {
 	
 	private String recipients;
 	private String recipient;
+	private Integer user_id;
 	
 	public Alert() {}
 	
@@ -52,6 +53,12 @@ public class Alert {
 	}
 	public void setRecipient(String recipient) {
 		this.recipient = recipient;
+	}
+	public Integer getUser_id() {
+		return user_id;
+	}
+	public void setUser_id(Integer user_id) {
+		this.user_id = user_id;
 	}
 	public int getCycle_id() {
 		return cycle_id;

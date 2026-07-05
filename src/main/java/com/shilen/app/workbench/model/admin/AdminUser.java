@@ -13,6 +13,7 @@ public class AdminUser {
 	private String first_name;
 	private String last_name;
 	private String sms_email;
+	private String sensor_notifications;
 	private List<Integer> selectedRoleIds = new ArrayList<Integer>();
 	private String roles;
 
@@ -78,6 +79,14 @@ public class AdminUser {
 
 	public void setSms_email(String sms_email) {
 		this.sms_email = sms_email;
+	}
+
+	public String getSensor_notifications() {
+		return sensor_notifications;
+	}
+
+	public void setSensor_notifications(String sensor_notifications) {
+		this.sensor_notifications = sensor_notifications;
 	}
 
 	public List<Integer> getSelectedRoleIds() {

@@ -120,7 +120,7 @@ public class ToolBNController {
 
 	@RequestMapping("/tool/bn/search")
 	public String read(@ModelAttribute ToolSearchForm form, Model model) {
-		model.addAttribute("RESULTS", mapper.Search(Utils.ifNull(form.getSearch_term()).toUpperCase()));
+		model.addAttribute("RESULTS", mapper.Search(form));
 		model.addAttribute("SEARCH_FORM", form);
 		return "tool/button_home";
 	}

@@ -1,0 +1,277 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<div th:replace="~{fragments/header}"></div>
+
+</head>
+<body>
+	<div class="app">
+		<div th:replace="~{fragments/app_header}"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
+
+		<main class="app-main">
+			<div class="wrapper">
+				<div class="page">
+					<div class="page-inner">
+						<header class="page-title-bar"></header>
+
+						<div class="page-section">
+							<div class="d-flex align-items-center justify-content-between flex-wrap"
+								style="margin: 20px 20px 15px 20px">
+								<span class="h5 m-0 font-weight-bold text-primary">ALERT TYPES</span>
+								<a th:href="@{/ss/home}" class="btn btn-sm btn-secondary">
+									<i class="fas fa-arrow-left"></i>&nbsp;Sensors
+								</a>
+							</div>
+
+							<div class="card shadow mb-4">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">ALERT TYPE MAINTENANCE&nbsp;&nbsp;&nbsp;&nbsp;
+										<a href="javascript:newObj()" role="button" class="btn btn-sm btn-icon btn-secondary"><i class="fas fa-plus"></i></a>
+									</span>
+								</div>
+								<div class="card-body">
+									<table class="table table-hover table-sm" id="results" style="width: 100%">
+										<thead>
+											<tr>
+												<th></th>
+												<th>TYPE</th>
+												<th>DESCRIPTION</th>
+												<th>DEFAULT VALUE</th>
+												<th>NOTIFICATION</th>
+												<th>ENABLED</th>
+												<th>UNIT</th>
+												<th>SORT</th>
+											</tr>
+										</thead>
+										<tbody></tbody>
+									</table>
+								</div>
+							</div>
+
+							<div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Alert Type Maintenance</h5>
+											<button class="close" type="button" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<form id="alertTypeForm">
+											<div class="modal-body">
+												<input type="hidden" id="form-alert_type_id" name="alert_type_id" />
+												<div class="form-group">
+													<label for="form-alert_type">Type</label>
+													<input type="text" class="form-control form-control-sm" id="form-alert_type" name="alert_type"
+														placeholder="ALERT_TYPE..." required>
+												</div>
+													<div class="form-group">
+														<label for="form-alert_description">Description</label>
+														<textarea class="form-control form-control-sm" id="form-alert_description" name="alert_description"
+															rows="4" placeholder="description..." required></textarea>
+													</div>
+												<div class="form-group">
+													<label for="form-alert_default_value">Default Value</label>
+													<input type="number" step="0.01" class="form-control form-control-sm" id="form-alert_default_value" name="alert_default_value" required>
+												</div>
+												<div class="form-group">
+													<label for="form-notification_type">Notification Type</label>
+													<select class="form-control form-control-sm" id="form-notification_type" name="notification_type">
+														<option value="E">E</option>
+														<option value="W">W</option>
+														<option value="I">I</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<label for="form-default_enabled">Default Enabled</label>
+													<select class="form-control form-control-sm" id="form-default_enabled" name="default_enabled">
+														<option value="Y">Y</option>
+														<option value="N">N</option>
+													</select>
+												</div>
+													<div class="form-group">
+														<label for="form-unit">Unit</label>
+															<select class="form-control form-control-sm" id="form-unit" name="unit">
+																<option value="f">Fahrenheit (f)</option>
+																<option value="m">Minutes (m)</option>
+																<option value="c">Count (c)</option>
+															</select>
+														</div>
+												<div class="form-group">
+													<label for="form-sort_order">Sort Order</label>
+													<input type="number" class="form-control form-control-sm" id="form-sort_order" name="sort_order" required>
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-outline-danger mr-auto" id="deleteBtn">Delete</button>
+												<button type="submit" class="btn btn-primary">Update</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+
+							<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+								<div class="modal-dialog" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">DELETE</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											Do you want to delete this alert type?
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+											<button type="button" class="btn btn-danger" id="confirmDeleteBtn">YES</button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div th:replace="~{fragments/footer}"></div>
+		</main>
+	</div>
+
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}"></script>
+	<script th:src="@{/assets/vendor/pace/pace.min.js}"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}"></script>
+	<script th:src="@{/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js}"></script>
+	<script th:src="@{/assets/vendor/flatpickr/flatpickr.min.js}"></script>
+	<script th:src="@{/assets/javascript/theme.min.js}"></script>
+	<script th:src="@{/assets/vendor/datatables/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/assets/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+	<script>
+		var table;
+
+		function clearForm() {
+			$('#form-alert_type_id').val('-1');
+			$('#form-alert_type').val('');
+			$('#form-alert_description').val('');
+			$('#form-alert_default_value').val('0');
+			$('#form-notification_type').val('W');
+			$('#form-default_enabled').val('Y');
+			$('#form-unit').val('f');
+			$('#form-sort_order').val('0');
+		}
+
+		function updateDeleteVisibility() {
+			var isNew = $('#form-alert_type_id').val() === '-1';
+			$('#deleteBtn').toggle(!isNew);
+		}
+
+			function normalizeUnit(unit) {
+				var normalized = (unit || '').toLowerCase();
+				if (normalized === 'f' || normalized === 'fahrenheit') {
+					return 'f';
+				}
+				if (normalized === 'm' || normalized === 'minute' || normalized === 'minutes' || normalized === 'h' || normalized === 'hour' || normalized === 'hours') {
+					return 'm';
+				}
+				if (normalized === 'c' || normalized === 'count' || normalized === 'counts') {
+					return 'c';
+				}
+				return 'f';
+			}
+
+		function fetchID(id) {
+			$.getJSON('/ss/alerttype/json/' + id, function(data) {
+				$('#form-alert_type_id').val(data.alert_type_id);
+				$('#form-alert_type').val(data.alert_type || '');
+				$('#form-alert_description').val(data.alert_description || '');
+				$('#form-alert_default_value').val(data.alert_default_value || 0);
+				$('#form-notification_type').val(data.notification_type || 'W');
+				$('#form-default_enabled').val(data.default_enabled || 'Y');
+					$('#form-unit').val(normalizeUnit(data.unit));
+				$('#form-sort_order').val(data.sort_order || 0);
+				updateDeleteVisibility();
+				$('#formModal').modal('show');
+			}).fail(function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			});
+		}
+
+		function newObj() {
+			clearForm();
+			updateDeleteVisibility();
+			$('#formModal').modal('show');
+		}
+
+		$(document).ready(function() {
+			table = $('#results').DataTable({
+				"ajax": {
+					"url": "/ss/alerttype/json",
+					"dataSrc": ""
+				},
+				"columns": [
+					{
+						"data": "alert_type_id",
+						render: function(data) {
+							return "<a href='javascript:fetchID(\"" + data + "\")' role=\"button\" class=\"btn btn-sm btn-icon btn-secondary\"><i class='far fa-edit'></i></a>";
+						}
+					},
+					{ "data": "alert_type" },
+					{ "data": "alert_description" },
+					{ "data": "alert_default_value" },
+					{ "data": "notification_type" },
+					{ "data": "default_enabled" },
+					{ "data": "unit" },
+					{ "data": "sort_order" }
+				]
+			});
+
+			$('#alertTypeForm').on('submit', function(event) {
+				event.preventDefault();
+
+				$.ajax({
+					type: 'POST',
+					url: '/ss/alerttype/update',
+					data: $('#alertTypeForm').serialize(),
+					success: function() {
+						$('#formModal').modal('hide');
+						table.ajax.reload();
+					},
+					error: function(xhr, ajaxOptions, thrownError) {
+						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+					}
+				});
+			});
+
+			$('#deleteBtn').on('click', function() {
+				$('#confirmModal').modal('show');
+			});
+
+			$('#confirmDeleteBtn').on('click', function() {
+				$.ajax({
+					type: 'POST',
+					url: '/ss/alerttype/delete',
+					data: { alert_type_id: $('#form-alert_type_id').val() },
+					success: function() {
+						$('#confirmModal').modal('hide');
+						$('#formModal').modal('hide');
+						clearForm();
+						table.ajax.reload();
+					},
+					error: function(xhr, ajaxOptions, thrownError) {
+						alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+					}
+				});
+			});
+		});
+	</script>
+
+</body>
+</html>

@@ -127,7 +127,7 @@ public class ToolDHController {
 
 	@RequestMapping("/tool/dh/search")
 	public String read(@ModelAttribute ToolSearchForm form, Model model) {
-		model.addAttribute("RESULTS", mapper.Search(Utils.ifNull(form.getSearch_term()).toUpperCase()));
+		model.addAttribute("RESULTS", mapper.Search(form));
 		model.addAttribute("SEARCH_FORM", form);
 		return "tool/deephole_home";
 	}
