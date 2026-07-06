@@ -1,0 +1,166 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<div th:replace="~{fragments/header}"></div>
+</head>
+
+<body>
+	<div class="app">
+		<div th:replace="~{fragments/app_header}"></div>
+		<div th:replace="~{fragments/sidebar}"></div>
+
+		<main class="app-main">
+			<div class="wrapper">
+				<div class="page">
+					<div class="page-inner">
+						<header class="page-title-bar"> </header>
+
+						<div class="page-section">
+							<div class="d-flex align-items-center justify-content-between flex-wrap"
+								style="margin: 20px 20px 15px 20px">
+								<span class="h5 m-0 font-weight-bold text-primary">AIR GAUGE INSPECTION</span>
+								<a th:if="${BACK_VALUE != null and BACK_VALUE != ''}"
+									th:href="@{/ag/search(type=${BACK_TYPE},value=${BACK_VALUE})}"
+									class="btn btn-sm btn-secondary">Back to Search</a>
+								<a th:if="${BACK_VALUE == null or BACK_VALUE == ''}"
+									th:href="@{/ag/home}" class="btn btn-sm btn-secondary">Back to Search</a>
+							</div>
+
+							<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">DETAILS</span>
+								</div>
+								<div class="card-body">
+									<div class="row">
+										<div class="col-md-3">
+											<label class="font-weight-bold">Inspection ID</label>
+											<div th:text="${INSPECTION.id}"></div>
+										</div>
+										<div class="col-md-3">
+											<label class="font-weight-bold">Work Order</label>
+											<div th:text="${INSPECTION.woid}"></div>
+										</div>
+										<div class="col-md-3">
+											<label class="font-weight-bold">Serial Number</label>
+											<div th:text="${INSPECTION.serialNumber}"></div>
+										</div>
+										<div class="col-md-3">
+											<label class="font-weight-bold">Created</label>
+											<div th:text="${INSPECTION.created}"></div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label class="font-weight-bold">Inspection Type</label>
+											<div th:text="${INSPECTION.inspectiontype}"></div>
+										</div>
+										<div class="col-md-3">
+											<label class="font-weight-bold">Custom 1</label>
+											<div th:text="${INSPECTION.custom1}"></div>
+										</div>
+										<div class="col-md-3">
+											<label class="font-weight-bold">Custom 2</label>
+											<div th:text="${INSPECTION.custom2}"></div>
+										</div>
+										<div class="col-md-3">
+											<label class="font-weight-bold">Comment</label>
+											<div th:text="${INSPECTION.comment}"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="card shadow mb-4" style="margin: 20px 20px 20px 20px">
+								<div class="card-header py-3">
+									<span class="h6 m-0 font-weight-bold text-primary">MEASUREMENTS</span>
+								</div>
+								<div class="card-body">
+									<div id="air-gauge-chart" style="height: 520px; width: 100%;"></div>
+									<div id="chart-empty" class="alert alert-info mt-3 d-none">
+										No samples were found for this inspection.
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div th:replace="~{fragments/footer}"></div>
+		</main>
+	</div>
+
+	<script th:src="@{/assets/vendor/jquery/jquery.min.js}" type="text/javascript"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/popper.min.js}" type="text/javascript"></script>
+	<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+	<script th:src="@{/assets/vendor/pace/pace.min.js}" type="text/javascript"></script>
+	<script th:src="@{/assets/vendor/stacked-menu/stacked-menu.min.js}" type="text/javascript"></script>
+	<script th:src="@{/assets/vendor/perfect-scrollbar/perfect-scrollbar.min.js}" type="text/javascript"></script>
+	<script th:src="@{/assets/javascript/theme.min.js}" type="text/javascript"></script>
+	<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+
+	<script th:inline="javascript">
+		var inspectionId = /*[[${INSPECTION.id}]]*/ 0;
+		var chartElement = document.getElementById('air-gauge-chart');
+		var airGaugeChart = echarts.init(chartElement);
+
+		fetch('/ag/inspection/' + inspectionId + '/samples/json')
+			.then(function(response) {
+				return response.json();
+			})
+			.then(function(samples) {
+				if (!samples || samples.length === 0) {
+					document.getElementById('chart-empty').classList.remove('d-none');
+					return;
+				}
+
+				var chartData = samples.map(function(sample) {
+					return [Number(sample.zposvalue), Number(sample.xvalue)];
+				});
+
+				airGaugeChart.setOption({
+					animation: false,
+					tooltip: {
+						trigger: 'axis',
+						valueFormatter: function(value) {
+							return value;
+						}
+					},
+					grid: {
+						left: 65,
+						right: 25,
+						top: 35,
+						bottom: 55
+					},
+					xAxis: {
+						type: 'value',
+						name: 'Position',
+						nameLocation: 'middle',
+						nameGap: 35
+					},
+					yAxis: {
+						type: 'value',
+						name: 'Diameter',
+						scale: true
+					},
+					series: [{
+						name: 'Measured Diameter',
+						type: 'line',
+						showSymbol: false,
+						data: chartData,
+						lineStyle: {
+							width: 2,
+							color: 'rgba(52, 108, 176, 1)'
+						}
+					}]
+				}, true);
+			});
+
+		$(window).on('resize', function() {
+			airGaugeChart.resize();
+		});
+	</script>
+</body>
+</html>
